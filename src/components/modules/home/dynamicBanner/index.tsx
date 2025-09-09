@@ -1,4 +1,3 @@
-
 interface Banner {
 	id: string;
 	imageUrl: string;
@@ -15,6 +14,7 @@ export default function DynamicBanner() {
 		<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 			{banners.map(banner => (
 				<img
+					key={banner.id}
 					src={banner.imageUrl}
 					alt={`Banner ${banner.id}`}
 					className="w-full h-full object-cover"

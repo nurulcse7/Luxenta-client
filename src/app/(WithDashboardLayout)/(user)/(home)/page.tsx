@@ -7,10 +7,12 @@ import LuxentaWallet from "@/components/modules/home/luxentaWallet";
 import AccountSummary from "@/components/modules/home/accountSummary";
 import NotificationPanel from "@/components/modules/home/notificationPanel";
 import TeamDashboard from "@/components/modules/home/teamDashboard";
+import DailyCheckin from "@/components/modules/user/DailyCheckin";
 
 export default function HomePage() {
 	return (
 		<div className="container mx-auto py-8 space-y-8">
+			<DailyCheckin />
 			{/* Dynamic Banner Section */}
 			<DynamicBanner />
 			{/* Account & Notification Summary */}

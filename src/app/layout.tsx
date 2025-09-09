@@ -24,12 +24,12 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang="en" data-arp="">
+		<html lang="bn" data-arp="">
 			<body
 				data-new-gr-c-s-check-loaded="14.1250.0"
 				data-gr-ext-installed=""
 				cz-shortcut-listen="true"
-				className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+				className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[radial-gradient(75%_60%_at_20%_20%,#101a33_0%,#0a0f1c_35%,#060a14_100%)] `}>
 				<Toaster richColors position="top-center" />
 				{children}
 			</body>
