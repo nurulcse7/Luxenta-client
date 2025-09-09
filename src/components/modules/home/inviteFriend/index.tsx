@@ -1,20 +1,21 @@
 "use client";
-
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
 
 export default function InviteFriend() {
+	const [inviteCode] = useState("LXNT12345");
+
 	return (
-		<Card className="rounded-2xl shadow">
-			<CardHeader>
-				<CardTitle>Invite a Friend</CardTitle>
-			</CardHeader>
-			<CardContent>
-				<p className="mb-2 text-gray-600">
-					Share your referral link to earn rewards.
-				</p>
-				<Button className="w-full">Copy Invite Link</Button>
-			</CardContent>
+		<Card className="p-4 text-center space-y-2 bg-purple-50">
+			<h2 className="text-lg font-semibold">Invite Friend</h2>
+			<p>Your Invite Code:</p>
+			<p className="font-bold text-lg">{inviteCode}</p>
+			<Button
+				onClick={() => navigator.clipboard.writeText(inviteCode)}
+				className="mt-2 bg-purple-500 hover:bg-purple-600 text-white">
+				Copy Code
+			</Button>
 		</Card>
 	);
 }

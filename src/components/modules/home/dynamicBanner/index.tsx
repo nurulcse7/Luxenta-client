@@ -1,21 +1,25 @@
-"use client";
 
-import Image from "next/image";
-import banner from "../../../../assets/images/banner.webp";
+interface Banner {
+	id: string;
+	imageUrl: string;
+}
+
+const banners: Banner[] = [
+	{ id: "1", imageUrl: "/assets/images/Crypto.jpeg" },
+	{ id: "2", imageUrl: "/assets/images/gold.jpeg" },
+	{ id: "3", imageUrl: "/assets/images/Real.jpeg" },
+];
+
 export default function DynamicBanner() {
 	return (
-		<div className="relative w-full h-64 rounded-2xl overflow-hidden shadow-lg">
-			<Image src={banner} alt="Luxenta Banner" fill className="object-cover" />
-			{/* Overlay */}
-			<div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center text-center px-4">
-				<h2 className="text-white text-3xl sm:text-4xl font-bold mb-2">
-					Welcome to Luxenta
-				</h2>
-				<p className="text-white/80 text-sm sm:text-base max-w-xl">
-					Your trusted investment platform. Deposit, invest, and earn
-					seamlessly.
-				</p>
-			</div>
+		<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+			{banners.map(banner => (
+				<img
+					src={banner.imageUrl}
+					alt={`Banner ${banner.id}`}
+					className="w-full h-full object-cover"
+				/>
+			))}
 		</div>
 	);
 }

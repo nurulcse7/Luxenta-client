@@ -3,6 +3,13 @@
 import { useState } from "react";
 import Link from "next/link";
 import { FaBars, FaTimes } from "react-icons/fa";
+import { Button } from "@/components/ui/button";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function Navbar() {
 	const [open, setOpen] = useState(false);
@@ -11,7 +18,7 @@ export default function Navbar() {
 		{ name: "Home", href: "/" },
 		{ name: "Investment", href: "/investment" },
 		{ name: "Team", href: "/team" },
-		{ name: "My Account", href: "/user/account" },
+		{ name: "My Account", href: "/account" },
 	];
 
 	return (
@@ -36,25 +43,23 @@ export default function Navbar() {
 				</ul>
 
 				{/* Mobile Toggle */}
-				<button
-					className="md:hidden text-2xl text-gray-700"
-					onClick={() => setOpen(!open)}>
-					{open ? <FaTimes /> : <FaBars />}
-				</button>
+				<div className="md:hidden flex items-center gap-2">
+					<DropdownMenu>
+						<DropdownMenuTrigger asChild>
+							<Button variant="ghost" className="p-2">
+								<FaBars size={22} />
+							</Button>
+						</DropdownMenuTrigger>
+						<DropdownMenuContent className="w-40 bg-white shadow-lg rounded-md p-2">
+							{menuItems.map(item => (
+								<DropdownMenuItem key={item.name}>
+									<Link href={item.href}>{item.name}</Link>
+								</DropdownMenuItem>
+							))}
+						</DropdownMenuContent>
+					</DropdownMenu>
+				</div>
 			</div>
-
-			{/* Mobile Menu */}
-			{open && (
-				<ul className="md:hidden bg-white border-t shadow-lg flex flex-col space-y-4 px-6 py-4 font-medium text-gray-700 animate-slide-down">
-					{menuItems.map(item => (
-						<li key={item.name}>
-							<Link href={item.href} onClick={() => setOpen(false)}>
-								{item.name}
-							</Link>
-						</li>
-					))}
-				</ul>
-			)}
 		</nav>
 	);
 }
