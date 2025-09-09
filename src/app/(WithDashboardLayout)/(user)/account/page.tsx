@@ -1,10 +1,9 @@
-
 const Account = () => {
   return (
-    <div>
-      This for user account!
-    </div>
-  )
-}
+		<div>
+			<h1 className="text-white">This for user account!</h1>
+		</div>
+	);
+};
 
 export default Account;
