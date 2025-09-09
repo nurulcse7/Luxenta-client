@@ -78,11 +78,22 @@ const DepositStep2 = ({
 	};
 
 	return (
-		<main className="min-h-screen grid place-items-center bg-[#0a0f1c] p-6">
-			<section className="w-full max-w-3xl bg-white/5 border border-white/20 rounded-2xl backdrop-blur-lg shadow-2xl p-6 grid gap-6">
+		<main className="min-h-screen grid place-items-center  p-6">
+			<section
+				className={`w-full max-w-3xl border border-white/20 rounded-2xl backdrop-blur-lg shadow-2xl p-6 grid gap-6 ${
+					selectedMethod === "bkash"
+						? "bg-[#E2136E]/50"
+						: selectedMethod === "nagad"
+						? "bg-[#FFAB31]/30"
+						: selectedMethod === "binance"
+						? "bg-[#000]/20"
+						: "bg-white/5"
+				}`}>
 				{/* Header */}
-				<h1 className="text-lg font-semibold text-white">ডিপোজিট — ধাপ ২</h1>
-
+				<div className="flex justify-between border-b border-gray-400 pb-1">
+					<h1 className="text-lg font-semibold text-white">ডিপোজিট — ধাপ ২</h1>
+					<h2 className="text-sm text-[#9fb3c8]">Luxenta • Secure Deposit</h2>
+				</div>
 				{/* Summary */}
 				<div className="flex flex-wrap gap-2 text-sm text-[#9fb3c8]">
 					<span className="px-3 py-1 rounded-full border border-white/20 bg-[#00e5ff0f] text-white text-xs">
@@ -95,7 +106,6 @@ const DepositStep2 = ({
 						Channel: <span className="font-mono">{channel}</span>
 					</span>
 				</div>
-
 				{/* Payment method */}
 				<div className="flex gap-2 flex-wrap">
 					{methods.map(m => (
@@ -111,13 +121,16 @@ const DepositStep2 = ({
 						</div>
 					))}
 				</div>
-				<div className="flex text-white">
-					<div>Send Money</div>
-					<div>
+				<div
+					className="relative flex justify-between items-center rounded-xl border border-[#00e5ff] mt-3 p-3
+  bg-gradient-to-r from-[#0077ff] via-[#6a5cff] to-[#00e5ff] bg-[length:200%_100%] animate-[gradient_3s_linear_infinite] text-white">
+					<div className="text-lg font-bold ml-3 animate-pulse">Send Money</div>
+					<div className="text-sm">
 						📢 এখন নির্দিষ্ট নম্বর/আইডিতে অর্থ পাঠান। সাবমিট করার সাথে সাথেই
 						ব্যালেন্স আপডেট হবে!
 					</div>
 				</div>
+
 				{/* Payment info */}
 				<div className="p-3 border border-white/20 rounded-xl bg-[#00e5ff0a] text-sm grid gap-2 text-white">
 					<div>পেমেন্ট তথ্য:</div>
@@ -129,7 +142,6 @@ const DepositStep2 = ({
 							: "—"}
 					</div>
 				</div>
-
 				{/* Txid input */}
 				<input
 					type="text"
@@ -138,15 +150,19 @@ const DepositStep2 = ({
 					onChange={e => setTxid(e.target.value)}
 					className="w-full p-3 rounded-xl border border-white/20 bg-white text-black text-sm"
 				/>
-				<ul className="text-white list-group">
-					<li>উল্লেখিত নম্বর/আইডি তে টাকা পাঠানোর পরই সাবমিট করুন।</li>
-					<li>
-						রেফারেন্স/নোটে আপনার Luxenta UID উল্লেখ করলে ভেরিফিকেশন দ্রুত হবে।
-					</li>
-					<li>ভুল এমাউন্ট/ভুল অ্যাকাউন্টে পাঠালে ডিপোজিট গৃহীত হবে না।</li>
-					<li>অ্যাডমিন ভেরিফাই করার পরই ব্যালেন্স যুক্ত হবে।</li>
-				</ul>
 
+				{selectedMethod ? (
+					<ul className="text-white list-disc list-inside space-y-1">
+						<li>উল্লেখিত নম্বর/আইডি তে টাকা পাঠানোর পরই সাবমিট করুন।</li>
+						<li>ট্রানজেকশন আইডি সাবমিট করুন|</li>
+						<li>ভুল এমাউন্ট/ভুল অ্যাকাউন্টে পাঠালে ডিপোজিট গৃহীত হবে না।</li>
+						<li>অ্যাডমিন ভেরিফাই করার পরই ব্যালেন্স যুক্ত হবে।</li>
+					</ul>
+				) : (
+					<div className="text-white text-center">
+						পেমেন্ট মেথড নির্বাচন করুন
+					</div>
+				)}
 				{/* Confirm */}
 				<label className="flex items-center gap-2 text-sm text-[#9fb3c8]">
 					<input
@@ -156,7 +172,6 @@ const DepositStep2 = ({
 					/>
 					আমি নিশ্চিত করছি যে আমি অর্থ পাঠিয়েছি।
 				</label>
-
 				{/* Actions */}
 				<div className="flex justify-between items-center">
 					<button

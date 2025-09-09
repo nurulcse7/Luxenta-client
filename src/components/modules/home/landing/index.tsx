@@ -26,8 +26,6 @@ export default function LandingPage() {
 				break;
 
 			case "ব্যাংক":
-				// route change হবে
-				router.push("/bank");
 				break;
 
 			case "বন্ধুকে আমন্ত্রণ":
@@ -87,16 +85,27 @@ export default function LandingPage() {
 					</div>
 				</div>
 				{/* Deposit & Withdraw */}
-				<main className="flex gap-4 px-6 mb-8 text-center text-sm">
+				<main className="flex flex-col sm:flex-row gap-4 px-6 mb-8 text-center text-sm">
+					{/* Deposit Card */}
 					<Link
-						href={"/deposit"}
-						className="flex-1 card-btn rounded-md bg-gradient-to-tr from-[#00e5ff] to-[#6a5cff] font-bold py-5 shadow-lg text-white hover:scale-105 transition-transform">
+						href="/deposit"
+						className="flex-1 bg-gradient-to-tr from-[#00e5ff] to-[#6a5cff] text-white font-bold py-6 rounded-xl shadow-lg hover:scale-105 transition-transform">
 						<h2 className="text-lg mb-1">ডিপোজিট</h2>
 						<p className="opacity-80">আপনার ওয়ালেটে টাকা যোগ করুন</p>
 					</Link>
+
+					{/* Wallet Card */}
 					<Link
-						href={"/withdraw"}
-						className="flex-1 card-btn rounded-md bg-gradient-to-tr from-[#ff5c7a] to-[#ff9f43] font-bold py-5 shadow-lg text-white hover:scale-105 transition-transform">
+						href="/wallet"
+						className="flex-1 bg-gradient-to-tr from-[#ffc14d] to-[#cc00ff] text-white font-bold py-6 rounded-xl shadow-lg hover:scale-105 transition-transform">
+						<h2 className="text-lg mb-1">ওয়ালেট</h2>
+						<p className="opacity-80">আপনার ওয়ালেটের ব্যালেন্স দেখুন</p>
+					</Link>
+
+					{/* Withdraw Card */}
+					<Link
+						href="/withdraw"
+						className="flex-1 bg-gradient-to-tr from-[#ff5c7a] to-[#ff9f43] text-white font-bold py-6 rounded-xl shadow-lg hover:scale-105 transition-transform">
 						<h2 className="text-lg mb-1">উত্তোলন</h2>
 						<p className="opacity-80">টাকা উত্তোলন করুন</p>
 					</Link>
