@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import InviteModal from "../inviteModal";
 import RedeemModal from "../redeemModal";
+import Marquee from "react-fast-marquee";
 
 export default function LandingPage() {
 	const router = useRouter();
@@ -38,6 +39,20 @@ export default function LandingPage() {
 	};
 
 	const items = ["চেক-ইন", "রিডিম কোড", "ব্যাংক", "বন্ধুকে আমন্ত্রণ"];
+
+	const images = [
+		"/assets/images/Real.jpeg",
+		"/assets/images/Crypto.jpeg",
+		"/assets/images/gold.jpeg",
+		"/assets/images/Real.jpeg",
+		"/assets/images/Crypto.jpeg",
+		"/assets/images/gold.jpeg",
+		"/assets/images/Real.jpeg",
+		"/assets/images/gold.jpeg",
+		"/assets/images/Crypto.jpeg",
+		"/assets/images/gold.jpeg",
+	];
+
 	return (
 		<main>
 			<div className="relative min-h-screen pb-20 text-[#e6f1ff]  font-sans">
@@ -58,31 +73,21 @@ export default function LandingPage() {
 					<img
 						src="/assets/images/Real.jpeg"
 						alt="AI Robot"
-						className="rounded-xl w-full max-w-[100px] h-[200px] object-cover"
+						className="rounded-xl w-full max-w-[600px] h-[200px] object-cover"
 					/>
 				</div>
 				{/* Auto Scrolling Small Images */}
 				<div className="overflow-hidden relative mb-8 px-6">
-					<div className="flex animate-[scrollImages_25s_linear_infinite] w-[200%]">
-						{[
-							"/assets/images/Real.jpeg",
-							"/assets/images/Crypto.jpeg",
-							"/assets/images/gold.jpeg",
-							"/assets/images/Real.jpeg",
-							"/assets/images/Crypto.jpeg",
-							"/assets/images/gold.jpeg",
-							"/assets/images/Real.jpeg",
-							"/assets/images/Crypto.jpeg",
-							"/assets/images/gold.jpeg",
-						].map((id, i) => (
+					<Marquee gradient={false} speed={50}>
+						{images.map((src, i) => (
 							<img
 								key={i}
-								src={`${id}`}
+								src={src}
 								className="w-[140px] h-[90px] mr-2 rounded-md object-cover flex-shrink-0"
 								alt={`slide-${i}`}
 							/>
 						))}
-					</div>
+					</Marquee>
 				</div>
 				{/* Deposit & Withdraw */}
 				<main className="flex flex-col sm:flex-row gap-4 px-6 mb-8 text-center text-sm">

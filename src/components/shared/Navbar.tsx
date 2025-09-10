@@ -12,7 +12,7 @@ export default function Navbar() {
 				<Home className="w-5 h-5 mb-1" /> হোম
 			</Link>
 			<Link
-				href={"/deposit"}
+				href={"/invest"}
 				className="flex flex-col items-center text-[#00e5ff] hover:text-white transition-transform hover:scale-110 cursor-pointer">
 				<TrendingUp className="w-5 h-5 mb-1" /> বিনিয়োগ
 			</Link>

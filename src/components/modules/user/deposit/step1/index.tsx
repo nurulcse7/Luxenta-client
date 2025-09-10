@@ -1,6 +1,6 @@
 "use client";
 
-import { ChannelKey } from "@/app/(WithDashboardLayout)/(user)/deposit/page";
+import { ChannelKey } from "@/app/(DashboardLayout)/(user)/deposit/page";
 import { useEffect, useState } from "react";
 
 interface DepositStep1Props {

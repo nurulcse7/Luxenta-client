@@ -1,10 +1,13 @@
+"use client";
 
-const Providers = () => {
-  return (
-    <div>
-      
-    </div>
-  )
-}
+import UserProvider from "@/context/UserContext";
 
-export default Providers
+const Providers = ({ children }: { children: React.ReactNode }) => {
+	return (
+		<UserProvider>
+	 {children} 
+		</UserProvider>
+	);
+};
+
+export default Providers;

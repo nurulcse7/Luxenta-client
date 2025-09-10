@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
+import Providers from "@/providers/Providers";
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -30,8 +31,11 @@ export default function RootLayout({
 				data-gr-ext-installed=""
 				cz-shortcut-listen="true"
 				className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[radial-gradient(75%_60%_at_20%_20%,#101a33_0%,#0a0f1c_35%,#060a14_100%)] `}>
-				<Toaster richColors position="top-center" />
-				{children}
+				{" "}
+				<Providers>
+					<Toaster richColors position="top-center" />
+					{children}
+				</Providers>
 			</body>
 		</html>
 	);
