@@ -6,7 +6,7 @@ export interface IUser {
 	isActive?: boolean;
 	is_deleted: boolean;
 	investorInfo: any;
-	role: "investor" | "admin" | "superAdmin";
+	role: "investor"|"agent";
 	iat?: number;
 	exp?: number;
 }
