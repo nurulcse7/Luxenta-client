@@ -1,48 +1,51 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { useState } from "react";
+import { LoginFormValues, loginSchema } from "./loginValidation";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { loginUser } from "@/services/AuthService";
+import { Button } from "@/components/ui/button";
 
 export default function LoginForm() {
 	const router = useRouter();
-	const [loading, setLoading] = useState(false);
-	const [message, setMessage] = useState<{
+	const [serverMessage, setServerMessage] = useState<{
 		type: "error" | "success";
 		text: string;
 	} | null>(null);
 
-	const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
-		e.preventDefault();
-		setLoading(true);
-		setMessage(null);
+	const {
+		register,
+		handleSubmit,
+		formState: { errors, isSubmitting },
+	} = useForm<LoginFormValues>({
+		resolver: zodResolver(loginSchema),
+	});
 
-		const form = new FormData(e.currentTarget);
-		const payload = {
-			emailOrNumber: form.get("emailOrNumber"),
-			password: form.get("password"),
-		};
+	const onSubmit = async (values: LoginFormValues) => {
+		setServerMessage(null);
 
 		try {
-			const res = await fetch("/api/auth/login", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(payload),
-			});
-
-			const data = await res.json();
-			if (!res.ok || data.error) {
-				setMessage({ type: "error", text: data.error || "লগইন ব্যর্থ হয়েছে" });
+			const result = await loginUser(values);
+			if (!result.success) {
+				setServerMessage({
+					type: "error",
+					text: result.message || "লগইন ব্যর্থ হয়েছে",
+				});
+				return;
 			} else {
-				setMessage({ type: "success", text: "✅ লগইন সফল হয়েছে!" });
-				setTimeout(() => router.push("/dashboard"), 800);
+				setServerMessage({
+					type: "success",
+					text: "✅ লগইন সফল হয়েছে!",
+				});
+				setTimeout(() => router.push("/"), 100);
 			}
 		} catch (err) {
-			setMessage({
+			setServerMessage({
 				type: "error",
 				text: "❌ নেটওয়ার্ক সমস্যা হয়েছে। আবার চেষ্টা করুন।",
 			});
-		} finally {
-			setLoading(false);
 		}
 	};
 
@@ -56,38 +59,43 @@ export default function LoginForm() {
 					</p>
 				</header>
 
-				<form onSubmit={handleLogin} className="grid gap-3">
+				<form onSubmit={handleSubmit(onSubmit)} className="grid gap-3">
 					<input
-						name="emailOrNumber"
 						type="text"
 						placeholder="ইমেইল অথবা মোবাইল নম্বর"
-						required
 						className="w-full p-3 rounded-lg border border-white/18 bg-white/6 text-white outline-none"
+						{...register("emailOrNumber")}
 					/>
+					{errors.emailOrNumber && (
+						<p className="text-red-400 text-sm">
+							{errors.emailOrNumber.message}
+						</p>
+					)}
 
 					<input
-						name="password"
 						type="password"
 						placeholder="পাসওয়ার্ড"
-						required
 						className="w-full p-3 rounded-lg border border-white/18 bg-white/6 text-white outline-none"
+						{...register("password")}
 					/>
-					{message && (
+					{errors.password && (
+						<p className="text-red-400 text-sm">{errors.password.message}</p>
+					)}
+
+					{serverMessage && (
 						<div
 							className={`p-3 rounded-md text-sm mt-1 ${
-								message.type === "error"
+								serverMessage.type === "error"
 									? "bg-red-700/40 text-red-100"
 									: "bg-green-700/30 text-green-100"
 							}`}>
-							{message.text}
+							{serverMessage.text}
 						</div>
 					)}
-					<button
-						type="submit"
-						disabled={loading}
-						className="w-full px-4 py-3 rounded-xl bg-gradient-to-br from-[#00e5ff] to-[#6a5cff] text-[#051018] font-bold">
-						{loading ? "লগইন হচ্ছে..." : "লগইন করুন"}
-					</button>
+
+					<Button type="submit" disabled={isSubmitting}>
+						{isSubmitting ? "লগইন হচ্ছে..." : "লগইন করুন"}
+					</Button>
 				</form>
 
 				<footer className="mt-4 text-center text-sm text-[#9fb3c8]">

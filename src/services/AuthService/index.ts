@@ -3,11 +3,8 @@
 import { jwtDecode } from "jwt-decode";
 import { cookies } from "next/headers";
 import { FieldValues } from "react-hook-form";
-export const registerUser = async (userData: any) => {
-	console.log(
-		"🚀 ~ registerUser ~ API_BASE_URL:",
-		process.env.NEXT_PUBLIC_BASE_API
-	);
+
+export const registerUser = async (userData: FieldValues) => {
 	try {
 		const res = await fetch(
 			`${process.env.NEXT_PUBLIC_BASE_API}/users/register/investor`,
@@ -64,45 +61,21 @@ export const getCurrentUser = async () => {
 
 	if (accessToken) {
 		decodedData = await jwtDecode(accessToken);
-		return decodedData;
-	} else {
-		return null;
-	}
-};
+		const now = Date.now() / 1000;
+		if (decodedData.exp && decodedData.exp < now) {
+			return null;
+		}
 
-// export const getCurrentUser = async () => {
-// 	const accessToken = (await cookies()).get("accessToken")?.value;
-// 	if (!accessToken) return null;
-
-// 	try {
-// 		const decoded = jwt.verify(accessToken, process.env.JWT_SECRET!);
-// 		// DB থেকে verified user fetch করা
-// 		const res = await fetch(
-// 			`${process.env.NEXT_PUBLIC_BASE_API}/user/${decoded.userId}`
-// 		);
-// 		const user = await res.json();
-// 		return user;
-// 	} catch (err) {
-// 		return null;
-// 	}
-// };
-
-export const reCaptchaTokenVerification = async (token: string) => {
-	try {
-		const res = await fetch("https://www.google.com/recaptcha/api/siteverify", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/x-www-form-urlencoded",
-			},
-			body: new URLSearchParams({
-				secret: process.env.NEXT_PUBLIC_RECAPTCHA_SERVER_KEY!,
-				response: token,
-			}),
+		const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/users/me`, {
+			headers: { Authorization: `${accessToken}` },
 		});
 
-		return res.json();
-	} catch (err: any) {
-		return Error(err);
+		if (!res.ok) return null;
+
+		const user = await res.json();
+		return user.data;
+	} else {
+		return null;
 	}
 };
 

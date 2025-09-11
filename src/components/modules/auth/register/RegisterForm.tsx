@@ -1,9 +1,19 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { useForm } from "react-hook-form";
 import { registerUser } from "@/services/AuthService";
+
+type FormValues = {
+	name: string;
+	email: string;
+	number: string;
+	password: string;
+	confirmPassword: string;
+	referral?: string | null;
+};
 
 export default function RegisterForm() {
 	const searchParams = useSearchParams();
@@ -11,67 +21,47 @@ export default function RegisterForm() {
 
 	// read optional ref param
 	const refParam = searchParams?.get("ref") ?? "";
+	const [isReferralLocked, setIsReferralLocked] = useState(Boolean(refParam));
 
-	const [name, setName] = useState("");
-	const [email, setEmail] = useState("");
-	const [number, setNumber] = useState("");
-	const [password, setPassword] = useState("");
-	const [confirmPassword, setConfirmPassword] = useState("");
-	const [referral, setReferral] = useState(refParam); // prefill from query
-	const [isReferralLocked, setIsReferralLocked] = useState(Boolean(refParam)); // lock when param present
+	const {
+		register,
+		handleSubmit,
+		watch,
+		setValue,
+		formState: { errors, isSubmitting },
+	} = useForm<FormValues>();
 
-	const [loading, setLoading] = useState(false);
 	const [message, setMessage] = useState<{
 		type: "error" | "success";
 		text: string;
 	} | null>(null);
 
-	// If the query param changes while component mounted, update local state
+	// sync referral from query param
 	useEffect(() => {
-		setReferral(refParam);
-		setIsReferralLocked(Boolean(refParam));
-	}, [refParam]);
-
-	const validate = () => {
-		if (!name.trim()) return "নাম লিখুন";
-		if (!email.trim() || !/^\S+@\S+\.\S+$/.test(email)) return "সঠিক ইমেইল দিন";
-		if (!number.trim() || !/^\+?\d{8,15}$/.test(number))
-			return "সঠিক মোবাইল নম্বর দিন (country code optional)";
-		if (password.length < 6) return "পাসওয়ার্ড কমপক্ষে ৬ অক্ষর হওয়া প্রয়োজন";
-		if (password !== confirmPassword) return "পাসওয়ার্ড ম্যাচ করে না";
-		return null;
-	};
-
-	const handleSubmit = async (e: React.FormEvent) => {
-		e.preventDefault();
-		setMessage(null);
-
-		const v = validate();
-		if (v) {
-			setMessage({ type: "error", text: v });
-			return;
+		if (refParam) {
+			setValue("referral", refParam);
+			setIsReferralLocked(true);
 		}
+	}, [refParam, setValue]);
 
-		setLoading(true);
-
+	const onSubmit = async (data: FormValues) => {
+		setMessage(null);
 		try {
 			const payload = {
-				name: name.trim(),
-				email: email.trim(),
-				number: number.trim(),
-				password,
-				referral: referral?.trim() || null,
+				name: data.name.trim(),
+				email: data.email.trim(),
+				number: data.number.trim(),
+				password: data.password,
+				referral: data.referral?.trim() || null,
 			};
 
-			// ✅ AuthService থেকে register করা
 			const result = await registerUser(payload);
 
 			if (!result.success) {
 				setMessage({
 					type: "error",
-					text: result.error || "রেজিস্ট্রেশন ব্যর্থ হয়েছে",
+					text: result.message || "রেজিস্ট্রেশন ব্যর্থ হয়েছে",
 				});
-				setLoading(false);
 				return;
 			}
 
@@ -87,8 +77,6 @@ export default function RegisterForm() {
 				type: "error",
 				text: "নেটওয়ার্ক ত্রুটি। আবার চেষ্টা করুন।",
 			});
-		} finally {
-			setLoading(false);
 		}
 	};
 
@@ -102,55 +90,75 @@ export default function RegisterForm() {
 					</p>
 				</header>
 
-				<form onSubmit={handleSubmit} className="grid gap-3">
+				<form onSubmit={handleSubmit(onSubmit)} className="grid gap-3">
 					<input
-						name="name"
-						value={name}
-						onChange={e => setName(e.target.value)}
 						placeholder="পুরো নাম"
 						className="w-full p-3 rounded-lg border border-white/18 bg-white/6 text-white outline-none"
-						required
+						{...register("name", { required: "নাম লিখুন" })}
 					/>
+					{errors.name && (
+						<p className="text-red-400 text-sm">{errors.name.message}</p>
+					)}
 
 					<input
-						name="email"
-						value={email}
-						onChange={e => setEmail(e.target.value)}
 						placeholder="ইমেইল"
 						type="email"
 						className="w-full p-3 rounded-lg border border-white/18 bg-white/6 text-white outline-none"
-						required
+						{...register("email", {
+							required: "সঠিক ইমেইল দিন",
+							pattern: { value: /^\S+@\S+\.\S+$/, message: "সঠিক ইমেইল দিন" },
+						})}
 					/>
+					{errors.email && (
+						<p className="text-red-400 text-sm">{errors.email.message}</p>
+					)}
 
 					<input
-						name="number"
-						value={number}
-						onChange={e => setNumber(e.target.value)}
 						placeholder="মোবাইল নম্বর (ex: +8801XXXXXXXXX)"
 						inputMode="tel"
 						className="w-full p-3 rounded-lg border border-white/18 bg-white/6 text-white outline-none"
-						required
+						{...register("number", {
+							required: "সঠিক মোবাইল নম্বর দিন",
+							pattern: {
+								value: /^\+?\d{8,15}$/,
+								message: "সঠিক মোবাইল নম্বর দিন",
+							},
+						})}
 					/>
+					{errors.number && (
+						<p className="text-red-400 text-sm">{errors.number.message}</p>
+					)}
 
 					<input
-						name="password"
-						value={password}
-						onChange={e => setPassword(e.target.value)}
 						placeholder="পাসওয়ার্ড"
 						type="password"
 						className="w-full p-3 rounded-lg border border-white/18 bg-white/6 text-white outline-none"
-						required
+						{...register("password", {
+							required: "পাসওয়ার্ড দিন",
+							minLength: {
+								value: 6,
+								message: "পাসওয়ার্ড কমপক্ষে ৬ অক্ষর হওয়া প্রয়োজন",
+							},
+						})}
 					/>
+					{errors.password && (
+						<p className="text-red-400 text-sm">{errors.password.message}</p>
+					)}
 
 					<input
-						name="confirmPassword"
-						value={confirmPassword}
-						onChange={e => setConfirmPassword(e.target.value)}
 						placeholder="কনফার্ম পাসওয়ার্ড"
 						type="password"
 						className="w-full p-3 rounded-lg border border-white/18 bg-white/6 text-white outline-none"
-						required
+						{...register("confirmPassword", {
+							validate: value =>
+								value === watch("password") || "পাসওয়ার্ড ম্যাচ করে না",
+						})}
 					/>
+					{errors.confirmPassword && (
+						<p className="text-red-400 text-sm">
+							{errors.confirmPassword.message}
+						</p>
+					)}
 
 					<div>
 						<label className="text-sm text-[#9fb3c8]">
@@ -158,8 +166,6 @@ export default function RegisterForm() {
 						</label>
 						<div className="mt-2 flex gap-2">
 							<input
-								value={referral}
-								onChange={e => setReferral(e.target.value)}
 								placeholder="আপনার রেফারাল কোড থাকলে দিন"
 								readOnly={isReferralLocked}
 								className={`flex-1 p-3 rounded-lg border ${
@@ -167,18 +173,11 @@ export default function RegisterForm() {
 										? "border-white/30 bg-white/8 text-white/70"
 										: "border-white/18 bg-white/6 text-white"
 								} outline-none`}
+								{...register("referral")}
 							/>
-							{/* Optional: Clear button if prefilling is locked but user should be allowed to remove:
-                  <button
-                    type="button"
-                    onClick={() => { setReferral(""); setIsReferralLocked(false); }}
-                    className="px-3 rounded bg-white/10 text-white"
-                  >
-                    পরিবর্তন
-                  </button>
-              */}
 						</div>
 					</div>
+
 					{message && (
 						<div
 							className={`p-3 rounded-md text-sm mt-1 ${
@@ -189,8 +188,9 @@ export default function RegisterForm() {
 							{message.text}
 						</div>
 					)}
-					<Button type="submit" disabled={loading}>
-						{loading ? "প্রসেস হচ্ছে..." : "রেজিস্টার করুন"}
+
+					<Button type="submit" disabled={isSubmitting}>
+						{isSubmitting ? "প্রসেস হচ্ছে..." : "রেজিস্টার করুন"}
 					</Button>
 				</form>
 
