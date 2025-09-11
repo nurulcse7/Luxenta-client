@@ -8,17 +8,30 @@ export const middleware = async (request: NextRequest) => {
 
 	const userInfo = await getCurrentUser();
 
+	// Logged-in user
 	if (userInfo) {
+		// Prevent logged-in user from accessing public routes
 		if (publicRoutes.some(route => pathname.startsWith(route))) {
 			return NextResponse.redirect(new URL(`/`, request.url));
 		}
+
+		// Only allow 'investor' role
+		if (userInfo.role !== "investor") {
+			return NextResponse.redirect(
+				new URL(`/login?redirectPath=${pathname}`, request.url)
+			);
+		}
+
+		// Allowed, continue
 		return NextResponse.next();
 	}
 
+	// Logged-out user accessing public routes
 	if (publicRoutes.some(route => pathname.startsWith(route))) {
 		return NextResponse.next();
 	}
 
+	// Logged-out user trying to access protected route
 	return NextResponse.redirect(
 		new URL(`/login?redirectPath=${pathname}`, request.url)
 	);
