@@ -33,10 +33,10 @@ const PAY_MAP = {
 type ChannelKey = keyof typeof PAY_MAP;
 type MethodKey = keyof (typeof PAY_MAP)["server1"];
 
-const methods: { id: MethodKey; label: string }[] = [
-	{ id: "bkash", label: "বিকাশ" },
-	{ id: "nagad", label: "নগদ" },
-	{ id: "binance", label: "Binance" },
+const methods: { id: MethodKey; label: string; img: string }[] = [
+	{ id: "bkash", label: "বিকাশ", img: "/assets/images/bkash.png" },
+	{ id: "nagad", label: "নগদ", img: "/assets/images/nagad.png" },
+	{ id: "binance", label: "Binance", img: "/assets/images/binance.png" },
 ];
 
 interface DepositStep2Props {
@@ -132,16 +132,25 @@ const DepositStep2 = ({
 				</div>
 
 				{/* Payment info */}
+				{/* Payment info */}
 				<div className="p-3 border border-white/20 rounded-xl bg-[#00e5ff0a] text-sm grid gap-2 text-white">
 					<div>পেমেন্ট তথ্য:</div>
-					<div className="font-mono">
-						{selectedMethod
-							? `${methods.find(m => m.id === selectedMethod)?.label}: ${
-									PAY_MAP[channel][selectedMethod]
-							  }`
-							: "—"}
-					</div>
+					{selectedMethod ? (
+						<div className="flex items-center gap-2 font-mono">
+							<img
+								src={methods.find(m => m.id === selectedMethod)?.img}
+								alt={methods.find(m => m.id === selectedMethod)?.label}
+								className="w-[100px] h-[30px] object-contain rounded"
+							/>
+							<span>{`${methods.find(m => m.id === selectedMethod)?.label}: ${
+								PAY_MAP[channel][selectedMethod]
+							}`}</span>
+						</div>
+					) : (
+						<div className="font-mono">—পেমেন্ট পদ্ধতি নির্বাচন করুন</div>
+					)}
 				</div>
+
 				{/* Txid input */}
 				<input
 					type="text"
