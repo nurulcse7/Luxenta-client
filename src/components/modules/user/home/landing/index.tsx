@@ -26,7 +26,8 @@ export default function LandingPage() {
 				setIsOpenRedeemModal(true);
 				break;
 
-			case "ব্যাংক":
+			case "আমার পণ্য":
+				router.push("/my-projects");
 				break;
 
 			case "বন্ধুকে আমন্ত্রণ":
@@ -38,7 +39,7 @@ export default function LandingPage() {
 		}
 	};
 
-	const items = ["চেক-ইন", "রিডিম কোড", "ব্যাংক", "বন্ধুকে আমন্ত্রণ"];
+	const items = ["চেক-ইন", "রিডিম কোড", "আমার পণ্য", "বন্ধুকে আমন্ত্রণ"];
 
 	const images = [
 		"/assets/images/Real.jpeg",

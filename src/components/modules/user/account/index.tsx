@@ -26,7 +26,7 @@ const Dashboard: React.FC = () => {
 			<div className="flex items-center gap-3 bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.18)] rounded-[18px] shadow-[0_10px_30px_rgba(0,0,0,.35),0_1px_0_rgba(255,255,255,.04)_inset] backdrop-blur-md p-4 mb-4 transition">
 				<img
 					src={user?.avatar || "https://via.placeholder.com/60"}
-					alt="avatar"
+					alt={user?.name}
 					width={48}
 					height={48}
 					className="w-12 h-12 rounded-full border-2 border-[#00e5ff]"

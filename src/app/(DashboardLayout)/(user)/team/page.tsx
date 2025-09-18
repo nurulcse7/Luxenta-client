@@ -1,7 +1,14 @@
-import React from "react";
+import Team from "@/components/modules/user/team";
 
-const Team = () => {
-	return <div className="text-white">This is team page</div>;
+export const metadata = {
+	title: "টিম পেজ • Luxenta",
+};
+const TeamPage = () => {
+	return (
+		<div>
+			<Team />
+		</div>
+	);
 };
 
-export default Team;
+export default TeamPage;

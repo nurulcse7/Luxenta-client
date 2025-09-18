@@ -6,7 +6,8 @@ export interface IUser {
 	isActive?: boolean;
 	is_deleted: boolean;
 	investorInfo: any;
-	role: "investor"|"agent";
+	role: "investor" | "agent";
+	avatar?: string;
 	iat?: number;
 	exp?: number;
 }

@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 // Project data moved inside the component for single-file approach
 const projects = [
 	{
+		id: "1",
 		title: "AI Trading Bot — Basic",
 		price: 5000,
 		daily: 50,
@@ -18,6 +19,7 @@ const projects = [
 		img: "https://source.unsplash.com/300x300/?ai,finance",
 	},
 	{
+		id: "2",
 		title: "Quant Signals — Starter",
 		price: 8000,
 		daily: 80,
@@ -26,6 +28,7 @@ const projects = [
 		img: "https://source.unsplash.com/300x300/?robot,stock",
 	},
 	{
+		id: "3",
 		title: "DeFi Yield — Lite",
 		price: 10000,
 		daily: 120,
@@ -34,6 +37,7 @@ const projects = [
 		img: "https://source.unsplash.com/300x300/?blockchain,finance",
 	},
 	{
+		id: "4",
 		title: "Data Center — Edge",
 		price: 12000,
 		daily: 150,
@@ -42,6 +46,7 @@ const projects = [
 		img: "https://source.unsplash.com/300x300/?server,data",
 	},
 	{
+		id: "5",
 		title: "GPU Mining — Flex",
 		price: 15000,
 		daily: 180,
@@ -50,6 +55,7 @@ const projects = [
 		img: "https://source.unsplash.com/300x300/?chip,ai",
 	},
 	{
+		id: "6",
 		title: "AI Cloud — Basic",
 		price: 18000,
 		daily: 210,
@@ -58,6 +64,7 @@ const projects = [
 		img: "https://source.unsplash.com/300x300/?cloud,ai",
 	},
 	{
+		id: "5",
 		title: "Quant Lab — Alpha",
 		price: 20000,
 		daily: 260,
@@ -66,6 +73,7 @@ const projects = [
 		img: "https://source.unsplash.com/300x300/?code,quant",
 	},
 	{
+		id: "7",
 		title: "Neural R&D — Beta",
 		price: 25000,
 		daily: 330,
@@ -74,6 +82,7 @@ const projects = [
 		img: "https://source.unsplash.com/300x300/?neural,network",
 	},
 	{
+		id: "8",
 		title: "Storage Grid — Pro",
 		price: 30000,
 		daily: 420,
@@ -82,6 +91,7 @@ const projects = [
 		img: "https://source.unsplash.com/300x300/?database,server",
 	},
 	{
+		id: "9",
 		title: "Edge IoT — Max",
 		price: 40000,
 		daily: 600,

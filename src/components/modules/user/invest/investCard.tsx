@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import { useEffect } from "react";
 
 const InvestProjectCard = ({ project }: any) => {
@@ -53,12 +54,9 @@ const InvestProjectCard = ({ project }: any) => {
 					<Button onClick={() => alert(`ক্রয় করা হয়েছে: ${project.title}`)}>
 						ক্রয় করুন
 					</Button>
-					<a
-						href={`/project-details?title=${encodeURIComponent(
-							project.title
-						)}`}>
-						<Button variant='outline'>বিস্তারিত</Button>
-					</a>
+					<Link href={`/invest/project-detail/${project.id}`}>
+						<Button variant="outline">বিস্তারিত</Button>
+					</Link>
 				</div>
 			</div>
 		</div>
