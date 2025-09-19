@@ -1,8 +1,9 @@
 import { Button } from "@/components/ui/button";
+import { TProject } from "@/types/project";
 import Link from "next/link";
 import { useEffect } from "react";
 
-const InvestProjectCard = ({ project }: any) => {
+const InvestProjectCard = ({ project }: { project: TProject }) => {
 	useEffect(() => {
 		const bar = document.getElementById(
 			`progress-${project.title.replace(/\s+/g, "-")}`
@@ -17,7 +18,7 @@ const InvestProjectCard = ({ project }: any) => {
 	return (
 		<div className="grid grid-cols-[88px_1fr] gap-4 p-3 rounded-2xl border border-[rgba(255,255,255,0.18)] bg-[rgba(255,255,255,0.08)]">
 			<img
-				src={project.img}
+				src={project.image}
 				alt="project"
 				width={88}
 				height={88}
@@ -32,11 +33,11 @@ const InvestProjectCard = ({ project }: any) => {
 					</div>
 					<div className="key text-muted text-sm">প্রতিদিনের আয়</div>
 					<div className="val font-bold text-base col-start-3">
-						৳ {project.daily}
+						৳ {project.dailyIncome}
 					</div>
 					<div className="key text-muted text-sm">লক-আপ পিরিয়ড</div>
 					<div className="val font-bold text-base col-start-3">
-						{project.lock} দিন
+						{project.duration} দিন
 					</div>
 				</div>
 				<div className="mt-2">

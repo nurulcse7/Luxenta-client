@@ -1,3 +1,5 @@
+import { IInvestor } from "./investor";
+
 export interface IUser {
 	id: string;
 	name: string;
@@ -5,7 +7,7 @@ export interface IUser {
 	number?: number;
 	isActive?: boolean;
 	is_deleted: boolean;
-	investorInfo: any;
+	investorInfo: IInvestor;
 	role: "investor" | "agent";
 	avatar?: string;
 	iat?: number;

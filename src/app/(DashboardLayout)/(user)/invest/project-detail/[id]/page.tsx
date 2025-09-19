@@ -9,11 +9,10 @@ interface Props {
 
 const ProjectDetailPage = ({ params }: Props) => {
 	const { id } = params;
-	console.log("🚀 ProjectDetailPage id:", id);
 
 	return (
 		<div>
-			<ProjectDetail />
+			<ProjectDetail projectId={id} />
 		</div>
 	);
 };

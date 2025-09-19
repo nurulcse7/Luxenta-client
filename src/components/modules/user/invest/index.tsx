@@ -1,105 +1,12 @@
-// components/Investments.js
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import { Wallet, Boxes, Layers } from "lucide-react";
 import InvestProjectCard from "./investCard";
 import { Button } from "@/components/ui/button";
-
-// Project data moved inside the component for single-file approach
-const projects = [
-	{
-		id: "1",
-		title: "AI Trading Bot — Basic",
-		price: 5000,
-		daily: 50,
-		lock: 30,
-		progress: 38,
-		img: "https://source.unsplash.com/300x300/?ai,finance",
-	},
-	{
-		id: "2",
-		title: "Quant Signals — Starter",
-		price: 8000,
-		daily: 80,
-		lock: 30,
-		progress: 62,
-		img: "https://source.unsplash.com/300x300/?robot,stock",
-	},
-	{
-		id: "3",
-		title: "DeFi Yield — Lite",
-		price: 10000,
-		daily: 120,
-		lock: 45,
-		progress: 47,
-		img: "https://source.unsplash.com/300x300/?blockchain,finance",
-	},
-	{
-		id: "4",
-		title: "Data Center — Edge",
-		price: 12000,
-		daily: 150,
-		lock: 60,
-		progress: 20,
-		img: "https://source.unsplash.com/300x300/?server,data",
-	},
-	{
-		id: "5",
-		title: "GPU Mining — Flex",
-		price: 15000,
-		daily: 180,
-		lock: 60,
-		progress: 73,
-		img: "https://source.unsplash.com/300x300/?chip,ai",
-	},
-	{
-		id: "6",
-		title: "AI Cloud — Basic",
-		price: 18000,
-		daily: 210,
-		lock: 75,
-		progress: 34,
-		img: "https://source.unsplash.com/300x300/?cloud,ai",
-	},
-	{
-		id: "5",
-		title: "Quant Lab — Alpha",
-		price: 20000,
-		daily: 260,
-		lock: 90,
-		progress: 55,
-		img: "https://source.unsplash.com/300x300/?code,quant",
-	},
-	{
-		id: "7",
-		title: "Neural R&D — Beta",
-		price: 25000,
-		daily: 330,
-		lock: 120,
-		progress: 28,
-		img: "https://source.unsplash.com/300x300/?neural,network",
-	},
-	{
-		id: "8",
-		title: "Storage Grid — Pro",
-		price: 30000,
-		daily: 420,
-		lock: 150,
-		progress: 81,
-		img: "https://source.unsplash.com/300x300/?database,server",
-	},
-	{
-		id: "9",
-		title: "Edge IoT — Max",
-		price: 40000,
-		daily: 600,
-		lock: 180,
-		progress: 66,
-		img: "https://source.unsplash.com/300x300/?satellite,tech",
-	},
-];
+import { TProject } from "@/types/project";
+import { getProjects } from "@/services/ProjectService";
+import { useUser } from "@/context/UserContext";
 
 const Ticker = () => {
 	const [tickerText, setTickerText] = useState("");
@@ -134,6 +41,31 @@ const Ticker = () => {
 };
 
 export const Invest = () => {
+	const {user}=useUser()
+	const [projects, setProjects] = useState<TProject[]>([]);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState<string | null>(null);
+
+	useEffect(() => {
+		const fetchProjects = async () => {
+			setLoading(true);
+			setError(null);
+			try {
+				const result = await getProjects();
+				if (result.success) {
+					setProjects(result.data);
+				} else {
+					setError(result.error || "Failed to fetch projects");
+				}
+			} catch (err: any) {
+				setError(err.message || "Something went wrong");
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		fetchProjects();
+	}, []);
 	const Card = ({ children, className }: any) => {
 		const baseClasses =
 			"bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.18)] rounded-2xl backdrop-blur-md shadow-lg shadow-[rgba(0,0,0,0.35)] p-4";
@@ -149,15 +81,19 @@ export const Invest = () => {
 					<div className="card-block bg-[rgba(255,255,255,0.08)] p-4 rounded-xl border border-[rgba(255,255,255,0.18)]">
 						<div className="text-sm text-gray-300 ">মোট বিনিয়োগ মূল্য</div>
 						<div className="text-4xl font-extrabold leading-tight">
-							৳ 80,000
+							৳ {user?.investorInfo.totalInvest}
 						</div>
 					</div>
 					<div className="card-block bg-[rgba(255,255,255,0.08)] p-4 rounded-xl border border-[rgba(255,255,255,0.18)]">
-						<div className="text-xl font-bold">৳ 18,550</div>
+						<div className="text-xl font-bold">
+							৳ {user?.investorInfo.totalEarnings}
+						</div>
 						<div className="text-sm text-gray-300  mt-1">মোট আয়</div>
 					</div>
 					<div className="card-block bg-[rgba(255,255,255,0.08)] p-4 rounded-xl border border-[rgba(255,255,255,0.18)] col-span-1 sm:col-span-2">
-						<div className="text-xl font-bold">৳ 740</div>
+						<div className="text-xl font-bold">
+							৳ {user?.investorInfo?.todayEarning ?? 0}
+						</div>
 						<div className="text-sm text-gray-300 mt-1">আজকের আয়</div>
 					</div>
 				</div>
@@ -187,8 +123,8 @@ export const Invest = () => {
 			</Card>
 
 			<div className="grid gap-4">
-				{projects.map((project, index) => (
-					<InvestProjectCard key={index} project={project} />
+				{projects.map(project => (
+					<InvestProjectCard key={project.id} project={project} />
 				))}
 			</div>
 		</div>
