@@ -7,6 +7,11 @@ import { Button } from "@/components/ui/button";
 import { TProject } from "@/types/project";
 import { getProjects } from "@/services/ProjectService";
 import { useUser } from "@/context/UserContext";
+import {
+	getSocket,
+	subscribeEvent,
+	unsubscribeEvent,
+} from "@/lib/socketClient";
 
 const Ticker = () => {
 	const [tickerText, setTickerText] = useState("");
@@ -41,7 +46,7 @@ const Ticker = () => {
 };
 
 export const Invest = () => {
-	const {user}=useUser()
+	const { user } = useUser();
 	const [projects, setProjects] = useState<TProject[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
@@ -65,7 +70,19 @@ export const Invest = () => {
 		};
 
 		fetchProjects();
+		// ---------------- Socket Setup ----------------
+		getSocket();
+		subscribeEvent("new-project", (project: TProject) => {
+			// নতুন project সবসময় লিস্টের উপরে add
+			setProjects(prev => [project, ...prev]);
+		});
+
+		// Cleanup
+		return () => {
+			unsubscribeEvent("new-project");
+		};
 	}, []);
+
 	const Card = ({ children, className }: any) => {
 		const baseClasses =
 			"bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.18)] rounded-2xl backdrop-blur-md shadow-lg shadow-[rgba(0,0,0,0.35)] p-4";
@@ -121,7 +138,8 @@ export const Invest = () => {
 				</div>
 				<Button className="px-6">সকল</Button>
 			</Card>
-
+			{loading && <p>Loading projects...</p>}
+			{error && <p className="text-red-400 mb-4">❌ {error}</p>}
 			<div className="grid gap-4">
 				{projects.map(project => (
 					<InvestProjectCard key={project.id} project={project} />

@@ -13,7 +13,7 @@ export interface IInvestor {
 	totalInvest: number;
 	totalProfit: number;
 	level: LevelType;
-	referralCode: number;
+	referralCode: string;
 
 	// relations
 	// payments?: IPayment[];
