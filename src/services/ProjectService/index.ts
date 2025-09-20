@@ -1,10 +1,11 @@
 "use server";
 
+import { getValidToken } from "@/lib/verifyToken";
 import { cookies } from "next/headers";
 
 // ---------------- GET ALL ----------------
 export const getProjects = async () => {
-	const accessToken = (await cookies()).get("accessToken")?.value;
+	const accessToken = await getValidToken();
 	try {
 		const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/project/all`, {
 			method: "GET",
@@ -23,7 +24,7 @@ export const getProjects = async () => {
 
 // ---------------- GET SINGLE ----------------
 export const getProject = async (id: string) => {
-	const accessToken = (await cookies()).get("accessToken")?.value;
+	const accessToken = await getValidToken();
 	try {
 		const res = await fetch(
 			`${process.env.NEXT_PUBLIC_BASE_API}/project/${id}`,

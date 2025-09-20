@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { registerUser } from "@/services/AuthService";
+import Link from "next/link";
 
 type FormValues = {
 	name: string;
@@ -196,9 +197,9 @@ export default function RegisterForm() {
 
 				<footer className="mt-4 text-center text-sm text-[#9fb3c8]">
 					Already have account?{" "}
-					<a href="/login" className="text-[#00e5ff] underline">
+					<Link href="/login" className="text-[#00e5ff] underline">
 						লগইন করুন
-					</a>
+					</Link>
 				</footer>
 			</section>
 		</main>

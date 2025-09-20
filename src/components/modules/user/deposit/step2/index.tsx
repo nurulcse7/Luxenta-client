@@ -1,43 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useSetting } from "@/context/SettingContext";
+import { useState, useEffect } from "react";
 
-const PAY_MAP = {
-	server1: {
-		bkash: "+880 1XXX-XXXX1",
-		nagad: "+880 1XXX-XXXX2",
-		binance: "binance_uid_1001",
-	},
-	server2: {
-		bkash: "+880 1XXX-XXXX3",
-		nagad: "+880 1XXX-XXXX4",
-		binance: "binance_uid_1002",
-	},
-	server3: {
-		bkash: "+880 1XXX-XXXX5",
-		nagad: "+880 1XXX-XXXX6",
-		binance: "binance_uid_1003",
-	},
-	server4: {
-		bkash: "+880 1XXX-XXXX7",
-		nagad: "+880 1XXX-XXXX8",
-		binance: "binance_uid_1004",
-	},
-	server5: {
-		bkash: "+880 1XXX-XXXX9",
-		nagad: "+880 1XXX-XXXX0",
-		binance: "binance_uid_1005",
-	},
-};
-
-type ChannelKey = keyof typeof PAY_MAP;
-type MethodKey = keyof (typeof PAY_MAP)["server1"];
-
-const methods: { id: MethodKey; label: string; img: string }[] = [
-	{ id: "bkash", label: "বিকাশ", img: "/assets/images/bkash.png" },
-	{ id: "nagad", label: "নগদ", img: "/assets/images/nagad.png" },
-	{ id: "binance", label: "Binance", img: "/assets/images/binance.png" },
-];
+type ChannelKey = string;
+type MethodKey = "bkash" | "nagad" | "binance";
 
 interface DepositStep2Props {
 	serialId: string;
@@ -46,15 +13,45 @@ interface DepositStep2Props {
 	goBack: () => void;
 }
 
+const methods: { id: MethodKey; label: string; img: string }[] = [
+	{ id: "bkash", label: "বিকাশ", img: "/assets/images/bkash.png" },
+	{ id: "nagad", label: "নগদ", img: "/assets/images/nagad.png" },
+	{ id: "binance", label: "Binance", img: "/assets/images/binance.png" },
+];
+
 const DepositStep2 = ({
 	serialId,
 	amount,
 	channel,
 	goBack,
 }: DepositStep2Props) => {
+	const { settings } = useSetting();
 	const [selectedMethod, setSelectedMethod] = useState<MethodKey | null>(null);
 	const [txid, setTxid] = useState("");
 	const [confirmPaid, setConfirmPaid] = useState(false);
+	const [payMap, setPayMap] = useState<Record<MethodKey, string>>({
+		bkash: "",
+		nagad: "",
+		binance: "",
+	});
+
+	useEffect(() => {
+		if (settings?.payment) {
+			const found = Array.isArray(settings.payment)
+				? settings.payment.find(p => p.serverId === channel)
+				: settings.payment.serverId === channel
+				? settings.payment
+				: null;
+
+			if (found) {
+				setPayMap({
+					bkash: found.bkash,
+					nagad: found.nagad,
+					binance: found.binance,
+				});
+			}
+		}
+	}, [settings, channel]);
 
 	const handleSubmit = () => {
 		if (!selectedMethod) return alert("পেমেন্ট মেথড নির্বাচন করুন");
@@ -67,7 +64,7 @@ const DepositStep2 = ({
 			channel,
 			method: selectedMethod,
 			txid: txid.trim(),
-			pay_to: PAY_MAP[channel][selectedMethod],
+			pay_to: payMap[selectedMethod],
 			submitted_at: new Date().toISOString(),
 		};
 
@@ -78,7 +75,7 @@ const DepositStep2 = ({
 	};
 
 	return (
-		<main className="min-h-screen grid place-items-center  p-6">
+		<main className="min-h-screen grid place-items-center p-6">
 			<section
 				className={`w-full max-w-3xl border border-white/20 rounded-2xl backdrop-blur-lg shadow-2xl p-6 grid gap-6 ${
 					selectedMethod === "bkash"
@@ -94,6 +91,7 @@ const DepositStep2 = ({
 					<h1 className="text-lg font-semibold text-white">ডিপোজিট — ধাপ ২</h1>
 					<h2 className="text-sm text-[#9fb3c8]">Luxenta • Secure Deposit</h2>
 				</div>
+
 				{/* Summary */}
 				<div className="flex flex-wrap gap-2 text-sm text-[#9fb3c8]">
 					<span className="px-3 py-1 rounded-full border border-white/20 bg-[#00e5ff0f] text-white text-xs">
@@ -106,6 +104,7 @@ const DepositStep2 = ({
 						Channel: <span className="font-mono">{channel}</span>
 					</span>
 				</div>
+
 				{/* Payment method */}
 				<div className="flex gap-2 flex-wrap">
 					{methods.map(m => (
@@ -121,17 +120,7 @@ const DepositStep2 = ({
 						</div>
 					))}
 				</div>
-				<div
-					className="relative flex justify-between items-center rounded-xl border border-[#00e5ff] mt-3 p-3
-  bg-gradient-to-r from-[#0077ff] via-[#6a5cff] to-[#00e5ff] bg-[length:200%_100%] animate-[gradient_3s_linear_infinite] text-white">
-					<div className="text-lg font-bold ml-3 animate-pulse">Send Money</div>
-					<div className="text-sm">
-						📢 এখন নির্দিষ্ট নম্বর/আইডিতে অর্থ পাঠান। সাবমিট করার সাথে সাথেই
-						ব্যালেন্স আপডেট হবে!
-					</div>
-				</div>
 
-				{/* Payment info */}
 				{/* Payment info */}
 				<div className="p-3 border border-white/20 rounded-xl bg-[#00e5ff0a] text-sm grid gap-2 text-white">
 					<div>পেমেন্ট তথ্য:</div>
@@ -142,9 +131,11 @@ const DepositStep2 = ({
 								alt={methods.find(m => m.id === selectedMethod)?.label}
 								className="w-[100px] h-[30px] object-contain rounded"
 							/>
-							<span>{`${methods.find(m => m.id === selectedMethod)?.label}: ${
-								PAY_MAP[channel][selectedMethod]
-							}`}</span>
+							<span>
+								{`${methods.find(m => m.id === selectedMethod)?.label}: ${
+									payMap[selectedMethod]
+								}`}
+							</span>
 						</div>
 					) : (
 						<div className="font-mono">—পেমেন্ট পদ্ধতি নির্বাচন করুন</div>
@@ -159,7 +150,6 @@ const DepositStep2 = ({
 					onChange={e => setTxid(e.target.value)}
 					className="w-full p-3 rounded-xl border border-white/20 bg-white text-black text-sm"
 				/>
-
 				{selectedMethod ? (
 					<ul className="text-white list-disc list-inside space-y-1">
 						<li>উল্লেখিত নম্বর/আইডি তে টাকা পাঠানোর পরই সাবমিট করুন।</li>
@@ -181,6 +171,7 @@ const DepositStep2 = ({
 					/>
 					আমি নিশ্চিত করছি যে আমি অর্থ পাঠিয়েছি।
 				</label>
+
 				{/* Actions */}
 				<div className="flex justify-between items-center">
 					<button

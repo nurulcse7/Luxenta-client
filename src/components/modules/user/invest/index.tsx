@@ -73,7 +73,6 @@ export const Invest = () => {
 		// ---------------- Socket Setup ----------------
 		getSocket();
 		subscribeEvent("new-project", (project: TProject) => {
-			// নতুন project সবসময় লিস্টের উপরে add
 			setProjects(prev => [project, ...prev]);
 		});
 

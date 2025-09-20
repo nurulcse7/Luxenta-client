@@ -1,26 +1,24 @@
 "use client";
 
-import { ChannelKey } from "@/app/(DashboardLayout)/(user)/deposit/page";
+import { useSetting } from "@/context/SettingContext";
 import { useEffect, useState } from "react";
+
+type ChannelKey = string;
 
 interface DepositStep1Props {
 	onSubmit: (serialId: string, amount: number, channel: ChannelKey) => void;
 }
 
-const channels: { id: ChannelKey; label: string; sub: string }[] = [
-	{ id: "server1", label: "সার্ভার (১)", sub: "Low Fee" },
-	{ id: "server2", label: "সার্ভার (২)", sub: "Fast" },
-	{ id: "server3", label: "সার্ভার (৩)", sub: "Standard" },
-	{ id: "server4", label: "সার্ভার (৪)", sub: "Backup" },
-	{ id: "server5", label: "সার্ভার (৫)", sub: "24/7" },
-];
-
 const DepositStep1 = ({ onSubmit }: DepositStep1Props) => {
+	const { settings } = useSetting();
 	const [serialCode, setSerialCode] = useState("");
 	const [amount, setAmount] = useState<number | "">("");
 	const [selectedChannel, setSelectedChannel] = useState<ChannelKey | null>(
 		null
 	);
+	const [channels, setChannels] = useState<
+		{ id: ChannelKey; label: string; sub: string }[]
+	>([]);
 
 	useEffect(() => {
 		// Generate unique serialId of 35 digits
@@ -29,6 +27,19 @@ const DepositStep1 = ({ onSubmit }: DepositStep1Props) => {
 		).join("");
 		setSerialCode(code);
 	}, []);
+
+	useEffect(() => {
+		if (settings?.payment) {
+			const allChannels = Array.isArray(settings.payment)
+				? settings.payment.map(p => ({
+						id: p.serverId,
+						label: p.label,
+						sub: p.sub,
+				  }))
+				: [settings.payment];
+			setChannels(allChannels);
+		}
+	}, [settings]);
 
 	const handleNext = () => {
 		if (!(amount && amount > 0)) {
@@ -57,6 +68,7 @@ const DepositStep1 = ({ onSubmit }: DepositStep1Props) => {
 
 				{/* Content */}
 				<div className="p-4 grid gap-3">
+					{/* Serial */}
 					<div className="flex justify-between items-center p-2.5 rounded-lg bg-white/5 border border-white/15 text-[11px]">
 						<div>সিরিয়াল নম্বর:</div>
 						<div className="font-mono text-[12px] text-[#00e5ff] break-words">
@@ -64,6 +76,7 @@ const DepositStep1 = ({ onSubmit }: DepositStep1Props) => {
 						</div>
 					</div>
 
+					{/* Amount */}
 					<div className="grid gap-2">
 						<label htmlFor="amount" className="text-[11px] text-[#9fb3c8]">
 							এমাউন্ট (৳)
@@ -84,6 +97,7 @@ const DepositStep1 = ({ onSubmit }: DepositStep1Props) => {
 						/>
 					</div>
 
+					{/* Channels */}
 					<div className="grid gap-2">
 						<div className="text-[12px] text-[#9fb3c8]">
 							চ্যানেল নির্বাচন করুন
@@ -107,6 +121,7 @@ const DepositStep1 = ({ onSubmit }: DepositStep1Props) => {
 						</div>
 					</div>
 
+					{/* Next Button */}
 					<div className="flex justify-end">
 						<button
 							onClick={handleNext}

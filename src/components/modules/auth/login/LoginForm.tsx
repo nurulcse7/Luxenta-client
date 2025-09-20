@@ -7,6 +7,7 @@ import { LoginFormValues, loginSchema } from "./loginValidation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginUser } from "@/services/AuthService";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function LoginForm() {
 	const router = useRouter();
@@ -100,9 +101,9 @@ export default function LoginForm() {
 
 				<footer className="mt-4 text-center text-sm text-[#9fb3c8]">
 					একাউন্ট নেই?{" "}
-					<a href="/register" className="text-[#00e5ff] underline">
+					<Link href="/register" className="text-[#00e5ff] underline">
 						রেজিস্টার করুন
-					</a>
+					</Link>
 				</footer>
 			</section>
 		</main>

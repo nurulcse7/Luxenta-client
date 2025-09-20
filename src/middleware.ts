@@ -1,42 +1,48 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCurrentUser } from "./services/AuthService";
 
-const publicRoutes = ["/login", "/register"];
+const allowedRoles = ["investor", "agent"] as const;
+type Role = (typeof allowedRoles)[number];
 
-export const middleware = async (request: NextRequest) => {
-	const { pathname } = request.nextUrl;
+const commonPaths = [/^\//]; // Everyone can access
+const roleBasedPaths: Record<Role, RegExp[]> = {
+	investor: [/^\/investor/],
+	agent: [/^\/agent/],
+};
 
-	const userInfo = await getCurrentUser();
+export const middleware = async (req: NextRequest) => {
+	const { pathname, origin } = req.nextUrl;
 
-	// Logged-in user
-	if (userInfo) {
-		// Prevent logged-in user from accessing public routes
-		if (publicRoutes.some(route => pathname.startsWith(route))) {
-			return NextResponse.redirect(new URL(`/`, request.url));
-		}
-
-		// Only allow 'investor' role
-		if (userInfo.role !== "investor") {
-			return NextResponse.redirect(
-				new URL(`/login?redirectPath=${pathname}`, request.url)
-			);
-		}
-
-		// Allowed, continue
+	// 1️⃣ Allow login and register even in maintenance
+	if (pathname === "/login" || pathname === "/register") {
 		return NextResponse.next();
 	}
 
-	// Logged-out user accessing public routes
-	if (publicRoutes.some(route => pathname.startsWith(route))) {
-		return NextResponse.next();
+	const user = await getCurrentUser();
+
+	// 3️⃣ Logged-out → redirect to login
+	if (!user) {
+		return NextResponse.redirect(new URL("/login", origin));
 	}
 
-	// Logged-out user trying to access protected route
-	return NextResponse.redirect(
-		new URL(`/login?redirectPath=${pathname}`, request.url)
-	);
+	const role = user.role as string;
+
+	// 4️⃣ Role-based access
+	if (allowedRoles.includes(role as Role)) {
+		const isCommon = commonPaths.some(regex => regex.test(pathname));
+		if (isCommon || pathname === "/") return NextResponse.next();
+
+		const allowedPaths = roleBasedPaths[role as Role];
+		const matchesRolePage = allowedPaths.some(regex => regex.test(pathname));
+		if (matchesRolePage) return NextResponse.next();
+
+		return NextResponse.redirect(new URL("/", origin));
+	}
+
+	// 5️⃣ Block other roles
+	return NextResponse.redirect(new URL("/login", origin));
 };
 
 export const config = {
-	matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+	matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 };
