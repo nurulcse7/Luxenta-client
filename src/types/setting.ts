@@ -3,6 +3,8 @@ export interface IGeneralSetting {
 	id: string;
 	maintenance: boolean;
 	notice?: string;
+	description?: string;
+	estimate?: string;
 	createdAt: Date;
 	updatedAt: Date;
 }

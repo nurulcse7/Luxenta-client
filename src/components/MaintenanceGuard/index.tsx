@@ -2,7 +2,6 @@
 
 import { ReactNode } from "react";
 import { useSetting } from "@/context/SettingContext";
-
 import Maintenance from "./maintenance";
 
 interface IMaintenanceGuard {
@@ -16,7 +15,14 @@ const MaintenanceGuard = ({ children }: IMaintenanceGuard) => {
 		return <div className="text-center text-white p-6">Loading...</div>;
 
 	if (settings?.general?.maintenance) {
-		return <Maintenance notice={settings.general.notice} />;
+		// Notice & Extra Info admin panel থেকে আসবে
+		return (
+			<Maintenance
+				notice={settings.general.notice}
+				estimate={settings.general.estimate}
+				description={settings.general.description}
+			/>
+		);
 	}
 
 	return <>{children}</>;
