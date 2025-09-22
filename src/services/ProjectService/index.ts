@@ -7,12 +7,15 @@ import { cookies } from "next/headers";
 export const getProjects = async () => {
 	const accessToken = await getValidToken();
 	try {
-		const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/projects/all`, {
-			method: "GET",
-			headers: {
-				Authorization: `${accessToken}`,
-			},
-		});
+		const res = await fetch(
+			`${process.env.NEXT_PUBLIC_BASE_API}/projects/all`,
+			{
+				method: "GET",
+				headers: {
+					Authorization: `${accessToken}`,
+				},
+			}
+		);
 
 		const result = await res.json();
 		return result;
@@ -27,7 +30,7 @@ export const getProject = async (id: string) => {
 	const accessToken = await getValidToken();
 	try {
 		const res = await fetch(
-			`${process.env.NEXT_PUBLIC_BASE_API}/project/${id}`,
+			`${process.env.NEXT_PUBLIC_BASE_API}/projects/${id}`,
 			{
 				method: "GET",
 				headers: {
