@@ -4,20 +4,6 @@ import { TProject } from "@/types/project";
 import { useEffect, useState } from "react";
 
 export default function ProjectDetail({ projectId }: { projectId: string }) {
-	// এখানে dynamic data বা props দিয়ে project info load করতে পারেন
-	// const project = {
-	// 	title: "প্রজেক্ট বিস্তারিতো",
-	// 	banner: "https://source.unsplash.com/800x400/?technology,finance",
-	// 	cycle: 30,
-	// 	daily: 50,
-	// 	price: 5000,
-	// 	available: 1,
-	// 	description: [
-	// 		"এই প্রজেক্টটি একটি কৃত্রিম বুদ্ধিমত্তা (AI) নির্ভর বিনিয়োগ সিস্টেম যা ব্যবহারকারীদের জন্য দৈনিক নির্দিষ্ট আয়ের সুবিধা প্রদান করে। এর মাধ্যমে আপনি স্বল্প সময়ে নির্ভরযোগ্য আয়ের সুযোগ পাবেন।",
-	// 		"বিনিয়োগ চক্র শেষ হওয়ার পর মূলধন স্বয়ংক্রিয়ভাবে ব্যালেন্সে যোগ হবে। প্রতিদিনের আয় আপনার অ্যাকাউন্টে যুক্ত হবে এবং তা উত্তোলনযোগ্য থাকবে।",
-	// 		"প্রজেক্টে অংশগ্রহণের আগে অবশ্যই সব শর্তাবলী ভালোভাবে পড়ে নিন।",
-	// 	],
-	// };
 	const [project, setProject] = useState<TProject | null>(null);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);

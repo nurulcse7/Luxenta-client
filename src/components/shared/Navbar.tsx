@@ -1,7 +1,8 @@
 "use client";
 
-import { Home, TrendingUp, Users, User } from "lucide-react";
+import { Home, TrendingUp, Users, User, History } from "lucide-react";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 export default function Navbar() {
 	return (
@@ -20,6 +21,11 @@ export default function Navbar() {
 				href={"/team"}
 				className="flex flex-col items-center text-[#00e5ff] hover:text-white transition-transform hover:scale-110 cursor-pointer">
 				<Users className="w-5 h-5 mb-1" /> দল
+			</Link>
+			<Link
+				href={"/history"}
+				className="flex flex-col items-center text-[#00e5ff] hover:text-white transition-transform hover:scale-110 cursor-pointer">
+				<History className="w-5 h-5 mb-1" /> ইতিহাস
 			</Link>
 			<Link
 				href={"/account"}

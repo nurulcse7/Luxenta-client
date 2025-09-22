@@ -1,4 +1,4 @@
-import DailyCheckin from "@/components/modules/user/DailyCheckin";
+import DailyCheckin from "@/components/modules/user/dailyCheckin";
 import React from "react";
 
 const DailyCheckInPage = () => {

@@ -1,5 +1,6 @@
 "use server";
 
+import { getValidToken } from "@/lib/verifyToken";
 import { jwtDecode } from "jwt-decode";
 import { cookies } from "next/headers";
 import { FieldValues } from "react-hook-form";
@@ -18,12 +19,6 @@ export const registerUser = async (userData: FieldValues) => {
 		);
 
 		const result = await res.json();
-		console.log("🚀 ~ registerUser ~ result:", result);
-
-		// if (result.success) {
-		// 	(await cookies()).set("accessToken", result.data.accessToken);
-		// 	(await cookies()).set("refreshToken", result.data.refreshToken);
-		// }
 
 		return result;
 	} catch (error: any) {
@@ -56,7 +51,7 @@ export const loginUser = async (userData: FieldValues) => {
 };
 
 export const getCurrentUser = async () => {
-	const accessToken = (await cookies()).get("accessToken")?.value;
+	const accessToken = await getValidToken()
 	let decodedData = null;
 
 	if (accessToken) {

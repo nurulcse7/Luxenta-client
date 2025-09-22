@@ -30,7 +30,7 @@ export default function RootLayout({
 				data-new-gr-c-s-check-loaded="14.1254.0"
 				data-gr-ext-installed=""
 				cz-shortcut-listen="true"
-				className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[radial-gradient(75%_60%_at_20%_20%,#101a33_0%,#0a0f1c_35%,#060a14_100%)] `}>
+				className={`${geistSans.variable} ${geistMono.variable} antialiased  bg-[radial-gradient(75%_60%_at_20%_20%,#101a33_0%,#0a0f1c_35%,#060a14_100%)] text-white `}>
 				{" "}
 				<Providers>
 					<Toaster richColors position="top-center" />

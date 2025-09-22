@@ -1,7 +1,6 @@
 "use server";
 
 import { getValidToken } from "@/lib/verifyToken";
-import { cookies } from "next/headers";
 
 // ---------------- GET ALL ----------------
 export const getProjects = async () => {

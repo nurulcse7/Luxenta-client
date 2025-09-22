@@ -21,7 +21,7 @@ const Dashboard: React.FC = () => {
 		}
 	};
 	return (
-		<div className="min-h-screen bg-[#0a0f1c] text-[#e6f1ff] font-sans p-3 ">
+		<div className="min-h-screen    font-sans p-3 ">
 			{/* Header */}
 			<div className="flex items-center gap-3 bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.18)] rounded-[18px] shadow-[0_10px_30px_rgba(0,0,0,.35),0_1px_0_rgba(255,255,255,.04)_inset] backdrop-blur-md p-4 mb-4 transition">
 				<img
@@ -80,17 +80,27 @@ const Dashboard: React.FC = () => {
 			<div className="mt-4">
 				{[
 					{
+						label: "ইতিহাস",
+						icon: HistoryIcon,
+						action: () => router.push("/history"),
+					},
+					{
+						label: "নোটিফিকেশন",
+						icon: BellIcon,
+						action: () => router.push("/notifications"),
+					},
+					{
 						label: "আমার সাহায্য",
 						icon: HelpIcon,
 						action: () => router.push("/support"),
 					},
 					{
-						label: "লগইন পাসওয়ার্ড",
+						label: "লগইন পাসওয়ার্ড",
 						icon: LockIcon,
 						action: () => router.push("/account/password"),
 					},
 					{
-						label: "উত্তোলন পাসওয়ার্ড",
+						label: "উত্তোলন পাসওয়ার্ড",
 						icon: ArrowLeftIcon,
 						action: () => router.push("/account/withdraw-password"),
 					},
@@ -230,6 +240,36 @@ const SignOutIcon = () => (
 			strokeLinejoin="round"
 			strokeWidth={2}
 			d="M17 16l4-4m0 0l-4-4m4 4H7"
+		/>
+	</svg>
+);
+const HistoryIcon = () => (
+	<svg
+		xmlns="http://www.w3.org/2000/svg"
+		className="w-5 h-5"
+		fill="none"
+		viewBox="0 0 24 24"
+		stroke="currentColor">
+		<path
+			strokeLinecap="round"
+			strokeLinejoin="round"
+			strokeWidth={2}
+			d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+		/>
+	</svg>
+);
+const BellIcon = () => (
+	<svg
+		xmlns="http://www.w3.org/2000/svg"
+		className="w-5 h-5"
+		fill="none"
+		viewBox="0 0 24 24"
+		stroke="currentColor">
+		<path
+			strokeLinecap="round"
+			strokeLinejoin="round"
+			strokeWidth={2}
+			d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.288V13a6 6 0 00-6-6H9a6 6 0 00-6 6v1.288A2.032 2.032 0 014.405 15.595L3 17h5m0 0a2 2 0 100 4 2 2 0 000-4z"
 		/>
 	</svg>
 );
