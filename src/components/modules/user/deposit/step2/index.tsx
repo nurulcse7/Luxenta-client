@@ -2,6 +2,9 @@
 
 import { useSetting } from "@/context/SettingContext";
 import { useState, useEffect } from "react";
+import { createDeposit } from "@/services/DepositService";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 type ChannelKey = string;
 type MethodKey = "bkash" | "nagad" | "binance";
@@ -26,9 +29,11 @@ const DepositStep2 = ({
 	goBack,
 }: DepositStep2Props) => {
 	const { settings } = useSetting();
+	const router = useRouter();
 	const [selectedMethod, setSelectedMethod] = useState<MethodKey | null>(null);
 	const [txid, setTxid] = useState("");
 	const [confirmPaid, setConfirmPaid] = useState(false);
+	const [loading, setLoading] = useState(false);
 	const [payMap, setPayMap] = useState<Record<MethodKey, string>>({
 		bkash: "",
 		nagad: "",
@@ -36,12 +41,10 @@ const DepositStep2 = ({
 	});
 
 	useEffect(() => {
-		if (settings?.payment) {
-			const found = Array.isArray(settings.payment)
-				? settings.payment.find(p => p.serverId === channel)
-				: settings.payment.serverId === channel
-				? settings.payment
-				: null;
+		// 🔹 Only proceed if settings and payment array exist
+		if (settings?.payment && Array.isArray(settings.payment)) {
+			// Find the correct payment channel within the array
+			const found = settings.payment.find(p => p.serverId === channel);
 
 			if (found) {
 				setPayMap({
@@ -53,10 +56,10 @@ const DepositStep2 = ({
 		}
 	}, [settings, channel]);
 
-	const handleSubmit = () => {
+	const handleSubmit = async () => {
 		if (!selectedMethod) return alert("পেমেন্ট মেথড নির্বাচন করুন");
 		if (!txid.trim()) return alert("ট্রানজেকশন আইডি লিখুন");
-		if (!confirmPaid) return alert("অর্থ প্রেরণের নিশ্চয়তা দিন");
+		if (!confirmPaid) return alert("অর্থ প্রেরণের নিশ্চয়তা দিন");
 
 		const payload = {
 			serialId,
@@ -65,13 +68,24 @@ const DepositStep2 = ({
 			method: selectedMethod,
 			txid: txid.trim(),
 			pay_to: payMap[selectedMethod],
-			submitted_at: new Date().toISOString(),
 		};
 
-		console.log("Deposit payload → send to backend API:", payload);
+		setLoading(true);
+		try {
+			const result = await createDeposit(payload);
 
-		// redirect success page
-		window.location.href = `/deposit/success?amount=${amount}`;
+			if (result.success) {
+				toast.success(result.message)
+				router.push(`/deposit/success?amount=${amount}`);
+			} else {
+				alert(result.error || "ডিপোজিট জমা দিতে ব্যর্থ হয়েছে");
+			}
+		} catch (error) {
+			console.error("🚀 ~ handleSubmit ~ error:", error);
+			alert("কিছু একটা ভুল হয়েছে, আবার চেষ্টা করুন।");
+		} finally {
+			setLoading(false);
+		}
 	};
 
 	return (
@@ -153,7 +167,7 @@ const DepositStep2 = ({
 				{selectedMethod ? (
 					<ul className="text-white list-disc list-inside space-y-1">
 						<li>উল্লেখিত নম্বর/আইডি তে টাকা পাঠানোর পরই সাবমিট করুন।</li>
-						<li>ট্রানজেকশন আইডি সাবমিট করুন|</li>
+						<li>ট্রানজেকশন আইডি সাবমিট করুন।</li>
 						<li>ভুল এমাউন্ট/ভুল অ্যাকাউন্টে পাঠালে ডিপোজিট গৃহীত হবে না।</li>
 						<li>অ্যাডমিন ভেরিফাই করার পরই ব্যালেন্স যুক্ত হবে।</li>
 					</ul>
@@ -169,7 +183,7 @@ const DepositStep2 = ({
 						checked={confirmPaid}
 						onChange={e => setConfirmPaid(e.target.checked)}
 					/>
-					আমি নিশ্চিত করছি যে আমি অর্থ পাঠিয়েছি।
+					আমি নিশ্চিত করছি যে আমি অর্থ পাঠিয়েছি।
 				</label>
 
 				{/* Actions */}
@@ -181,8 +195,9 @@ const DepositStep2 = ({
 					</button>
 					<button
 						onClick={handleSubmit}
-						className="px-4 py-2 rounded-xl bg-gradient-to-br from-[#00e5ff] to-[#6a5cff] text-[#051018] font-semibold text-sm">
-						সাবমিট
+						disabled={loading}
+						className="px-4 py-2 rounded-xl bg-gradient-to-br from-[#00e5ff] to-[#6a5cff] text-[#051018] font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed">
+						{loading ? "সাবমিট হচ্ছে..." : "সাবমিট"}
 					</button>
 				</div>
 			</section>

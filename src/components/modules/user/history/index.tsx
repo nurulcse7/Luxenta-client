@@ -1,164 +1,95 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
+	Search,
+	RefreshCcw,
+	Eye,
+	ChevronLeft,
+	ChevronRight,
+	X,
 	TrendingUp,
 	TrendingDown,
-	Clock,
 	PiggyBank,
 	Briefcase,
 	PlusCircle,
-	MinusCircle,
 	CheckCircle,
-	ChevronLeft,
-	ChevronRight,
-	RefreshCcw,
-	Search,
+	Clock,
 } from "lucide-react";
+import { toast } from "sonner";
+import { getHistory } from "@/services/HistoryService";
+import { IHistory } from "@/types/history";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-
-// Mock data to demonstrate the page. Replace with your actual API call.
-const mockHistoryData = [
-	{
-		id: "1",
-		type: "deposit",
-		amount: 5000,
-		title: "জমা",
-		description: "বিকাশ থেকে",
-		createdAt: new Date(Date.now() - 3600000),
-	},
-	{
-		id: "2",
-		type: "invest",
-		amount: 1000,
-		title: "বিনিয়োগ",
-		description: "প্রজেক্ট X-এ বিনিয়োগ",
-		createdAt: new Date(Date.now() - 7200000),
-	},
-	{
-		id: "3",
-		type: "project_profit",
-		amount: 250,
-		title: "লাভ",
-		description: "প্রজেক্ট X থেকে লাভ",
-		createdAt: new Date(Date.now() - 10800000),
-	},
-	{
-		id: "4",
-		type: "withdraw",
-		amount: 200,
-		title: "উত্তোলন",
-		description: "বিকাশে উত্তোলন",
-		createdAt: new Date(Date.now() - 14400000),
-	},
-	{
-		id: "5",
-		type: "referral_bonus",
-		amount: 50,
-		title: "রেফারেল বোনাস",
-		description: "বন্ধুকে রেফার করার জন্য",
-		createdAt: new Date(Date.now() - 18000000),
-	},
-	{
-		id: "6",
-		type: "checkin_bonus",
-		amount: 10,
-		title: "দৈনিক বোনাস",
-		description: "দৈনিক চেকিং",
-		createdAt: new Date(Date.now() - 21600000),
-	},
-	{
-		id: "7",
-		type: "salary",
-		amount: 10000,
-		title: "বেতন",
-		description: "মাসিক বেতন",
-		createdAt: new Date(Date.now() - 25200000),
-	},
-	{
-		id: "8",
-		type: "deposit",
-		amount: 1500,
-		title: "জমা",
-		description: "নগদ থেকে",
-		createdAt: new Date(Date.now() - 28800000),
-	},
-	{
-		id: "9",
-		type: "invest",
-		amount: 500,
-		title: "বিনিয়োগ",
-		description: "প্রজেক্ট Y-এ বিনিয়োগ",
-		createdAt: new Date(Date.now() - 32400000),
-	},
-	{
-		id: "10",
-		type: "project_profit",
-		amount: 100,
-		title: "লাভ",
-		description: "প্রজেক্ট Y থেকে লাভ",
-		createdAt: new Date(Date.now() - 36000000),
-	},
-	{
-		id: "11",
-		type: "withdraw",
-		amount: 50,
-		title: "উত্তোলন",
-		description: "নগদে উত্তোলন",
-		createdAt: new Date(Date.now() - 39600000),
-	},
-];
-
-const pageSize = 8;
 
 const History = () => {
-	const [historyData, setHistoryData] = useState([]);
-	const [page, setPage] = useState(1);
-	const [meta, setMeta] = useState({ total: 0, totalPage: 1 });
-	const [loading, setLoading] = useState(false);
+	const [historyData, setHistoryData] = useState<IHistory[]>([]);
 	const [searchTerm, setSearchTerm] = useState("");
+	const [page, setPage] = useState(1);
+	const [meta, setMeta] = useState<{
+		page: number;
+		limit: number;
+		total: number;
+		totalPage: number;
+	} | null>(null);
+	const [selectedHistory, setSelectedHistory] = useState<IHistory | null>(null);
+	const [loading, setLoading] = useState(false);
 
-	// This function simulates an API call. Replace this with your actual fetch function.
-	const fetchHistory = (pageNumber, search) => {
+	const panelRef = useRef<HTMLDivElement>(null);
+
+	const router = useRouter();
+
+	const fetchHistory = async (
+		pageNumber: number = 1,
+		search: string = searchTerm
+	) => {
 		setLoading(true);
-		// Simulate API delay
-		setTimeout(() => {
-			const filteredData = mockHistoryData.filter(
-				item =>
-					item.title.toLowerCase().includes(search.toLowerCase()) ||
-					item.description.toLowerCase().includes(search.toLowerCase())
-			);
-			const startIndex = (pageNumber - 1) * pageSize;
-			const endIndex = startIndex + pageSize;
-			const paginatedData = filteredData.slice(startIndex, endIndex);
+		try {
+			const query = {
+				page: pageNumber,
+				searchTerm: search,
+			};
+			const result = await getHistory(query);
 
-			setHistoryData(paginatedData);
-			setMeta({
-				total: filteredData.length,
-				totalPage: Math.ceil(filteredData.length / pageSize),
-			});
+			if (result.success) {
+				setHistoryData(result.data);
+				setMeta(result.meta);
+				setPage(pageNumber);
+			} else {
+				setHistoryData([]);
+				setMeta(null);
+			}
+		} catch (error) {
+			console.error("Error fetching history:", error);
+			setHistoryData([]);
+		} finally {
 			setLoading(false);
-		}, 500);
+		}
 	};
 
-	// Fetch data when the page or search term state changes
 	useEffect(() => {
-		fetchHistory(page, searchTerm);
-	}, [page, searchTerm]);
+		fetchHistory(1);
+	}, []);
 
-	const formatAmount = (amount, type) => {
-		const sign =
-			type === "deposit" ||
-			type === "project_profit" ||
-			type === "salary" ||
-			type === "referral_bonus" ||
-			type === "checkin_bonus"
-				? "+"
-				: "-";
-		return `${sign}৳${amount.toLocaleString()}`;
-	};
+	useEffect(() => {
+		const handleClickOutside = (event: MouseEvent) => {
+			if (
+				panelRef.current &&
+				!panelRef.current.contains(event.target as Node)
+			) {
+				setSelectedHistory(null);
+			}
+		};
+
+		document.addEventListener("mousedown", handleClickOutside);
+
+		return () => {
+			document.removeEventListener("mousedown", handleClickOutside);
+		};
+	}, [selectedHistory]);
 
 	const typeIcons = {
 		deposit: <PiggyBank className="w-5 h-5" />,
@@ -180,37 +111,85 @@ const History = () => {
 		checkin_bonus: "text-purple-500",
 	};
 
-	return (
-		<div className="min-h-screen bg-[#0a0a0a] text-white p-4 font-sans">
-			<div className="bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.18)] rounded-[18px] backdrop-blur-md p-4 mb-4 transition flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-				<div className="flex flex-col items-start">
-					<h1 className="text-2xl font-bold mb-1">লেনদেনের ইতিহাস</h1>
-					<p className="text-sm text-gray-400">আপনার সকল কার্যক্রমের তালিকা</p>
-				</div>
-				<div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
-					<div className="relative w-full sm:w-auto flex-grow">
-						<Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-						<Input
-							placeholder="সার্চ করুন..."
-							value={searchTerm}
-							onChange={e => {
-								const value = e.target.value;
-								setSearchTerm(value);
-								setPage(1); // Reset to page 1 on new search
-							}}
-							className="pl-9 pr-4 bg-gray-800 text-white placeholder-gray-400 border-gray-700 w-full"
-						/>
-					</div>
-					<Button
-						onClick={() => fetchHistory(page, searchTerm)}
-						variant="outline"
-						className="bg-gray-800 border-gray-700 text-white hover:bg-gray-700 w-full sm:w-auto">
-						<RefreshCcw className="w-4 h-4 mr-2" /> রিফ্রেশ
-					</Button>
-				</div>
-			</div>
+	const formatAmount = (amount: number, type: string) => {
+		const sign =
+			type === "deposit" ||
+			type === "project_profit" ||
+			type === "salary" ||
+			type === "referral_bonus" ||
+			type === "checkin_bonus"
+				? "+"
+				: "-";
+		return `${sign}৳${amount.toLocaleString()}`;
+	};
 
-			<div className="bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.18)] rounded-xl backdrop-blur-md p-4 mt-6">
+	const renderPagination = () => {
+		if (!meta) return null;
+
+		return (
+			<div className="flex items-center justify-between mt-6 text-white">
+				<Button
+					variant="ghost"
+					className="text-white"
+					disabled={page === 1 || loading}
+					onClick={() => fetchHistory(page - 1, searchTerm)}>
+					<ChevronLeft className="w-4 h-4 mr-2" /> পূর্ববর্তী
+				</Button>
+				<div className="flex items-center space-x-2 text-sm text-gray-400">
+					<span>
+						পৃষ্ঠা {meta.page} / {meta.totalPage}
+					</span>
+				</div>
+				<Button
+					variant="ghost"
+					className="text-white"
+					disabled={page === meta.totalPage || loading}
+					onClick={() => fetchHistory(page + 1, searchTerm)}>
+					পরবর্তী <ChevronRight className="w-4 h-4 ml-2" />
+				</Button>
+			</div>
+		);
+	};
+
+	return (
+		<div className="relative h-screen flex text-white">
+			{/* Main Content Area */}
+			<div
+				className={`p-6 flex-1 transition-transform duration-300 ease-in-out ${
+					selectedHistory
+						? "-translate-x-1/3 opacity-50 pointer-events-none"
+						: "translate-x-0"
+				}`}>
+				{/* Command Bar */}
+				<div className="sticky top-0 z-10 flex flex-col sm:flex-row items-center justify-between gap-4 p-4 mb-6 -mx-6 bg-[#0a0f1c]/90 backdrop-blur-md border-b border-gray-700">
+					<h1 className="text-3xl font-bold flex-1">লেনদেনের ইতিহাস</h1>
+					<div className="flex w-full sm:w-auto gap-2">
+						<div className="relative w-full">
+							<Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+							<Input
+								placeholder="সার্চ করুন..."
+								value={searchTerm}
+								onChange={e => {
+									const value = e.target.value;
+									setSearchTerm(value);
+									fetchHistory(1, value); // 🔹 এটি সরাসরি search trigger করে
+								}}
+								className="pl-9 pr-4 bg-gray-800 text-white placeholder-gray-400 border-gray-700"
+							/>
+						</div>
+						<Button
+							onClick={() => fetchHistory(page, searchTerm)}
+							variant="outline"
+							className="hidden sm:inline-flex bg-gray-800 border-gray-700 text-white hover:bg-gray-700">
+							<RefreshCcw className="w-4 h-4" />
+						</Button>
+					</div>
+					<Badge className="text-sm bg-gray-700 text-white">
+						মোট লেনদেন: {meta?.total || 0}
+					</Badge>
+				</div>
+
+				{/* History List */}
 				{loading ? (
 					<div className="text-center p-10">
 						<p className="text-lg text-gray-400">লোডিং...</p>
@@ -220,59 +199,129 @@ const History = () => {
 						<p className="text-lg text-gray-400">কোনো লেনদেন পাওয়া যায়নি।</p>
 					</div>
 				) : (
-					<ul className="divide-y divide-gray-700">
+					<div className="space-y-4">
 						{historyData.map(item => (
-							<li
+							<div
 								key={item.id}
-								className="py-4 flex items-center justify-between">
-								<div className="flex items-center">
-									<div
-										className={cn("p-2 rounded-full", typeColors[item.type])}>
-										{typeIcons[item.type] || <Clock className="w-5 h-5" />}
-									</div>
-									<div className="ml-4">
-										<p className="font-semibold text-lg">{item.title}</p>
-										<p className="text-sm text-gray-400">{item.description}</p>
+								className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 border rounded-lg shadow-sm bg-gray-900 border-gray-700 hover:shadow-md transition-shadow cursor-pointer"
+								onClick={() => setSelectedHistory(item)}>
+								<div className="flex-1 space-y-1 sm:space-y-0 sm:flex sm:items-center sm:gap-6">
+									<h3 className="font-semibold text-lg text-white">
+										{item.title}
+									</h3>
+									<div className="flex items-center gap-4 text-sm text-gray-400">
+										<span className="flex items-center gap-1">
+											{typeIcons[item.type] || <Clock className="h-4 w-4" />}{" "}
+											{item.type}
+										</span>
+										<span className="flex items-center gap-1">
+											{formatAmount(item.amount, item.type)}
+										</span>
+										<Badge
+											className={cn(
+												"uppercase text-white",
+												typeColors[item.type]
+											)}>
+											{item.type.replace(/_/g, " ")}
+										</Badge>
 									</div>
 								</div>
-								<div className="text-right">
-									<p className={cn("font-bold text-lg", typeColors[item.type])}>
-										{formatAmount(item.amount, item.type)}
-									</p>
-									<p className="text-xs text-gray-500">
-										{new Date(item.createdAt).toLocaleString()}
-									</p>
+								<div className="mt-4 sm:mt-0">
+									<Button
+										size="sm"
+										variant="outline"
+										className="bg-gray-800 border-gray-700 text-white hover:bg-gray-700"
+										onClick={e => {
+											e.stopPropagation();
+											setSelectedHistory(item);
+										}}>
+										<Eye className="w-4 h-4 mr-2" /> দেখুন
+									</Button>
 								</div>
-							</li>
+							</div>
 						))}
-					</ul>
+					</div>
 				)}
+
+				{renderPagination()}
 			</div>
 
-			{/* Pagination Controls */}
-			{meta.totalPage > 1 && (
-				<div className="flex items-center justify-between mt-6 text-white">
-					<Button
-						variant="ghost"
-						className="text-white"
-						disabled={page === 1}
-						onClick={() => setPage(prev => prev - 1)}>
-						<ChevronLeft className="w-4 h-4 mr-2" /> পূর্ববর্তী
-					</Button>
-					<div className="flex items-center space-x-2 text-sm text-gray-400">
-						<span>
-							পৃষ্ঠা {page} / {meta.totalPage}
-						</span>
+			{/* Right Fly-Out Panel */}
+			<div
+				ref={panelRef}
+				className={`fixed top-0 right-0 h-full w-full sm:w-1/3 bg-gray-950 shadow-2xl transition-transform duration-300 ease-in-out z-20 overflow-y-auto ${
+					selectedHistory ? "translate-x-0" : "translate-x-full"
+				}`}>
+				{selectedHistory && (
+					<div className="p-8">
+						<div className="flex justify-between items-center mb-6">
+							<h2 className="text-2xl font-bold text-white">লেনদেনের বিবরণ</h2>
+							<Button
+								variant="ghost"
+								size="sm"
+								className="text-gray-400 hover:bg-gray-800"
+								onClick={() => setSelectedHistory(null)}>
+								<X className="h-5 w-5" />
+							</Button>
+						</div>
+
+						{/* History Item Details */}
+						<div className="space-y-4 p-6 border rounded-xl bg-gray-900 border-gray-800">
+							<div className="flex items-center space-x-3 mb-2">
+								<span
+									className={cn(
+										"p-2 rounded-full",
+										typeColors[selectedHistory.type]
+									)}>
+									{typeIcons[selectedHistory.type]}
+								</span>
+								<h3 className="text-xl font-bold text-white capitalize">
+									{selectedHistory.title}
+								</h3>
+							</div>
+							<div className="grid grid-cols-1 gap-y-3">
+								<div className="flex items-center space-x-3">
+									<span className="text-sm font-medium text-gray-300">
+										পরিমাণ:
+									</span>
+									<span
+										className={cn(
+											"text-lg font-bold",
+											typeColors[selectedHistory.type]
+										)}>
+										{formatAmount(selectedHistory.amount, selectedHistory.type)}
+									</span>
+								</div>
+								<div className="flex items-center space-x-3">
+									<span className="text-sm font-medium text-gray-300">
+										বর্ণনা:
+									</span>
+									<p className="text-sm font-medium text-gray-300">
+										{selectedHistory.description || "নেই"}
+									</p>
+								</div>
+								<div className="flex items-center space-x-3">
+									<span className="text-sm font-medium text-gray-300">
+										সময়:
+									</span>
+									<p className="text-sm font-medium text-gray-300">
+										{new Date(selectedHistory.createdAt).toLocaleString()}
+									</p>
+								</div>
+							</div>
+						</div>
+
+						<div className="mt-6">
+							<Button
+								onClick={() => setSelectedHistory(null)}
+								variant="outline"
+								className="bg-gray-800 border-gray-700 text-white hover:bg-gray-700 w-full">
+								বন্ধ করুন
+							</Button>
+						</div>
 					</div>
-					<Button
-						variant="ghost"
-						className="text-white"
-						disabled={page === meta.totalPage}
-						onClick={() => setPage(prev => prev + 1)}>
-						পরবর্তী <ChevronRight className="w-4 h-4 ml-2" />
-					</Button>
-				</div>
-			)}
+				)}
+			</div>
 		</div>
 	);
 };
