@@ -70,15 +70,36 @@ export const Invest = () => {
 		};
 
 		fetchProjects();
+
 		// ---------------- Socket Setup ----------------
 		getSocket();
+
+		// Subscribe to new project events
 		subscribeEvent("new-project", (project: TProject) => {
 			setProjects(prev => [project, ...prev]);
 		});
 
-		// Cleanup
+		// Subscribe to update project events
+		subscribeEvent("update-project", (updatedProject: TProject) => {
+			setProjects(prev =>
+				prev.map(project =>
+					project.id === updatedProject.id ? updatedProject : project
+				)
+			);
+		});
+
+		// Subscribe to delete project events
+		subscribeEvent("delete-project", (deletedProject: TProject) => {
+			setProjects(prev =>
+				prev.filter(project => project.id !== deletedProject.id)
+			);
+		});
+
+		// Cleanup function to prevent memory leaks
 		return () => {
 			unsubscribeEvent("new-project");
+			unsubscribeEvent("update-project");
+			unsubscribeEvent("delete-project");
 		};
 	}, []);
 

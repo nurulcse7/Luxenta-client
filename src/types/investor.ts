@@ -12,6 +12,7 @@ export interface IInvestor {
 	todayEarning: number;
 	totalInvest: number;
 	totalProfit: number;
+	teamSize: number;
 	withdrawPassword?: string;
 	level: LevelType;
 	referralCode: string;

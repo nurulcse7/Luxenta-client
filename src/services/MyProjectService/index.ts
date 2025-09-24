@@ -19,7 +19,7 @@ export const getMyProjects = async () => {
 		const result = await res.json();
 		return result;
 	} catch (error: any) {
-		console.error("🚀 ~ getProjects ~ error:", error);
+		console.error("🚀 ~ getMyProjects ~ error:", error);
 		return { success: false, error: error.message || "Something went wrong" };
 	}
 };

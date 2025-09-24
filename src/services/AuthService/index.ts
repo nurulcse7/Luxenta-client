@@ -1,6 +1,5 @@
 "use server";
 
-import { getValidToken } from "@/lib/verifyToken";
 import { jwtDecode } from "jwt-decode";
 import { cookies } from "next/headers";
 import { FieldValues } from "react-hook-form";
@@ -51,7 +50,7 @@ export const loginUser = async (userData: FieldValues) => {
 };
 
 export const getCurrentUser = async () => {
-	const accessToken = await getValidToken()
+	const accessToken = (await cookies()).get("accessToken")?.value;
 	let decodedData = null;
 
 	if (accessToken) {
@@ -85,7 +84,6 @@ export const getNewToken = async () => {
 			{
 				method: "POST",
 				headers: {
-					"Content-Type": "application/json",
 					Authorization: (await cookies()).get("refreshToken")!.value,
 				},
 			}

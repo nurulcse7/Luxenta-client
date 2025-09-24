@@ -111,7 +111,7 @@ const mockHistoryData = [
 	},
 ];
 
-const pageSize = 5;
+const pageSize = 8;
 
 const History = () => {
 	const [historyData, setHistoryData] = useState([]);

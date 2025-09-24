@@ -1,14 +1,13 @@
+// components/Notifications.jsx
 "use client";
 
 import { useState, useEffect } from "react";
 import {
-	TrendingUp,
 	TrendingDown,
-	Clock,
 	PiggyBank,
 	Briefcase,
 	PlusCircle,
-	MinusCircle,
+	UserPlus,
 	CheckCircle,
 	ChevronLeft,
 	ChevronRight,
@@ -17,101 +16,97 @@ import {
 	BellRing,
 	CheckCircle as ReadIcon,
 	RotateCw,
+	DollarSign,
+	ArrowUpFromDot,
+	FileText,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-// Define the notification types
-enum NotificationType {
-	deposit,
-	withdraw,
-	salary,
-	referral,
-	project,
-}
+// Import the types from the separate file
+import { Notification, NotificationType } from "@/types/notification";
 
-// Model for the notification data
-interface Notification {
-	id: string;
-	title: string;
-	message: string;
-	type: keyof typeof NotificationType;
-	isRead: boolean;
-	createdAt: Date;
-}
-
-// Mock data to demonstrate the page. Replace with your actual API call.
+// Mock data, now using the imported Notification type
 const mockNotificationsData: Notification[] = [
 	{
 		id: "1",
+		investorId: "user123",
 		title: "নতুন ডিপোজিট!",
 		message: "আপনার অ্যাকাউন্টে ৳5000 জমা হয়েছে।",
-		type: "deposit",
+		type: NotificationType.deposit,
 		isRead: false,
 		createdAt: new Date(Date.now() - 60000),
 	},
 	{
 		id: "2",
+		investorId: "user123",
 		title: "বিনিয়োগের লাভ",
 		message: "প্রজেক্ট X থেকে ৳250 লাভ পেয়েছেন।",
-		type: "project",
+		type: NotificationType.project,
 		isRead: false,
 		createdAt: new Date(Date.now() - 3600000),
 	},
 	{
 		id: "3",
+		investorId: "user123",
 		title: "উত্তোলন সম্পন্ন",
 		message: "আপনার ৳200 উত্তোলন সফল হয়েছে।",
-		type: "withdraw",
+		type: NotificationType.withdraw,
 		isRead: true,
 		createdAt: new Date(Date.now() - 7200000),
 	},
 	{
 		id: "4",
+		investorId: "user123",
 		title: "রেফারেল বোনাস",
 		message: "নতুন রেফারেলের জন্য ৳50 বোনাস পেয়েছেন।",
-		type: "referral",
+		type: NotificationType.referral,
 		isRead: false,
 		createdAt: new Date(Date.now() - 10800000),
 	},
 	{
 		id: "5",
+		investorId: "user123",
 		title: "বেতন জমা হয়েছে!",
 		message: "আপনার মাসিক বেতন ৳10000 জমা হয়েছে।",
-		type: "salary",
+		type: NotificationType.salary,
 		isRead: true,
 		createdAt: new Date(Date.now() - 14400000),
 	},
 	{
 		id: "6",
+		investorId: "user123",
 		title: "নতুন প্রজেক্ট",
 		message: "একটি নতুন বিনিয়োগ প্রজেক্ট চালু হয়েছে।",
-		type: "project",
+		type: NotificationType.project,
 		isRead: false,
 		createdAt: new Date(Date.now() - 18000000),
 	},
 	{
 		id: "7",
+		investorId: "user123",
 		title: "সতর্কতা",
 		message: "আপনার পাসওয়ার্ড পরিবর্তনের অনুরোধ করা হয়েছে।",
-		type: "withdraw",
+		type: NotificationType.withdraw,
 		isRead: true,
 		createdAt: new Date(Date.now() - 21600000),
 	},
 	{
 		id: "8",
+		investorId: "user123",
 		title: "নতুন ডিপোজিট",
 		message: "আপনার অ্যাকাউন্টে ৳1500 জমা হয়েছে।",
-		type: "deposit",
+		type: NotificationType.deposit,
 		isRead: true,
 		createdAt: new Date(Date.now() - 25200000),
 	},
 	{
 		id: "9",
+		investorId: "user123",
 		title: "লাভের আপডেট",
 		message: "প্রজেক্ট Y থেকে ৳100 লাভ পেয়েছেন।",
-		type: "project",
+		type: NotificationType.project,
 		isRead: false,
 		createdAt: new Date(Date.now() - 28800000),
 	},
@@ -119,7 +114,43 @@ const mockNotificationsData: Notification[] = [
 
 const pageSize = 5;
 
+// Helper function to get the correct icon based on type
+const getNotificationIcon = (type: NotificationType) => {
+	switch (type) {
+		case NotificationType.deposit:
+			return <DollarSign className="w-5 h-5" />;
+		case NotificationType.withdraw:
+			return <ArrowUpFromDot className="w-5 h-5" />;
+		case NotificationType.salary:
+			return <PiggyBank className="w-5 h-5" />;
+		case NotificationType.referral:
+			return <UserPlus className="w-5 h-5" />;
+		case NotificationType.project:
+			return <FileText className="w-5 h-5" />;
+		default:
+			return <BellRing className="w-5 h-5" />;
+	}
+};
+
+const getNotificationColor = (type: NotificationType) => {
+	switch (type) {
+		case NotificationType.deposit:
+			return "text-green-500";
+		case NotificationType.withdraw:
+			return "text-red-500";
+		case NotificationType.salary:
+			return "text-yellow-500";
+		case NotificationType.referral:
+			return "text-cyan-500";
+		case NotificationType.project:
+			return "text-blue-500";
+		default:
+			return "text-gray-500";
+	}
+};
+
 const Notifications = () => {
+	// Use the imported Notification interface for state
 	const [notifications, setNotifications] = useState<Notification[]>([]);
 	const [page, setPage] = useState(1);
 	const [meta, setMeta] = useState({ total: 0, totalPage: 1 });
@@ -128,6 +159,7 @@ const Notifications = () => {
 
 	const fetchNotifications = (pageNumber: number, search: string) => {
 		setLoading(true);
+		// Simulate API call delay
 		setTimeout(() => {
 			const filteredData = mockNotificationsData.filter(
 				item =>
@@ -135,8 +167,10 @@ const Notifications = () => {
 					item.message.toLowerCase().includes(search.toLowerCase())
 			);
 			const startIndex = (pageNumber - 1) * pageSize;
-			const endIndex = startIndex + pageSize;
-			const paginatedData = filteredData.slice(startIndex, endIndex);
+			const paginatedData = filteredData.slice(
+				startIndex,
+				startIndex + pageSize
+			);
 
 			setNotifications(paginatedData);
 			setMeta({
@@ -155,22 +189,6 @@ const Notifications = () => {
 		setNotifications(prev =>
 			prev.map(n => (n.id === id ? { ...n, isRead: true } : n))
 		);
-	};
-
-	const typeIcons = {
-		deposit: <PiggyBank className="w-5 h-5" />,
-		withdraw: <TrendingDown className="w-5 h-5" />,
-		project: <Briefcase className="w-5 h-5" />,
-		salary: <PlusCircle className="w-5 h-5" />,
-		referral: <CheckCircle className="w-5 h-5" />,
-	};
-
-	const typeColors = {
-		deposit: "text-green-500",
-		withdraw: "text-red-500",
-		project: "text-blue-500",
-		salary: "text-yellow-500",
-		referral: "text-cyan-500",
 	};
 
 	return (
@@ -223,18 +241,25 @@ const Notifications = () => {
 									"py-4 flex items-center justify-between transition-all duration-300",
 									!item.isRead && "bg-gray-800/40"
 								)}>
-								<div
-									className="flex items-center"
-									onClick={() => handleMarkAsRead(item.id)}>
+								<div className="flex items-center">
 									<div
-										className={cn("p-2 rounded-full", typeColors[item.type])}>
-										{typeIcons[item.type] || <BellRing className="w-5 h-5" />}
+										className={cn(
+											"p-2 rounded-full",
+											getNotificationColor(item.type)
+										)}>
+										{getNotificationIcon(item.type)}
 									</div>
 									<div className="ml-4">
 										<p className="font-semibold text-lg">{item.title}</p>
 										<p className="text-sm text-gray-400">{item.message}</p>
 										<p className="text-xs text-gray-500 mt-1">
-											{new Date(item.createdAt).toLocaleString()}
+											{new Date(item.createdAt).toLocaleString("bn-BD", {
+												year: "numeric",
+												month: "long",
+												day: "numeric",
+												hour: "2-digit",
+												minute: "2-digit",
+											})}
 										</p>
 									</div>
 								</div>
