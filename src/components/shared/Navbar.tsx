@@ -1,4 +1,4 @@
-// components/Navbar.js
+// src/components/shared/Navbar.js (or wherever your Navbar is located)
 "use client";
 
 import { useState, useEffect } from "react";
@@ -14,6 +14,7 @@ import {
 	Clock,
 	UserPlus,
 	FileText,
+	Settings,
 } from "lucide-react";
 
 import {
@@ -23,11 +24,23 @@ import {
 } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
-import { Notification, NotificationType } from "@/types/notification";
 
-// A helper function to get the appropriate icon based on the notification type
+import { INotification, NotificationType } from "@/types/notification";
+import {
+	getUserNotifications,
+	markNotificationAsRead,
+} from "@/services/NotificationService";
+import {
+	getSocket,
+	subscribeEvent,
+	unsubscribeEvent,
+} from "@/lib/socketClient";
+import { useUser } from "@/context/UserContext";
+
 const getNotificationIcon = (type: NotificationType) => {
 	switch (type) {
+		case "system":
+			return <Settings className="w-4 h-4 text-gray-400" />;
 		case "deposit":
 			return <DollarSign className="w-4 h-4 text-green-500" />;
 		case "withdraw":
@@ -39,41 +52,74 @@ const getNotificationIcon = (type: NotificationType) => {
 		case "project":
 			return <FileText className="w-4 h-4 text-purple-500" />;
 		default:
-			return <Bell className="w-4 h-4 text-gray-500" />;
+			return <Bell className="w-4 h-4 text-white" />;
 	}
 };
 
 export default function Navbar() {
 	const [open, setOpen] = useState(false);
-	const [notifications, setNotifications] = useState<Notification[]>([]);
-
+	const [notifications, setNotifications] = useState<INotification[]>([]);
+	const { user } = useUser();
 	// Fetch notifications from the backend
 	useEffect(() => {
+		// --- 1. Initial Data Fetch ---
 		const fetchNotifications = async () => {
+			/* ... fetch logic remains the same ... */
 			try {
-				// Replace with your actual API endpoint
-				const response = await fetch("/api/notifications");
-				if (!response.ok) {
-					throw new Error("Failed to fetch notifications");
+				const result: any = await getUserNotifications();
+				if (result.success && Array.isArray(result.data)) {
+					setNotifications(result.data);
+				} else {
+					setNotifications([]);
 				}
-				const data = await response.json();
-				setNotifications(data);
 			} catch (error) {
 				console.error("Error fetching notifications:", error);
+				setNotifications([]);
 			}
 		};
 
 		fetchNotifications();
-	}, []);
+
+		// --- 2. Socket Setup for Real-Time Updates ---
+		const socket = getSocket();
+
+		// Function to send the user ID to the server
+		const sendUserId = () => {
+			if (user?.id) {
+				socket.emit("set-user", user?.id);
+			}
+		};
+
+		// 🔴 CRITICAL FIX 3: Emit 'set-user' only if the user?.id is available
+		if (user?.id) {
+			// Send ID immediately if connected
+			if (socket.connected) {
+				sendUserId();
+			}
+
+			// Send ID on every new connection/reconnection
+			socket.on("connect", sendUserId);
+		}
+
+		// 🔹 Subscribe to new notification events
+		subscribeEvent("new-notification", (newNotification: INotification) => {
+			setNotifications(prev => [newNotification, ...prev]);
+		});
+
+		// --- 3. Cleanup Function ---
+		return () => {
+			unsubscribeEvent("new-notification");
+
+			if (user?.id) {
+				socket.off("connect", sendUserId);
+			}
+		};
+	}, [user?.id]);
 
 	const handleMarkAsRead = async (notificationId: string) => {
 		try {
-			// Replace with your actual API endpoint to mark a notification as read
-			await fetch(`/api/notifications/${notificationId}/read`, {
-				method: "PUT",
-			});
+			await markNotificationAsRead(notificationId);
 
-			// Update the state to reflect the change immediately
 			setNotifications(prevNotifications =>
 				prevNotifications.map(n =>
 					n.id === notificationId ? { ...n, isRead: true } : n
@@ -106,7 +152,7 @@ export default function Navbar() {
 			</Link>
 
 			{/* Notification Dropdown using Popover */}
-			<Popover  open={open} onOpenChange={setOpen}>
+			<Popover open={open} onOpenChange={setOpen}>
 				<PopoverTrigger asChild>
 					<button className="flex flex-col items-center text-[#00e5ff] hover:text-white transition-transform hover:scale-110 cursor-pointer relative">
 						<Bell className="w-5 h-5 mb-1" />
@@ -118,31 +164,26 @@ export default function Navbar() {
 						নোটিফিকেশন
 					</button>
 				</PopoverTrigger>
-				<PopoverContent className="w-72 p-0 rounded-lg shadow-lg">
-					<div className="p-4 border-b">
+				<PopoverContent className="w-72 p-0 rounded-lg shadow-lg bg-gray-900 border-gray-700 text-white">
+					<div className="p-4 border-b border-gray-700">
 						<h4 className="font-bold text-sm"> নোটিফিকেশন</h4>
 					</div>
-					{displayedNotifications.length > 0 ? (
+					{newNotifications.length > 0 ? (
 						<ScrollArea className="h-48">
-							<ul className="divide-y divide-gray-200">
-								{displayedNotifications.map(notification => (
+							<ul className="divide-y divide-gray-700">
+								{newNotifications.map(notification => (
 									<li
 										key={notification.id}
 										onClick={() => handleMarkAsRead(notification.id)}
-										className="p-4 flex items-start gap-3 hover:bg-gray-50 cursor-pointer transition-colors">
+										className="p-4 flex items-start gap-3 hover:bg-gray-800 cursor-pointer transition-colors">
 										<div className="pt-1">
 											{getNotificationIcon(notification.type)}
 										</div>
 										<div className="flex-1">
-											<p
-												className={`text-sm ${
-													!notification.isRead
-														? "font-semibold text-gray-900"
-														: "text-gray-600"
-												}`}>
+											<p className="text-sm font-semibold text-white">
 												{notification.title}
 											</p>
-											<p className="text-xs text-gray-500 mt-1">
+											<p className="text-xs text-gray-400 mt-1">
 												{notification.message}
 											</p>
 										</div>
@@ -155,9 +196,11 @@ export default function Navbar() {
 							কোনো নতুন নোটিফিকেশন নেই।
 						</p>
 					)}
-					<div className="p-2 border-t text-center">
+					<div className="p-2 border-t border-gray-700 text-center">
 						<Link href="/notifications">
-							<Button variant="ghost" className="w-full text-blue-600">
+							<Button
+								variant="ghost"
+								className="w-full text-blue-400 hover:bg-gray-800">
 								সব নোটিফিকেশন দেখুন
 							</Button>
 						</Link>

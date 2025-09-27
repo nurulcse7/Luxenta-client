@@ -1,14 +1,9 @@
 // components/Notifications.jsx
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react"; // 💡 Added useCallback
 import {
-	TrendingDown,
-	PiggyBank,
-	Briefcase,
-	PlusCircle,
-	UserPlus,
-	CheckCircle,
+	// ... (Your Lucide Icons)
 	ChevronLeft,
 	ChevronRight,
 	RefreshCcw,
@@ -19,113 +14,39 @@ import {
 	DollarSign,
 	ArrowUpFromDot,
 	FileText,
+	PiggyBank,
+	UserPlus,
+	Settings, // 💡 For 'system' type
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 // Import the types from the separate file
-import { Notification, NotificationType } from "@/types/notification";
+import { INotification, NotificationType } from "@/types/notification"; // 💡 Renamed to TNotification for clarity
+import {
+	getUserNotifications,
+	markNotificationAsRead,
+} from "@/services/NotificationService"; // ⚠️ Ensure this import path is correct
 
-// Mock data, now using the imported Notification type
-const mockNotificationsData: Notification[] = [
-	{
-		id: "1",
-		investorId: "user123",
-		title: "নতুন ডিপোজিট!",
-		message: "আপনার অ্যাকাউন্টে ৳5000 জমা হয়েছে।",
-		type: NotificationType.deposit,
-		isRead: false,
-		createdAt: new Date(Date.now() - 60000),
-	},
-	{
-		id: "2",
-		investorId: "user123",
-		title: "বিনিয়োগের লাভ",
-		message: "প্রজেক্ট X থেকে ৳250 লাভ পেয়েছেন।",
-		type: NotificationType.project,
-		isRead: false,
-		createdAt: new Date(Date.now() - 3600000),
-	},
-	{
-		id: "3",
-		investorId: "user123",
-		title: "উত্তোলন সম্পন্ন",
-		message: "আপনার ৳200 উত্তোলন সফল হয়েছে।",
-		type: NotificationType.withdraw,
-		isRead: true,
-		createdAt: new Date(Date.now() - 7200000),
-	},
-	{
-		id: "4",
-		investorId: "user123",
-		title: "রেফারেল বোনাস",
-		message: "নতুন রেফারেলের জন্য ৳50 বোনাস পেয়েছেন।",
-		type: NotificationType.referral,
-		isRead: false,
-		createdAt: new Date(Date.now() - 10800000),
-	},
-	{
-		id: "5",
-		investorId: "user123",
-		title: "বেতন জমা হয়েছে!",
-		message: "আপনার মাসিক বেতন ৳10000 জমা হয়েছে।",
-		type: NotificationType.salary,
-		isRead: true,
-		createdAt: new Date(Date.now() - 14400000),
-	},
-	{
-		id: "6",
-		investorId: "user123",
-		title: "নতুন প্রজেক্ট",
-		message: "একটি নতুন বিনিয়োগ প্রজেক্ট চালু হয়েছে।",
-		type: NotificationType.project,
-		isRead: false,
-		createdAt: new Date(Date.now() - 18000000),
-	},
-	{
-		id: "7",
-		investorId: "user123",
-		title: "সতর্কতা",
-		message: "আপনার পাসওয়ার্ড পরিবর্তনের অনুরোধ করা হয়েছে।",
-		type: NotificationType.withdraw,
-		isRead: true,
-		createdAt: new Date(Date.now() - 21600000),
-	},
-	{
-		id: "8",
-		investorId: "user123",
-		title: "নতুন ডিপোজিট",
-		message: "আপনার অ্যাকাউন্টে ৳1500 জমা হয়েছে।",
-		type: NotificationType.deposit,
-		isRead: true,
-		createdAt: new Date(Date.now() - 25200000),
-	},
-	{
-		id: "9",
-		investorId: "user123",
-		title: "লাভের আপডেট",
-		message: "প্রজেক্ট Y থেকে ৳100 লাভ পেয়েছেন।",
-		type: NotificationType.project,
-		isRead: false,
-		createdAt: new Date(Date.now() - 28800000),
-	},
-];
+// 🔴 MOCK DATA REMOVED
 
-const pageSize = 5;
+const pageSize = 10; // 💡 Assuming a default API page size of 10 or more
 
 // Helper function to get the correct icon based on type
 const getNotificationIcon = (type: NotificationType) => {
 	switch (type) {
-		case NotificationType.deposit:
+		case "system":
+			return <Settings className="w-5 h-5" />;
+		case "deposit":
 			return <DollarSign className="w-5 h-5" />;
-		case NotificationType.withdraw:
+		case "withdraw":
 			return <ArrowUpFromDot className="w-5 h-5" />;
-		case NotificationType.salary:
+		case "salary":
 			return <PiggyBank className="w-5 h-5" />;
-		case NotificationType.referral:
+		case "referral":
 			return <UserPlus className="w-5 h-5" />;
-		case NotificationType.project:
+		case "project":
 			return <FileText className="w-5 h-5" />;
 		default:
 			return <BellRing className="w-5 h-5" />;
@@ -134,15 +55,17 @@ const getNotificationIcon = (type: NotificationType) => {
 
 const getNotificationColor = (type: NotificationType) => {
 	switch (type) {
-		case NotificationType.deposit:
+		case "system":
+			return "text-gray-500";
+		case "deposit":
 			return "text-green-500";
-		case NotificationType.withdraw:
+		case "withdraw":
 			return "text-red-500";
-		case NotificationType.salary:
+		case "salary":
 			return "text-yellow-500";
-		case NotificationType.referral:
+		case "referral":
 			return "text-cyan-500";
-		case NotificationType.project:
+		case "project":
 			return "text-blue-500";
 		default:
 			return "text-gray-500";
@@ -151,45 +74,91 @@ const getNotificationColor = (type: NotificationType) => {
 
 const Notifications = () => {
 	// Use the imported Notification interface for state
-	const [notifications, setNotifications] = useState<Notification[]>([]);
+	const [notifications, setNotifications] = useState<INotification[]>([]);
 	const [page, setPage] = useState(1);
-	const [meta, setMeta] = useState({ total: 0, totalPage: 1 });
+	// 💡 meta structure adjusted to match a typical API response
+	const [meta, setMeta] = useState({ total: 0, totalPage: 1, limit: pageSize });
 	const [loading, setLoading] = useState(false);
 	const [searchTerm, setSearchTerm] = useState("");
 
-	const fetchNotifications = (pageNumber: number, search: string) => {
+	// 🔴 CORE CHANGE: API Integration
+	const fetchNotifications = useCallback(async (pageNumber, search) => {
 		setLoading(true);
-		// Simulate API call delay
-		setTimeout(() => {
-			const filteredData = mockNotificationsData.filter(
-				item =>
-					item.title.toLowerCase().includes(search.toLowerCase()) ||
-					item.message.toLowerCase().includes(search.toLowerCase())
-			);
-			const startIndex = (pageNumber - 1) * pageSize;
-			const paginatedData = filteredData.slice(
-				startIndex,
-				startIndex + pageSize
-			);
+		try {
+			const queryParams = {
+				page: pageNumber,
+				limit: pageSize,
+				// 💡 Adjust 'search' parameter name if your API uses a different key (e.g., 'q')
+				search: search,
+			};
 
-			setNotifications(paginatedData);
-			setMeta({
-				total: filteredData.length,
-				totalPage: Math.ceil(filteredData.length / pageSize),
-			});
+			// 💡 Call the real API service function
+			const result = await getUserNotifications();
+
+			if (result.success && Array.isArray(result.data)) {
+				setNotifications(result.data);
+				setMeta(result.meta || { total: 0, totalPage: 1, limit: pageSize });
+			} else {
+				setNotifications([]);
+				setMeta({ total: 0, totalPage: 1, limit: pageSize });
+				console.error(
+					"Failed to fetch notifications:",
+					result.error || "Invalid response data."
+				);
+				// Optionally show a toast notification here
+			}
+		} catch (error) {
+			console.error("Network or fetch error:", error);
+			setNotifications([]);
+			setMeta({ total: 0, totalPage: 1, limit: pageSize });
+			// Optionally show an error toast here
+		} finally {
 			setLoading(false);
-		}, 500);
-	};
+		}
+	}, []); // Empty dependency array means this function is created once
 
 	useEffect(() => {
+		// 💡 Fetch data whenever page or searchTerm changes
 		fetchNotifications(page, searchTerm);
-	}, [page, searchTerm]);
+	}, [page, searchTerm, fetchNotifications]);
 
-	const handleMarkAsRead = (id: string) => {
+	const handleMarkAsRead = async (id: string) => {
+		// 1. Optimistic UI Update (Fast visual response)
 		setNotifications(prev =>
 			prev.map(n => (n.id === id ? { ...n, isRead: true } : n))
 		);
+
+		try {
+			// 2. 🔴 API Call to update status on the server
+			const result = await markNotificationAsRead(id);
+
+			if (!result.success) {
+				// 3. If API fails, rollback the UI change
+				setNotifications(prev =>
+					prev.map(n => (n.id === id ? { ...n, isRead: false } : n))
+				);
+				console.error("Failed to mark notification as read:", result.error);
+				// Optionally show error toast
+			}
+		} catch (error) {
+			// 4. Rollback on network error
+			setNotifications(prev =>
+				prev.map(n => (n.id === id ? { ...n, isRead: false } : n))
+			);
+			console.error("Error marking as read:", error);
+		}
 	};
+
+	// 💡 This is now a simple button click that triggers a re-fetch
+	const handleRefresh = () => {
+		// Resetting page to 1 on refresh is often a good default
+		if (page !== 1) setPage(1);
+		else fetchNotifications(page, searchTerm); // Force re-fetch if already on page 1
+	};
+
+	// 💡 Pagination check
+	const isFirstPage = page === 1;
+	const isLastPage = page === meta.totalPage || meta.totalPage === 0;
 
 	return (
 		<div className="min-h-screen bg-[#0a0a0a] text-white p-4 font-sans">
@@ -206,22 +175,26 @@ const Notifications = () => {
 							value={searchTerm}
 							onChange={e => {
 								setSearchTerm(e.target.value);
-								setPage(1);
+								setPage(1); // Reset page to 1 on search change
 							}}
 							className="pl-9 pr-4 bg-gray-800 text-white placeholder-gray-400 border-gray-700 w-full"
 						/>
 					</div>
 					<Button
-						onClick={() => fetchNotifications(page, searchTerm)}
+						onClick={handleRefresh} // 💡 Use the new refresh handler
 						variant="outline"
+						disabled={loading}
 						className="bg-gray-800 border-gray-700 text-white hover:bg-gray-700 w-full sm:w-auto">
-						<RefreshCcw className="w-4 h-4 mr-2" /> রিফ্রেশ
+						<RefreshCcw
+							className={cn("w-4 h-4 mr-2", loading && "animate-spin")}
+						/>{" "}
+						রিফ্রেশ
 					</Button>
 				</div>
 			</div>
 
 			<div className="bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.18)] rounded-xl backdrop-blur-md p-4 mt-6">
-				{loading ? (
+				{loading && notifications.length === 0 ? ( // Only show full loader if no data is present
 					<div className="flex items-center justify-center p-10 text-gray-400">
 						<RotateCw className="w-5 h-5 mr-2 animate-spin" />
 						<p className="text-lg">লোডিং...</p>
@@ -237,9 +210,13 @@ const Notifications = () => {
 						{notifications.map(item => (
 							<li
 								key={item.id}
+								// 💡 Added isRead check to the onClick to avoid redundant API calls
+								onClick={() => !item.isRead && handleMarkAsRead(item.id)}
 								className={cn(
-									"py-4 flex items-center justify-between transition-all duration-300",
-									!item.isRead && "bg-gray-800/40"
+									"py-4 flex items-center justify-between transition-all duration-300 px-2 rounded-lg cursor-pointer",
+									!item.isRead
+										? "bg-gray-800/60 hover:bg-gray-800/80"
+										: "hover:bg-gray-800/20"
 								)}>
 								<div className="flex items-center">
 									<div
@@ -270,18 +247,14 @@ const Notifications = () => {
 											item.isRead ? "bg-transparent" : "bg-red-500"
 										)}
 									/>
-									<Button
-										variant="ghost"
-										size="icon"
-										onClick={() => handleMarkAsRead(item.id)}
+									{/* 💡 Mark as Read button removed, as we added the functionality to the li's onClick */}
+									{/* <Button variant="ghost" ... /> */}
+									<ReadIcon
 										className={cn(
-											"transition-colors duration-200",
-											item.isRead
-												? "text-gray-500 hover:text-green-500"
-												: "text-green-500 hover:text-green-400"
-										)}>
-										<ReadIcon className="w-4 h-4" />
-									</Button>
+											"w-4 h-4",
+											item.isRead ? "text-green-500" : "text-gray-600"
+										)}
+									/>
 								</div>
 							</li>
 						))}
@@ -294,8 +267,8 @@ const Notifications = () => {
 				<div className="flex items-center justify-between mt-6 text-white">
 					<Button
 						variant="ghost"
-						className="text-white"
-						disabled={page === 1}
+						className="text-white hover:bg-gray-800"
+						disabled={isFirstPage || loading} // 💡 Disabled check
 						onClick={() => setPage(prev => prev - 1)}>
 						<ChevronLeft className="w-4 h-4 mr-2" /> পূর্ববর্তী
 					</Button>
@@ -303,11 +276,12 @@ const Notifications = () => {
 						<span>
 							পৃষ্ঠা {page} / {meta.totalPage}
 						</span>
+						<span className="text-xs">({meta.total} মোট)</span>
 					</div>
 					<Button
 						variant="ghost"
-						className="text-white"
-						disabled={page === meta.totalPage}
+						className="text-white hover:bg-gray-800"
+						disabled={isLastPage || loading} // 💡 Disabled check
 						onClick={() => setPage(prev => prev + 1)}>
 						পরবর্তী <ChevronRight className="w-4 h-4 ml-2" />
 					</Button>

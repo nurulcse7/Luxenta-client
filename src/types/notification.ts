@@ -1,6 +1,7 @@
 // types/notifications.
 
 export enum NotificationType {
+	system = "system",
 	deposit = "deposit",
 	withdraw = "withdraw",
 	salary = "salary",
@@ -8,7 +9,7 @@ export enum NotificationType {
 	project = "project",
 }
 
-export interface Notification {
+export interface INotification {
 	id: string;
 	investorId?: string;
 	title: string;
