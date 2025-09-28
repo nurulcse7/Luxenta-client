@@ -84,6 +84,7 @@ export const getNewToken = async () => {
 			{
 				method: "POST",
 				headers: {
+					"Content-Type": "application/json",
 					Authorization: (await cookies()).get("refreshToken")!.value,
 				},
 			}

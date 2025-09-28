@@ -1,10 +1,13 @@
 "use client";
 
+import { useUser } from "@/context/UserContext";
 import React, { useState, useEffect } from "react";
-
-const KEY_MAIN = "lx_main_balance";
-const KEY_HIST = "lx_checkin_history";
-const KEY_LAST = "lx_last_checkin";
+import { toast } from "sonner";
+import {
+	createCheckIn,
+	getMyCheckIns,
+	getLastCheckIn,
+} from "@/services/CheckInService";
 
 function yyyyMMdd(d: Date) {
 	return (
@@ -46,24 +49,47 @@ interface CheckInHistory {
 }
 
 const DailyCheckin = () => {
-	const [mainBalance, setMainBalance] = useState(0);
+	const { user } = useUser();
+	const [mainBalance, setMainBalance] = useState(
+		user?.investorInfo?.walletBalance || 0
+	);
 	const [todayBonusAmount, setTodayBonusAmount] = useState(1);
 	const [history, setHistory] = useState<CheckInHistory[]>([]);
 	const [lastCheckinDate, setLastCheckinDate] = useState("");
 	const [isModalOpen, setIsModalOpen] = useState(false);
-	const [toastMessage, setToastMessage] = useState("");
 	const [isGlow, setIsGlow] = useState(false);
 	const [viewDate, setViewDate] = useState(new Date());
 
+	// 🔹 Load history + last check-in from API
 	useEffect(() => {
-		const savedMain = parseFloat(localStorage.getItem(KEY_MAIN) || "0");
-		const savedHistory = JSON.parse(localStorage.getItem(KEY_HIST) || "[]");
-		const savedLast = localStorage.getItem(KEY_LAST) || "";
-		setMainBalance(savedMain);
-		setHistory(savedHistory);
-		setLastCheckinDate(savedLast);
-	}, []);
+		const fetchData = async () => {
+			const histRes = await getMyCheckIns();
+			if (histRes?.success) {
+				setHistory(
+					histRes.data.map((h: any) => ({
+						date: h.date,
+						dateTime: h.dateTime,
+						bonus: h.bonus,
+						isoWeek: { year: h.isoWeekYear, week: h.isoWeekNo },
+					}))
+				);
+			}
 
+			const lastRes = await getLastCheckIn();
+			if (lastRes?.success && lastRes.data) {
+				setLastCheckinDate(lastRes.data.date);
+			}
+
+			// main balance update from user
+			if (user?.investorInfo?.walletBalance) {
+				setMainBalance(user.investorInfo.walletBalance);
+			}
+		};
+
+		fetchData();
+	}, [user]);
+
+	// 🔹 Bonus calculation
 	useEffect(() => {
 		const last = history[0];
 		const today = new Date();
@@ -76,43 +102,53 @@ const DailyCheckin = () => {
 			newBonus = last.bonus < 7 ? last.bonus + 1 : 1;
 		}
 		setTodayBonusAmount(newBonus);
+	}, [history]);
 
-		localStorage.setItem(KEY_MAIN, String(mainBalance));
-		localStorage.setItem(KEY_HIST, JSON.stringify(history));
-		localStorage.setItem(KEY_LAST, lastCheckinDate);
-	}, [mainBalance, history, lastCheckinDate]);
-
-	const showToast = (msg: string) => {
-		setToastMessage(msg);
-		setTimeout(() => setToastMessage(""), 1600);
-	};
-
-	const handleCheckin = () => {
+	// 🔹 Handle check-in action
+	const handleCheckin = async () => {
 		const today = new Date();
 		const dateStr = yyyyMMdd(today);
 		const alreadyChecked =
 			lastCheckinDate === dateStr || history.some(h => h.date === dateStr);
 		if (alreadyChecked) {
-			showToast("আজকের চেক-ইন সম্পন্ন হয়েছে ✅");
+			toast.error("আজকের চেক-ইন সম্পন্ন হয়েছে ✅");
 			return;
 		}
 
 		setIsGlow(true);
 		setTimeout(() => setIsGlow(false), 600);
 
-		const bonus = todayBonusAmount;
 		const iso = toISOWeek(today);
 		const dtStr = dateTimeFmt(today);
 
-		setMainBalance(prev => prev + bonus);
-		setHistory(prev => [
-			{ date: dateStr, dateTime: dtStr, bonus: bonus, isoWeek: iso },
-			...prev,
-		]);
-		setLastCheckinDate(dateStr);
-		showToast(`চেক-ইন সম্পন্ন! +৳${bonus}`);
+		const payload = {
+			bonus: todayBonusAmount,
+			isoWeekYear: iso.year,
+			isoWeekNo: iso.week,
+			date: dateStr,
+			dateTime: today.toISOString(),
+		};
+
+		const res = await createCheckIn(payload);
+		if (res?.success) {
+			setMainBalance(prev => prev + todayBonusAmount);
+			setHistory(prev => [
+				{
+					date: dateStr,
+					dateTime: dtStr,
+					bonus: todayBonusAmount,
+					isoWeek: iso,
+				},
+				...prev,
+			]);
+			setLastCheckinDate(dateStr);
+			toast.success(`চেক-ইন সম্পন্ন! +৳${todayBonusAmount}`);
+		} else {
+			toast.error("চেক-ইন ব্যর্থ হয়েছে ❌");
+		}
 	};
 
+	// 🔹 Render calendar
 	const renderCalendar = () => {
 		const startOfMonth = new Date(
 			viewDate.getFullYear(),
@@ -163,6 +199,7 @@ const DailyCheckin = () => {
 		return calendarDays;
 	};
 
+	// 🔹 Render history table
 	const renderHistoryTable = () => {
 		if (history.length === 0) {
 			return (
@@ -320,13 +357,6 @@ const DailyCheckin = () => {
 							<tbody>{renderHistoryTable()}</tbody>
 						</table>
 					</div>
-				</div>
-			)}
-
-			{/* Toast */}
-			{toastMessage && (
-				<div className="fixed left-1/2 -translate-x-1/2 bottom-5 bg-black/70 text-white px-4 py-2 rounded-xl text-sm transition-opacity duration-300 opacity-100 pointer-events-auto z-50">
-					{toastMessage}
 				</div>
 			)}
 		</main>
