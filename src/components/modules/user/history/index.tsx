@@ -19,11 +19,16 @@ import {
 	PlusCircle,
 	CheckCircle,
 	Clock,
+	// নতুন আইকন ইম্পোর্ট করা হলো: Shuffle (ট্রান্সফারের জন্য)
+	Shuffle,
 } from "lucide-react";
 import { toast } from "sonner";
 import { getHistory } from "@/services/HistoryService";
 import { IHistory } from "@/types/history";
 import { cn } from "@/lib/utils";
+
+// ⚠️ Note: আপনার IHistory type-এ যেন নতুন enum মানগুলো (MAIN_TO_LUXENTA, LUXENTA_TO_MAIN) থাকে।
+// যদি না থাকে, তবে TS error দেবে।
 
 const History = () => {
 	const [historyData, setHistoryData] = useState<IHistory[]>([]);
@@ -39,7 +44,6 @@ const History = () => {
 	const [loading, setLoading] = useState(false);
 
 	const panelRef = useRef<HTMLDivElement>(null);
-
 	const router = useRouter();
 
 	const fetchHistory = async (
@@ -99,9 +103,11 @@ const History = () => {
 		salary: <PlusCircle className="w-5 h-5" />,
 		referral_bonus: <PlusCircle className="w-5 h-5" />,
 		checkin_bonus: <CheckCircle className="w-5 h-5" />,
+		MAIN_TO_LUXENTA: <Shuffle className="w-5 h-5 rotate-90" />,
+		LUXENTA_TO_MAIN: <Shuffle className="w-5 h-5 -rotate-90" />,
 	};
 
-	const typeColors = {
+	const typeColors: Record<IHistory["type"], string> = {
 		deposit: "text-green-500",
 		withdraw: "text-red-500",
 		invest: "text-blue-500",
@@ -109,17 +115,15 @@ const History = () => {
 		salary: "text-yellow-500",
 		referral_bonus: "text-cyan-500",
 		checkin_bonus: "text-purple-500",
+		MAIN_TO_LUXENTA: "text-indigo-400",
+		LUXENTA_TO_MAIN: "text-indigo-600",
 	};
 
-	const formatAmount = (amount: number, type: string) => {
-		const sign =
-			type === "deposit" ||
-			type === "project_profit" ||
-			type === "salary" ||
-			type === "referral_bonus" ||
-			type === "checkin_bonus"
-				? "+"
-				: "-";
+	// 🌟 অ্যামাউন্ট ফরমেটিং লজিক
+	const formatAmount = (amount: number, type: IHistory["type"]) => {
+		const isDeduction =
+			type === "withdraw" || type === "invest" || type === "MAIN_TO_LUXENTA";
+		const sign = isDeduction ? "-" : "+";
 		return `${sign}৳${amount.toLocaleString()}`;
 	};
 
@@ -172,7 +176,7 @@ const History = () => {
 								onChange={e => {
 									const value = e.target.value;
 									setSearchTerm(value);
-									fetchHistory(1, value); // 🔹 এটি সরাসরি search trigger করে
+									fetchHistory(1, value);
 								}}
 								className="pl-9 pr-4 bg-gray-800 text-white placeholder-gray-400 border-gray-700"
 							/>
@@ -211,7 +215,10 @@ const History = () => {
 									</h3>
 									<div className="flex items-center gap-4 text-sm text-gray-400">
 										<span className="flex items-center gap-1">
-											{typeIcons[item.type] || <Clock className="h-4 w-4" />}{" "}
+											{/* Clock আইকন fallback হিসেবে ব্যবহৃত হবে */}
+											{typeIcons[item.type as keyof typeof typeIcons] || (
+												<Clock className="h-4 w-4" />
+											)}{" "}
 											{item.type}
 										</span>
 										<span className="flex items-center gap-1">
@@ -220,7 +227,7 @@ const History = () => {
 										<Badge
 											className={cn(
 												"uppercase text-white",
-												typeColors[item.type]
+												typeColors[item.type as keyof typeof typeColors]
 											)}>
 											{item.type.replace(/_/g, " ")}
 										</Badge>
@@ -271,9 +278,9 @@ const History = () => {
 								<span
 									className={cn(
 										"p-2 rounded-full",
-										typeColors[selectedHistory.type]
+										typeColors[selectedHistory.type as keyof typeof typeColors]
 									)}>
-									{typeIcons[selectedHistory.type]}
+									{typeIcons[selectedHistory.type as keyof typeof typeIcons]}
 								</span>
 								<h3 className="text-xl font-bold text-white capitalize">
 									{selectedHistory.title}
@@ -287,7 +294,9 @@ const History = () => {
 									<span
 										className={cn(
 											"text-lg font-bold",
-											typeColors[selectedHistory.type]
+											typeColors[
+												selectedHistory.type as keyof typeof typeColors
+											]
 										)}>
 										{formatAmount(selectedHistory.amount, selectedHistory.type)}
 									</span>

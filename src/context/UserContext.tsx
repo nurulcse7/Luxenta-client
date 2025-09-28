@@ -8,6 +8,12 @@ import {
 } from "react";
 import { IUser } from "@/types/user";
 import { getCurrentUser } from "@/services/AuthService";
+import {
+	getSocket,
+	subscribeEvent,
+	unsubscribeEvent,
+} from "@/lib/socketClient";
+import { setuid } from "process";
 
 interface IUserProviderValues {
 	user: IUser | null;
@@ -31,6 +37,30 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
 		};
 
 		fetchUser();
+
+		getSocket();
+
+		subscribeEvent("user-data-update", updateData => {
+
+			setUser(prevUser => {
+				if (!prevUser) return null;
+
+				const updatedInvestorInfo = {
+					...prevUser.investorInfo,
+					...updateData,
+				};
+
+				return {
+					...prevUser,
+					investorInfo: updatedInvestorInfo,
+				};
+			});
+		});
+
+		// 2. Cleanup Function
+		return () => {
+			unsubscribeEvent("user-data-update");
+		};
 	}, []);
 
 	return (

@@ -3,7 +3,7 @@ import React from 'react'
 
 const NotificationsPage = () => {
   return (
-    <div>
+    <div className='pb-[60px]'>
       <Notifications/>
     </div>
   )

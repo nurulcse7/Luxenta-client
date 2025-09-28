@@ -2,7 +2,7 @@ import History from "@/components/modules/user/history";
 
 const HistoryPage = () => {
 	return (
-		<div>
+		<div className="pb-[150px]">
 			<History />
 		</div>
 	);

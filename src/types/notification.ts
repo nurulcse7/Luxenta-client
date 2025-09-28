@@ -7,6 +7,8 @@ export enum NotificationType {
 	salary = "salary",
 	referral = "referral",
 	project = "project",
+	MAIN_TO_LUXENTA = "MAIN_TO_LUXENTA",
+	LUXENTA_TO_MAIN = "LUXENTA_TO_MAIN",
 }
 
 export interface INotification {

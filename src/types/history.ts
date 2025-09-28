@@ -6,6 +6,8 @@ enum HistoryType {
 	salary = "salary",
 	referral_bonus = "referral_bonus",
 	checkin_bonus = "checkin_bonus",
+	MAIN_TO_LUXENTA = "MAIN_TO_LUXENTA",
+	LUXENTA_TO_MAIN = "LUXENTA_TO_MAIN",
 }
 
 export interface IHistory {

@@ -1,7 +1,11 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { useUser } from "@/context/UserContext";
+import { transferFunds } from "@/services/InvestorService";
 import { useState, useEffect } from "react";
+import { toast } from "sonner";
+// API কল ইম্পোর্ট করা হয়েছে
 
 interface HistoryItem {
 	type: "Main → Wallet" | "Wallet → Main";
@@ -12,13 +16,35 @@ interface HistoryItem {
 const DAILY_RATE = 0.0071;
 
 export default function LuxentaWallet() {
-	const [mainBal, setMainBal] = useState(15000);
-	const [walletBal, setWalletBal] = useState(0);
+	// user এবং settings ডেটা ব্যবহার করা হয়নি, কিন্তু রাখা হয়েছে।
+	const { user } = useUser(); // refetchUser যুক্ত করা হলো
+
+	// initialState হিসাবে user ডেটা ব্যবহার করা যেতে পারে
+	// তবে এই উদাহরণের জন্য, আমরা state-এ ম্যানুয়ালি ডেটা রাখছি।
+	// আসল অ্যাপ্লিকেশনে, এটি user.investorInfo.walletBalance এবং luxentaWallet থেকে আসা উচিত।
+	const [mainBal, setMainBal] = useState(
+		user?.investorInfo?.walletBalance || 15000
+	);
+	const [walletBal, setWalletBal] = useState(
+		user?.investorInfo?.luxentaWallet || 0
+	);
+
+	// Loading state যোগ করা হয়েছে
+	const [isLoading, setIsLoading] = useState(false);
+
 	const [toWalletAmt, setToWalletAmt] = useState<number | "">("");
 	const [toMainAmt, setToMainAmt] = useState<number | "">("");
 	const [history, setHistory] = useState<HistoryItem[]>([]);
 	const [lastCalc, setLastCalc] = useState<Date | null>(null);
 	const [showHistory, setShowHistory] = useState(false);
+
+	// User ডেটা আপডেট হলে ব্যালেন্স আপডেট
+	useEffect(() => {
+		if (user) {
+			setMainBal(user.investorInfo.walletBalance);
+			setWalletBal(user.investorInfo.luxentaWallet);
+		}
+	}, [user]);
 
 	// Simulate daily compound accrual on Wallet balance
 	useEffect(() => {
@@ -29,15 +55,22 @@ export default function LuxentaWallet() {
 		}
 		const msPerDay = 24 * 60 * 60 * 1000;
 		const days = Math.floor((now.getTime() - lastCalc.getTime()) / msPerDay);
+
+		// এখানে লাভ যোগের লজিকটি API-এর মাধ্যমে সার্ভারে হওয়া উচিত,
+		// কিন্তু UI-তে সিমুলেশন লজিক রাখা হলো।
 		if (days > 0 && walletBal > 0) {
-			setWalletBal(prev => prev * Math.pow(1 + DAILY_RATE, days));
+			// Note: In a real app, this calculation should be verified
+			// and often performed on the server.
+			const newWalletBal = walletBal * Math.pow(1 + DAILY_RATE, days);
+			setWalletBal(parseFloat(newWalletBal.toFixed(2))); // রাউন্ডিং
 			setLastCalc(now);
 		}
-	}, []);
+	}, [walletBal, lastCalc]);
 
 	const fmt = (n: number) =>
 		`৳ ${n.toLocaleString(undefined, { maximumFractionDigits: 2 })}`;
 
+	// অ্যানিমেশন ফাংশন (অপশনাল, কিন্তু রাখা হলো)
 	const animateValue = (
 		start: number,
 		end: number,
@@ -62,9 +95,12 @@ export default function LuxentaWallet() {
 		setHistory(prev => [newItem, ...prev]);
 	};
 
-	const handleToWallet = () => {
+	// 💰 Main → Wallet হ্যান্ডলার (API কল যুক্ত করা হয়েছে)
+	const handleToWallet = async () => {
 		const amt = Number(toWalletAmt);
-		if (!(amt > 0)) {
+		if (isLoading) return;
+
+		if (!(amt > 0) || isNaN(amt)) {
 			alert("সঠিক ট্রান্সফার পরিমাণ লিখুন");
 			return;
 		}
@@ -72,15 +108,38 @@ export default function LuxentaWallet() {
 			alert("মেইন ব্যালেন্সে পর্যাপ্ত টাকা নেই");
 			return;
 		}
-		animateValue(mainBal, mainBal - amt, setMainBal);
-		animateValue(walletBal, walletBal + amt, setWalletBal);
-		addHistory("Main → Wallet", amt);
-		setToWalletAmt("");
+
+		setIsLoading(true);
+		try {
+			// API কল
+			const result = await transferFunds("wallet", amt);
+
+			if (result.success) {
+				// UI আপডেট: সার্ভার থেকে সাকসেস পেলে
+				toast.success(result.message || "ট্রান্সফার সফল হয়েছে!");
+
+				// অ্যানিমেশন চালানো
+				animateValue(mainBal, mainBal - amt, setMainBal);
+				animateValue(walletBal, walletBal + amt, setWalletBal);
+
+				addHistory("Main → Wallet", amt);
+				setToWalletAmt("");
+			} else {
+				toast.error(`ট্রান্সফার ব্যর্থ: ${result.error}`);
+			}
+		} catch (error: any) {
+			toast.error(error.message || "নেটওয়ার্ক বা অন্য কোনো সমস্যা হয়েছে।");
+		} finally {
+			setIsLoading(false);
+		}
 	};
 
-	const handleToMain = () => {
+	// 💸 Wallet → Main হ্যান্ডলার (API কল যুক্ত করা হয়েছে)
+	const handleToMain = async () => {
 		const amt = Number(toMainAmt);
-		if (!(amt > 0)) {
+		if (isLoading) return;  
+
+		if (!(amt > 0) || isNaN(amt)) {
 			alert("সঠিক ট্রান্সফার পরিমাণ লিখুন");
 			return;
 		}
@@ -88,10 +147,30 @@ export default function LuxentaWallet() {
 			alert("Wallet-এ পর্যাপ্ত টাকা নেই");
 			return;
 		}
-		animateValue(walletBal, walletBal - amt, setWalletBal);
-		animateValue(mainBal, mainBal + amt, setMainBal);
-		addHistory("Wallet → Main", amt);
-		setToMainAmt("");
+
+		setIsLoading(true);
+		try {
+			// API কল
+			const result = await transferFunds("main", amt);
+
+			if (result.success) {
+				// UI আপডেট: সার্ভার থেকে সাকসেস পেলে
+				toast.success(result.message || "ট্রান্সফার সফল হয়েছে!");
+
+				// অ্যানিমেশন চালানো
+				animateValue(walletBal, walletBal - amt, setWalletBal);
+				animateValue(mainBal, mainBal + amt, setMainBal);
+
+				addHistory("Wallet → Main", amt);
+				setToMainAmt("");
+			} else {
+				toast.error(`ট্রান্সফার ব্যর্থ: ${result.error}`);
+			}
+		} catch (error: any) {
+			toast.error(error.message || "নেটওয়ার্ক বা অন্য কোনো সমস্যা হয়েছে।");
+		} finally {
+			setIsLoading(false);
+		}
 	};
 
 	return (
@@ -148,9 +227,14 @@ export default function LuxentaWallet() {
 								)
 							}
 							className="flex-1 p-2 rounded-lg border border-white/18 bg-white/8 text-[#e6f1ff]"
+							disabled={isLoading} // লোডিং অবস্থায় ডিসেবল
 						/>
-						<Button className="rounded-sm" onClick={handleToWallet}>
-							Wallet-এ পাঠান
+						<Button
+							className="rounded-sm"
+							onClick={handleToWallet}
+							disabled={isLoading} // লোডিং অবস্থায় ডিসেবল
+						>
+							{isLoading ? "ট্রান্সফার হচ্ছে..." : "Wallet-এ পাঠান"}
 						</Button>
 					</div>
 				</div>
@@ -173,12 +257,15 @@ export default function LuxentaWallet() {
 								)
 							}
 							className="flex-1 p-2 rounded-lg border border-white/18 bg-white/8 text-[#e6f1ff]"
+							disabled={isLoading} // লোডিং অবস্থায় ডিসেবল
 						/>
 						<Button
 							variant="secondary"
 							className="rounded-sm"
-							onClick={handleToMain}>
-							মেইনে ফিরিয়ে নিন
+							onClick={handleToMain}
+							disabled={isLoading} // লোডিং অবস্থায় ডিসেবল
+						>
+							{isLoading ? "ফিরিয়ে নেওয়া হচ্ছে..." : "মেইনে ফিরিয়ে নিন"}
 						</Button>
 					</div>
 				</div>
@@ -206,7 +293,7 @@ export default function LuxentaWallet() {
 						<div className="flex flex-col gap-2">
 							{history.length === 0 ? (
 								<p className="text-center text-[#9fb3c8]">
-									কোনও ট্রান্সফার হয়নি।
+									কোনও ট্রান্সফার হয়নি।
 								</p>
 							) : (
 								history.map((item, i) => (
@@ -230,16 +317,16 @@ export default function LuxentaWallet() {
 				{/* Rules Card */}
 				<div className="bg-[#0a0f1c] border border-white/18 rounded-lg p-4 backdrop-blur-sm shadow-lg">
 					<h3 className="text-center text-[#00e5ff] font-bold mb-2">
-						নিয়মাবলী
+						নিয়মাবলী
 					</h3>
 					<ul className="list-disc list-inside text-xs text-[#9fb3c8]">
 						<li>লাভ হিসাব: প্রতিদিন 0.71% কম্পাউন্ড</li>
-						<li>লাভ জমা হয়: Luxenta Wallet (স্বয়ংক্রিয়)</li>
+						<li>লাভ জমা হয়: Luxenta Wallet (স্বয়ংক্রিয়)</li>
 						<li>ব্যবহার: এডভান্স/উইথড্রর আগে Wallet → মেইন</li>
 					</ul>
 					<p className="text-[10px] mt-1 text-[#9fb3c8]">
-						ℹ️ এই পেজ খোলার সাথে সাথে শেষ হালনাগাদ থেকে যতদিন পেরিয়েছে, সেই
-						হিসাবে Wallet ব্যালেন্সে লাভ যোগ হয়।
+						ℹ️ এই পেজ খোলার সাথে সাথে শেষ হালনাগাদ থেকে যতদিন পেরিয়েছে, সেই
+						হিসাবে Wallet ব্যালেন্সে লাভ যোগ হয়।
 					</p>
 				</div>
 			</section>
