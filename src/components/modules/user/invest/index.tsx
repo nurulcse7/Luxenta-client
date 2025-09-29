@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Wallet, Boxes, Layers } from "lucide-react";
+// Assuming these imports are correct based on your file structure
 import InvestProjectCard from "./investCard";
 import { Button } from "@/components/ui/button";
 import { TProject } from "@/types/project";
@@ -13,6 +14,7 @@ import {
 	unsubscribeEvent,
 } from "@/lib/socketClient";
 
+// --- Ticker Component (Unchanged) ---
 const Ticker = () => {
 	const [tickerText, setTickerText] = useState("");
 
@@ -47,9 +49,15 @@ const Ticker = () => {
 
 export const Invest = () => {
 	const { user } = useUser();
-	const [projects, setProjects] = useState<TProject[]>([]);
+	// Stores all projects (open, closed, draft) fetched from DB or through sockets.
+	const [allProjects, setAllProjects] = useState<TProject[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
+
+	// ✨ Filter the projects to display only those with status 'open'.
+	const displayProjects = useMemo(() => {
+		return allProjects.filter(project => project.status === "open");
+	}, [allProjects]);
 
 	useEffect(() => {
 		const fetchProjects = async () => {
@@ -58,7 +66,8 @@ export const Invest = () => {
 			try {
 				const result = await getProjects();
 				if (result.success) {
-					setProjects(result.data);
+					// Set the entire list of projects
+					setAllProjects(result.data);
 				} else {
 					setError(result.error || "Failed to fetch projects");
 				}
@@ -74,28 +83,25 @@ export const Invest = () => {
 		// ---------------- Socket Setup ----------------
 		getSocket();
 
-		// Subscribe to new project events
 		subscribeEvent("new-project", (project: TProject) => {
-			setProjects(prev => [project, ...prev]);
+			setAllProjects(prev => [project, ...prev]);
 		});
 
-		// Subscribe to update project events
 		subscribeEvent("update-project", (updatedProject: TProject) => {
-			setProjects(prev =>
+			setAllProjects(prev =>
 				prev.map(project =>
 					project.id === updatedProject.id ? updatedProject : project
 				)
 			);
 		});
 
-		// Subscribe to delete project events
 		subscribeEvent("delete-project", (deletedProject: TProject) => {
-			setProjects(prev =>
+			setAllProjects(prev =>
 				prev.filter(project => project.id !== deletedProject.id)
 			);
 		});
 
-		// Cleanup function to prevent memory leaks
+		// Cleanup
 		return () => {
 			unsubscribeEvent("new-project");
 			unsubscribeEvent("update-project");
@@ -118,18 +124,18 @@ export const Invest = () => {
 					<div className="card-block bg-[rgba(255,255,255,0.08)] p-4 rounded-xl border border-[rgba(255,255,255,0.18)]">
 						<div className="text-sm text-gray-300 ">মোট বিনিয়োগ মূল্য</div>
 						<div className="text-4xl font-extrabold leading-tight">
-							৳ {user?.investorInfo.totalInvest}
+							৳ {user?.investorInfo.totalInvest || 0}
 						</div>
 					</div>
 					<div className="card-block bg-[rgba(255,255,255,0.08)] p-4 rounded-xl border border-[rgba(255,255,255,0.18)]">
 						<div className="text-xl font-bold">
-							৳ {user?.investorInfo.totalEarnings}
+							৳ {user?.investorInfo.totalEarnings || 0}
 						</div>
 						<div className="text-sm text-gray-300  mt-1">মোট আয়</div>
 					</div>
 					<div className="card-block bg-[rgba(255,255,255,0.08)] p-4 rounded-xl border border-[rgba(255,255,255,0.18)] col-span-1 sm:col-span-2">
 						<div className="text-xl font-bold">
-							৳ {user?.investorInfo?.todayEarning ?? 0}
+							৳ {user?.investorInfo?.todayEarning || 0}
 						</div>
 						<div className="text-sm text-gray-300 mt-1">আজকের আয়</div>
 					</div>
@@ -160,10 +166,18 @@ export const Invest = () => {
 			</Card>
 			{loading && <p>Loading projects...</p>}
 			{error && <p className="text-red-400 mb-4">❌ {error}</p>}
+
+			{/* Renders only the 'open' projects */}
 			<div className="grid gap-4">
-				{projects.map(project => (
-					<InvestProjectCard key={project.id} project={project} />
-				))}
+				{displayProjects.length > 0
+					? displayProjects.map(project => (
+							<InvestProjectCard key={project.id} project={project} />
+					  ))
+					: !loading && (
+							<p className="text-center text-gray-400 mt-8">
+								এই মুহূর্তে কোনো ওপেন প্রজেক্ট নেই।
+							</p>
+					  )}
 			</div>
 		</div>
 	);
