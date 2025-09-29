@@ -22,7 +22,7 @@ export const setWithdrawMethod = async (payload: any) => {
 		return result;
 	} catch (error: any) {
 		console.error("🚀 ~ set withdraw method ~ error:", error);
-		return { success: false, error: error.message || "Something went wrong" };
+		return { success: false, message: error.message || "Something went wrong" };
 	}
 };
 
@@ -44,7 +44,7 @@ export const getWithdrawMethod = async () => {
 		return result;
 	} catch (error: any) {
 		console.error("🚀 ~   withdraw method ~ error:", error);
-		return { success: false, error: error.message || "Something went wrong" };
+		return { success: false, message: error.message || "Something went wrong" };
 	}
 };
 
@@ -71,6 +71,6 @@ export const setWithdrawPassword = async (payload: {
 		return result;
 	} catch (error: any) {
 		console.error("🚀 ~  set withdraw password  ~ error:", error);
-		return { success: false, error: error.message || "Something went wrong" };
+		return { success: false, message: error.message || "Something went wrong" };
 	}
 };

@@ -12,6 +12,7 @@ import {
 	IGeneralSetting,
 	ISupportSetting,
 	IPaymentSetting,
+	IWithdrawSetting,
 } from "@/types/setting"; // Ensure these types are correctly imported
 import { getSettings } from "@/services/SettingService";
 
@@ -115,6 +116,15 @@ const SettingProvider = ({ children }: { children: ReactNode }) => {
 					);
 				}
 			);
+			// Handle Withdraw Setting updates
+			subscribeEvent(
+				"withdraw-setting-updated",
+				(updatedSetting: IWithdrawSetting) => {
+					setSettings(prev =>
+						prev ? { ...prev, withdraw: updatedSetting } : null
+					);
+				}
+			);
 		};
 
 		// Initial data fetch and socket listener setup
@@ -128,6 +138,7 @@ const SettingProvider = ({ children }: { children: ReactNode }) => {
 			unsubscribeEvent("payment-setting-created");
 			unsubscribeEvent("payment-setting-updated");
 			unsubscribeEvent("payment-setting-deleted");
+			unsubscribeEvent("withdraw-setting-updated");
 		};
 	}, []);
 

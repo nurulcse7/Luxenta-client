@@ -22,6 +22,6 @@ export const getHistory = async (queryParams: Record<string, any> = {}) => {
 		return result;
 	} catch (error: any) {
 		console.error("🚀 ~ getHistory ~ error:", error);
-		return { success: false, error: error.message || "Something went wrong" };
+		return { success: false, message: error.message || "Something went wrong" };
 	}
 };

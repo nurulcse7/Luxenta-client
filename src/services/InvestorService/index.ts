@@ -36,6 +36,6 @@ export const transferFunds = async (
 			message: result.message || "Wallet transfer successful",
 		};
 	} catch (error: any) {
-		return { success: false, error: error.message || "Something went wrong" };
+		return { success: false, message: error.message || "Something went wrong" };
 	}
 };

@@ -34,8 +34,26 @@ export interface ISupportSetting {
 	updatedAt: Date;
 }
 
+// Withdraw Settings
+export interface IWithdrawSetting {
+	id: string;
+	enabled: boolean;
+	minAmount: number;
+	maxAmount: number;
+	dailyLimit: number;
+	feePercentage: number;
+	allowedDays: string[];
+	startTime?: string; // "09:00"
+	endTime?: string; // "18:00"
+	processTime?: string;
+	createdAt: Date;
+	updatedAt: Date;
+}
+
+// Extend ISettings to include withdraw
 export interface ISettings {
 	general: IGeneralSetting;
 	payment: IPaymentSetting[];
 	support: ISupportSetting;
+	withdraw: IWithdrawSetting;
 }

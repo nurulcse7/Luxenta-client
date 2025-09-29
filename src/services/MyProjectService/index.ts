@@ -20,7 +20,7 @@ export const getMyProjects = async () => {
 		return result;
 	} catch (error: any) {
 		console.error("🚀 ~ getMyProjects ~ error:", error);
-		return { success: false, error: error.message || "Something went wrong" };
+		return { success: false, message: error.message || "Something went wrong" };
 	}
 };
 
@@ -42,7 +42,7 @@ export const getMyProject = async (id: string) => {
 		return result;
 	} catch (error: any) {
 		console.error("🚀 ~ getProject ~ error:", error);
-		return { success: false, error: error.message || "Something went wrong" };
+		return { success: false, message: error.message || "Something went wrong" };
 	}
 };
 
@@ -65,6 +65,6 @@ export const buyProject = async (projectId: string) => {
 		return result;
 	} catch (error: any) {
 		console.error("🚀 ~ getProject ~ error:", error);
-		return { success: false, error: error.message || "Something went wrong" };
+		return { success: false, message: error.message || "Something went wrong" };
 	}
 };

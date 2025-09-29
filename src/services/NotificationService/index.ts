@@ -33,7 +33,7 @@ export const getUserNotifications = async (
 		console.error("🚀 ~ getUserNotifications ~ error:", error);
 		return {
 			success: false,
-			error: error.message || "Failed to fetch user notifications",
+			message: error.message || "Failed to fetch user notifications",
 		};
 	}
 };
@@ -67,6 +67,6 @@ export const markNotificationAsRead = async (notificationId: string) => {
 			message: result.message || "Notification marked as read",
 		};
 	} catch (error: any) {
-		return { success: false, error: error.message || "Something went wrong" };
+		return { success: false, message: error.message || "Something went wrong" };
 	}
 };

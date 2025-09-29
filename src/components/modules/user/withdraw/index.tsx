@@ -1,6 +1,10 @@
 "use client";
 
+import { useUser } from "@/context/UserContext";
+import { getWithdrawMethod } from "@/services/WithdrawAccountService";
+import { createWithdrawRequest } from "@/services/WithdrawService";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 interface WithdrawRecord {
 	serialId: string;
@@ -11,16 +15,33 @@ interface WithdrawRecord {
 const DAILY_LIMIT = 8000;
 
 const Withdraw = () => {
+	const { user } = useUser(); // user.investorInfo.withdrawPassword
 	const [userBalance, setUserBalance] = useState(15000);
 	const [amount, setAmount] = useState<number | "">("");
 	const [withdrawableToday, setWithdrawableToday] = useState(0);
 	const [serialCode, setSerialCode] = useState("");
 	const [records, setRecords] = useState<WithdrawRecord[]>([]);
 	const [modalOpen, setModalOpen] = useState(false);
+	const [loading, setLoading] = useState(true);
+	const [withdrawMethodExists, setWithdrawMethodExists] = useState(false);
+
+	const router = useRouter();
+
+	// check withdraw method from API
+	useEffect(() => {
+		(async () => {
+			const res = await getWithdrawMethod();
+			if (res?.success && res?.data) {
+				setWithdrawMethodExists(true);
+			} else {
+				setWithdrawMethodExists(false);
+			}
+			setLoading(false);
+		})();
+	}, []);
 
 	// generate serial
 	useEffect(() => {
-		// Generate unique serialId of 35 digits
 		const code = Array.from({ length: 35 }, () =>
 			Math.floor(Math.random() * 10)
 		).join("");
@@ -32,8 +53,9 @@ const Withdraw = () => {
 		setWithdrawableToday(Math.min(userBalance, DAILY_LIMIT));
 	}, [userBalance]);
 
-	const handleWithdraw = () => {
+	const handleWithdraw = async () => {
 		const amt = Number(amount);
+
 		if (!(amt > 0)) {
 			alert("সঠিক এমাউন্ট লিখুন");
 			return;
@@ -42,7 +64,27 @@ const Withdraw = () => {
 			alert(`আজকে সর্বোচ্চ ৳${withdrawableToday} উত্তোলন করা যাবে`);
 			return;
 		}
+		if (!user?.investorInfo?.withdrawPassword) {
+			alert("❌ প্রথমে একটি Withdraw Password সেট করুন");
+			return;
+		}
+		if (!withdrawMethodExists) {
+			alert("❌ আপনার কোনো Withdraw Account সেট করা নেই");
+			return;
+		}
 
+		// create withdraw API call
+		const res = await createWithdrawRequest({
+			amount: amt,
+			withdrawPassword: user.investorInfo.withdrawPassword,
+		});
+
+		if (!res.success) {
+			alert(res.message || "Withdraw failed");
+			return;
+		}
+
+		// update balance + record
 		setUserBalance(prev => prev - amt);
 		const newRecord: WithdrawRecord = {
 			serialId: serialCode,
@@ -54,6 +96,42 @@ const Withdraw = () => {
 		setSerialCode("");
 		setModalOpen(true);
 	};
+
+	if (loading) {
+		return <div className="p-5 text-center text-[#9fb3c8]">লোড হচ্ছে...</div>;
+	}
+
+	// no password set
+	if (!user?.investorInfo?.withdrawPassword) {
+		return (
+			<div className="flex flex-col items-center justify-center h-[80vh] text-center gap-4">
+				<p className="text-red-400 font-semibold text-lg">
+					❌ আপনার কোনো Withdraw Password সেট করা নেই
+				</p>
+				<button
+					onClick={() => router.push("/set-withdraw-password")}
+					className="px-4 py-2 rounded-lg bg-gradient-to-br from-[#00e5ff] to-[#6a5cff] text-[#051018] font-bold">
+					Set Withdraw Password
+				</button>
+			</div>
+		);
+	}
+
+	// no withdraw method set
+	if (!withdrawMethodExists) {
+		return (
+			<div className="flex flex-col items-center justify-center h-[80vh] text-center gap-4">
+				<p className="text-red-400 font-semibold text-lg">
+					❌ আপনি কোনো Withdraw Method সেট করেননি
+				</p>
+				<button
+					onClick={() => router.push("/set-withdraw-method")}
+					className="px-4 py-2 rounded-lg bg-gradient-to-br from-[#00e5ff] to-[#6a5cff] text-[#051018] font-bold">
+					Set Withdraw Method
+				</button>
+			</div>
+		);
+	}
 
 	return (
 		<main className="max-h-[90vh] flex flex-col gap-3 p-3 text-[#e6f1ff]">

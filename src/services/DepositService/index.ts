@@ -19,7 +19,7 @@ export const createDeposit = async (payload: any) => {
 		return result;
 	} catch (error: any) {
 		console.error("🚀 ~ createDeposit ~ error:", error);
-		return { success: false, error: error.message || "Something went wrong" };
+		return { success: false, message: error.message || "Something went wrong" };
 	}
 };
 
@@ -41,6 +41,6 @@ export const getMyDeposits = async () => {
 		return result;
 	} catch (error: any) {
 		console.error("🚀 ~ getMyDeposits ~ error:", error);
-		return { success: false, error: error.message || "Something went wrong" };
+		return { success: false, message: error.message || "Something went wrong" };
 	}
 };

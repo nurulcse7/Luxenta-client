@@ -22,7 +22,7 @@ export const createCheckIn = async (payload: any) => {
 		return result;
 	} catch (error: any) {
 		console.error("🚀 ~ createCheckIn ~ error:", error);
-		return { success: false, error: error.message || "Something went wrong" };
+		return { success: false, message: error.message || "Something went wrong" };
 	}
 };
 
@@ -41,7 +41,7 @@ export const getMyCheckIns = async () => {
 		return result;
 	} catch (error: any) {
 		console.error("🚀 ~ getMyCheckIns ~ error:", error);
-		return { success: false, error: error.message || "Something went wrong" };
+		return { success: false, message: error.message || "Something went wrong" };
 	}
 };
 
@@ -63,6 +63,6 @@ export const getLastCheckIn = async () => {
 		return result;
 	} catch (error: any) {
 		console.error("🚀 ~ getLastCheckIn ~ error:", error);
-		return { success: false, error: error.message || "Something went wrong" };
+		return { success: false, message: error.message || "Something went wrong" };
 	}
 };

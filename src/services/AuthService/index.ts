@@ -22,7 +22,7 @@ export const registerUser = async (userData: FieldValues) => {
 		return result;
 	} catch (error: any) {
 		console.error("🚀 ~ registerUser ~ error:", error);
-		return { success: false, error: error.message || "Something went wrong" };
+		return { success: false, message: error.message || "Something went wrong" };
 	}
 };
 
