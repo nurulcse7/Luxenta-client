@@ -13,7 +13,6 @@ import {
 	subscribeEvent,
 	unsubscribeEvent,
 } from "@/lib/socketClient";
-import { setuid } from "process";
 
 interface IUserProviderValues {
 	user: IUser | null;
@@ -41,7 +40,6 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
 		getSocket();
 
 		subscribeEvent("user-data-update", updateData => {
-
 			setUser(prevUser => {
 				if (!prevUser) return null;
 

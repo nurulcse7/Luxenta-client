@@ -1,4 +1,3 @@
-type Investor = {};
 export type TProject = {
 	id: string;
 	title: string;
@@ -10,5 +9,4 @@ export type TProject = {
 	dailyIncome: number;
 	progress: number;
 	status: string;
-	investors: Investor[];
 };

@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { createDeposit } from "@/services/DepositService";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import Image from "next/image";
 
 type ChannelKey = string;
 type MethodKey = "bkash" | "nagad" | "binance";
@@ -140,9 +141,11 @@ const DepositStep2 = ({
 					<div>পেমেন্ট তথ্য:</div>
 					{selectedMethod ? (
 						<div className="flex items-center gap-2 font-mono">
-							<img
-								src={methods.find(m => m.id === selectedMethod)?.img}
-								alt={methods.find(m => m.id === selectedMethod)?.label}
+							<Image
+								src={methods.find(m => m.id === selectedMethod)?.img as string}
+								alt={
+									methods.find(m => m.id === selectedMethod)?.label as string
+								}
 								className="w-[100px] h-[30px] object-contain rounded"
 							/>
 							<span>

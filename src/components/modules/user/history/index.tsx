@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -19,16 +18,12 @@ import {
 	PlusCircle,
 	CheckCircle,
 	Clock,
-	// নতুন আইকন ইম্পোর্ট করা হলো: Shuffle (ট্রান্সফারের জন্য)
 	Shuffle,
 } from "lucide-react";
-import { toast } from "sonner";
 import { getHistory } from "@/services/HistoryService";
 import { IHistory } from "@/types/history";
 import { cn } from "@/lib/utils";
 
-// ⚠️ Note: আপনার IHistory type-এ যেন নতুন enum মানগুলো (MAIN_TO_LUXENTA, LUXENTA_TO_MAIN) থাকে।
-// যদি না থাকে, তবে TS error দেবে।
 
 const History = () => {
 	const [historyData, setHistoryData] = useState<IHistory[]>([]);
@@ -44,7 +39,6 @@ const History = () => {
 	const [loading, setLoading] = useState(false);
 
 	const panelRef = useRef<HTMLDivElement>(null);
-	const router = useRouter();
 
 	const fetchHistory = async (
 		pageNumber: number = 1,

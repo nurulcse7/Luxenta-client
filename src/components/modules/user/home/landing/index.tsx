@@ -8,6 +8,8 @@ import { useState } from "react";
 import InviteModal from "../inviteModal";
 import RedeemModal from "../redeemModal";
 import Marquee from "react-fast-marquee";
+import Image from "next/image";
+import Real from "../../../../../../public/assets/images/Real.jpeg";
 
 export default function LandingPage() {
 	const router = useRouter();
@@ -71,9 +73,11 @@ export default function LandingPage() {
 				</header>
 				{/* Main Image */}
 				<div className="flex justify-center px-6 mb-6">
-					<img
-						src="/assets/images/Real.jpeg"
+					<Image
+						src={Real}
 						alt="AI Robot"
+						width={600}
+						height={200}
 						className="rounded-xl w-full max-w-[600px] h-[200px] object-cover"
 					/>
 				</div>
@@ -81,9 +85,11 @@ export default function LandingPage() {
 				<div className="overflow-hidden relative mb-8 px-6">
 					<Marquee gradient={false} speed={50}>
 						{images.map((src, i) => (
-							<img
+							<Image
 								key={i}
 								src={src}
+								width={140}
+								height={90}
 								className="w-[140px] h-[90px] mr-2 rounded-md object-cover flex-shrink-0"
 								alt={`slide-${i}`}
 							/>

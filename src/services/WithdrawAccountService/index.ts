@@ -3,7 +3,11 @@
 import { getValidToken } from "@/lib/verifyToken";
 
 // set withdraw  method
-export const setWithdrawMethod = async (payload: any) => {
+export const setWithdrawMethod = async (payload: {
+	method: string;
+	account: string;
+	accountPassword: string;
+}) => {
 	const accessToken = await getValidToken();
 	try {
 		const res = await fetch(

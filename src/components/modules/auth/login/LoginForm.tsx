@@ -43,6 +43,7 @@ export default function LoginForm() {
 				setTimeout(() => router.push("/"), 100);
 			}
 		} catch (err) {
+			console.log("🚀 ~ onSubmit ~ err:", err)
 			setServerMessage({
 				type: "error",
 				text: "❌ নেটওয়ার্ক সমস্যা হয়েছে। আবার চেষ্টা করুন।",

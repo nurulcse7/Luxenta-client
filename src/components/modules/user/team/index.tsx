@@ -1,5 +1,7 @@
 "use client";
 import { useUser } from "@/context/UserContext";
+import Image from "next/image";
+import Real from "../../../../../public/assets/images/Real.jpeg";
 
 const Team = () => {
 	const { user } = useUser();
@@ -10,9 +12,9 @@ const Team = () => {
 			{/* Header */}
 			<header className="flex justify-between items-center p-2">
 				<div className="flex items-center gap-3">
-					<img
-						src={user?.avatar || "https://via.placeholder.com/60"}
-						alt={user?.name}
+					<Image
+						src={Real}
+						alt={user?.name as string}
 						width={48}
 						height={48}
 						className="w-12 h-12 rounded-full border-2 border-[#00e5ff]"

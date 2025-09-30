@@ -7,6 +7,7 @@ export const getUserNotifications = async (
 ) => {
 	const accessToken = await getValidToken();
 	const queryString = new URLSearchParams(queryParams).toString();
+	console.log("🚀 ~ getUserNotifications ~ queryString:", queryString)
 
 	const url = `${process.env.NEXT_PUBLIC_BASE_API}/notifications`;
 

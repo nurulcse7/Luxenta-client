@@ -16,7 +16,6 @@ export interface IUser {
 	is_deleted: boolean;
 	investorInfo: IInvestor;
 	role: "investor" | "agent";
-	avatar?: string;
 	iat?: number;
 	exp?: number;
 }

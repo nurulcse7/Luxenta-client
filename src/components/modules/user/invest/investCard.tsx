@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { TProject } from "@/types/project";
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect } from "react";
 
@@ -46,8 +47,8 @@ const InvestProjectCard = ({ project }: { project: TProject }) => {
 
 	return (
 		<div className="grid grid-cols-[88px_1fr] gap-4 p-3 rounded-2xl border border-[rgba(255,255,255,0.18)] bg-[rgba(255,255,255,0.08)]">
-			<img
-				src={project.image}
+			<Image
+				src={project.image as string}
 				alt="project"
 				width={88}
 				height={88}

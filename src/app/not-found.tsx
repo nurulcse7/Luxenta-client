@@ -10,8 +10,8 @@ export default function Custom404() {
 				Page Not Found
 			</h2>
 			<p className="text-gray-500 text-lg md:text-xl mb-8 text-center max-w-md">
-				Oops! Looks like the page you are looking for doesn't exist. It might
-				have been moved or deleted.
+				Oops! Looks like the page you are looking for doesn&apos;t exist. It
+				might have been moved or deleted.
 			</p>
 			<Link href="/">
 				<button className="px-8 py-3 bg-indigo-600 text-white font-medium rounded-lg shadow-lg hover:bg-indigo-700 transition-colors duration-300">

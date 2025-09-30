@@ -4,6 +4,7 @@ import { TProject } from "@/types/project";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
+import Image from "next/image";
 
 // স্ট্যাটাস অনুযায়ী ক্লাস এবং টেক্সট নির্ধারণের ফাংশন
 const getStatusClasses = (status: string) => {
@@ -83,8 +84,8 @@ export default function ProjectDetail({ projectId }: { projectId: string }) {
 			</div>
 
 			<div className="mb-3">
-				<img
-					src={project.image}
+				<Image
+					src={project.image as string}
 					alt="Project Banner"
 					className="w-full h-52 object-cover rounded-xl shadow-lg border border-[rgba(255,255,255,0.18)]"
 				/>

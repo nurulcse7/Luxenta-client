@@ -3,14 +3,12 @@
 import { ReactNode } from "react";
 import { useSetting } from "@/context/SettingContext";
 import Maintenance from "./maintenance";
-import { useUser } from "@/context/UserContext";
 
 interface IMaintenanceGuard {
 	children: ReactNode;
 }
 
 const MaintenanceGuard = ({ children }: IMaintenanceGuard) => {
-	const { user } = useUser();
 	const { settings, isLoading } = useSetting();
 
 	if (isLoading)

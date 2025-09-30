@@ -5,12 +5,7 @@ import DepositStep1 from "@/components/modules/user/deposit/step1";
 import DepositStep2 from "@/components/modules/user/deposit/step2";
 
 // Allowed channel types
-export type ChannelKey =
-	| "server1"
-	| "server2"
-	| "server3"
-	| "server4"
-	| "server5";
+export type ChannelKey = string;
 
 const DepositPage = () => {
 	const [step, setStep] = useState<1 | 2>(1);
