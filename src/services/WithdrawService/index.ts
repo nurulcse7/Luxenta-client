@@ -4,12 +4,13 @@ import { getValidToken } from "@/lib/verifyToken";
 
 // create withdraw request (with password)
 export const createWithdrawRequest = async (payload: {
+	serialId: string;
 	amount: number;
 	withdrawPassword: string;
 }) => {
 	const accessToken = await getValidToken();
 	try {
-		const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/withdraw`, {
+		const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/withdraw/`, {
 			method: "POST",
 			headers: {
 				Authorization: `${accessToken}`,
@@ -26,15 +27,18 @@ export const createWithdrawRequest = async (payload: {
 };
 
 // get all withdraw requests (user side)
-export const getWithdraws = async () => {
+export const getMyWithdraws = async () => {
 	const accessToken = await getValidToken();
 	try {
-		const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/withdraw`, {
-			method: "GET",
-			headers: {
-				Authorization: `${accessToken}`,
-			},
-		});
+		const res = await fetch(
+			`${process.env.NEXT_PUBLIC_BASE_API}/withdraw/my-withdraws`,
+			{
+				method: "GET",
+				headers: {
+					Authorization: `${accessToken}`,
+				},
+			}
+		);
 
 		const result = await res.json();
 		return result;

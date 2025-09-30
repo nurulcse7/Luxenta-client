@@ -37,11 +37,11 @@ export interface ISupportSetting {
 // Withdraw Settings
 export interface IWithdrawSetting {
 	id: string;
-	enabled: boolean;
+	isEnabled: boolean;
 	minAmount: number;
 	maxAmount: number;
 	dailyLimit: number;
-	feePercentage: number;
+	withdrawFee: number;
 	allowedDays: string[];
 	startTime?: string; // "09:00"
 	endTime?: string; // "18:00"
