@@ -13,7 +13,7 @@ import { toast } from "sonner";
 
 interface WithdrawRecord {
 	serialId: string;
-	requestedAt: string;
+	createdAt: string;
 	amount: number;
 }
 
@@ -86,7 +86,7 @@ const Withdraw = () => {
 				const todayTotal = res.data
 					.filter(
 						(w: WithdrawRecord) =>
-							new Date(w.requestedAt).toDateString() === today
+							new Date(w.createdAt).toDateString() === today
 					)
 					.reduce((sum: number, w: WithdrawRecord) => sum + w.amount, 0);
 
@@ -167,7 +167,7 @@ const Withdraw = () => {
 		setUserBalance(prev => prev - amt);
 		const newRecord: WithdrawRecord = {
 			serialId: serialCode,
-			requestedAt: new Date().toISOString(),
+			createdAt: new Date().toISOString(),
 			amount: amt,
 		};
 		setRecords(prev => [newRecord, ...prev]);
@@ -342,7 +342,7 @@ const Withdraw = () => {
 								কোনো রেকর্ড পাওয়া যায়নি
 							</p>
 						) : (
-							<ul className="space-y-3 max-h-[700px] overflow-y-auto">
+							<ul className="space-y-3 ">
 								{records.map((r, idx) => (
 									<li
 										key={idx}
@@ -350,7 +350,7 @@ const Withdraw = () => {
 										<div>
 											<div className="text-sm font-semibold">৳{r.amount}</div>
 											<div className="text-xs text-[#9fb3c8]">
-												{new Date(r.requestedAt).toLocaleString()}
+												{new Date(r.createdAt).toLocaleString()}
 											</div>
 										</div>
 										<span className="text-xs font-mono text-[#6a5cff]">
