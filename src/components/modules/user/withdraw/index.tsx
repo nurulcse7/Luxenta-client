@@ -176,6 +176,7 @@ const Withdraw = () => {
 		setPasswordModal(false);
 		setWithdrawPassword("");
 		toast.success(res.message || "✅ Withdraw request submitted!");
+		router.push(`/withdraw/success?amount=${amt}`);
 	};
 
 	// ---------------- UI ----------------

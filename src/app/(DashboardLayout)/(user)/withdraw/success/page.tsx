@@ -1,8 +1,11 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function UserThankYou() {
+export default function WithdrawThankYou() {
+	const searchParams = useSearchParams();
+	const amount = searchParams.get("amount") || "0.00";
 	const [counter, setCounter] = useState(10);
 
 	useEffect(() => {
@@ -24,8 +27,8 @@ export default function UserThankYou() {
 	};
 
 	return (
-		<main className="grid place-items-center min-h-screen bg-[#0f1a0f] text-[#e6ffe6] relative overflow-hidden">
-			{/* falling 🎉 */}
+		<main className="grid place-items-center min-h-screen bg-[#1a0f0f] text-[#ffe6e6] relative overflow-hidden">
+			{/* falling coins */}
 			<div className="absolute inset-0 pointer-events-none select-none overflow-hidden">
 				{Array.from({ length: 25 }).map((_, i) => {
 					const left = Math.random() * 100;
@@ -44,26 +47,24 @@ export default function UserThankYou() {
 								animationDuration: `${duration}s`,
 								animationDelay: `${delay}s`,
 							}}>
-							🎉
+							🪙
 						</div>
 					);
 				})}
 			</div>
 
 			<div className="w-[90%] max-w-lg bg-white/10 rounded-[18px] p-8 text-center shadow-xl backdrop-blur-lg animate-fadeIn relative z-10">
-				<h1 className="text-2xl font-bold mb-4 text-[#4eff8d]">🎊 স্বাগতম!</h1>
-				<div className="text-4xl font-bold my-4 text-[#00e676]">
-					নতুন ইউজার তৈরি হয়েছে
-				</div>
-				<p className="mb-2">আপনার অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে।</p>
-				<p className="mb-2">এখনই লগইন করে এক্সপ্লোর শুরু করুন।</p>
-				<div className="text-xl font-bold my-4 text-[#00e676] animate-pulse">
+				<h1 className="text-2xl font-bold mb-4 text-[#ff6b6b]">✅ ধন্যবাদ!</h1>
+				<div className="text-4xl font-bold my-4 text-[#ffd93d]">{amount} ৳</div>
+				<p className="mb-2">আপনার উইথড্র রিকোয়েস্ট সফলভাবে সাবমিট হয়েছে।</p>
+				<p className="mb-2">সিস্টেম এটি শীঘ্রই প্রসেস করবে।</p>
+				<div className="text-xl font-bold my-4 text-[#ffd93d] animate-pulse">
 					{counter}
 				</div>
 				<button
 					onClick={handleGoto}
-					className="px-5 py-3 rounded-lg font-semibold text-sm bg-gradient-to-br from-[#4eff8d] to-[#00e676] text-[#0f1a0f] hover:scale-105 transition-transform shadow-md">
-					হোমে যান
+					className="px-5 py-3 rounded-lg font-semibold text-sm bg-gradient-to-br from-[#ff6b6b] to-[#ffcc70] text-[#1a0f0f] hover:scale-105 transition-transform shadow-md">
+					অর্ডার বন্ধ করুন
 				</button>
 			</div>
 

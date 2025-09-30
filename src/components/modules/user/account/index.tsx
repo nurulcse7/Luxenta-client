@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import { useUser } from "@/context/UserContext";
 import { logout } from "@/services/AuthService";
 
-const Dashboard: React.FC = () => {
-	const { user } = useUser();
+const MyAccount = () => {
+	const { user, isLoading } = useUser();
 	const router = useRouter();
 
 	if (!user) return null;
@@ -20,6 +20,7 @@ const Dashboard: React.FC = () => {
 			console.error("Logout failed:", err);
 		}
 	};
+	if (isLoading) return <h1>Account Info loading</h1>;
 	return (
 		<div className="min-h-screen    font-sans p-3 ">
 			{/* Header */}
@@ -274,4 +275,4 @@ const BellIcon = () => (
 	</svg>
 );
 
-export default Dashboard;
+export default MyAccount;

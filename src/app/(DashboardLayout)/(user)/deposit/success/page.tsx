@@ -20,19 +20,6 @@ export default function DepositThankYou() {
 			});
 		}, 1000);
 
-		// 💵 falling money animation
-		const NUM_MONEY = 30;
-		for (let i = 0; i < NUM_MONEY; i++) {
-			const money = document.createElement("div");
-			money.textContent = "💵";
-			money.className = "money absolute pointer-events-none select-none";
-			money.style.left = Math.random() * 100 + "vw";
-			money.style.top = "-50px";
-			money.style.fontSize = Math.random() * 20 + 20 + "px";
-			money.style.animation = `fall ${3 + Math.random() * 3}s linear infinite`;
-			document.body.appendChild(money);
-		}
-
 		return () => clearInterval(timer);
 	}, []);
 
@@ -42,6 +29,32 @@ export default function DepositThankYou() {
 
 	return (
 		<main className="grid place-items-center min-h-screen bg-[#0a0f1c] text-[#e6f1ff] relative overflow-hidden">
+			{/* 💵 container */}
+			<div className="absolute inset-0 pointer-events-none select-none overflow-hidden">
+				{Array.from({ length: 25 }).map((_, i) => {
+					const left = Math.random() * 100; // vw
+					const size = 20 + Math.random() * 20;
+					const duration = 3 + Math.random() * 3;
+					const delay = Math.random() * 5;
+
+					return (
+						<div
+							key={i}
+							className="absolute animate-fall"
+							style={{
+								left: `${left}vw`,
+								top: "-50px",
+								fontSize: `${size}px`,
+								animationDuration: `${duration}s`,
+								animationDelay: `${delay}s`,
+							}}>
+							💵
+						</div>
+					);
+				})}
+			</div>
+
+			{/* Content */}
 			<div className="w-[90%] max-w-lg bg-white/10 rounded-[18px] p-8 text-center shadow-xl backdrop-blur-lg animate-fadeIn relative z-10">
 				<h1 className="text-2xl font-bold mb-4 text-[#3ae6a4]">✅ ধন্যবাদ!</h1>
 				<div className="text-4xl font-bold my-4 text-[#00e5ff]">{amount} ৳</div>
@@ -57,7 +70,7 @@ export default function DepositThankYou() {
 				</button>
 			</div>
 
-			{/* extra CSS */}
+			{/* CSS */}
 			<style jsx>{`
 				@keyframes fall {
 					0% {
@@ -68,9 +81,14 @@ export default function DepositThankYou() {
 						opacity: 1;
 					}
 					100% {
-						transform: translateY(100vh) rotate(360deg) scale(1);
+						transform: translateY(110vh) rotate(360deg) scale(1);
 						opacity: 0;
 					}
+				}
+				.animate-fall {
+					animation-name: fall;
+					animation-timing-function: linear;
+					animation-iteration-count: infinite;
 				}
 				@keyframes fadeIn {
 					0% {
