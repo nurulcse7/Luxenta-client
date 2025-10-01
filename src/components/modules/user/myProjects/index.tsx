@@ -1,39 +1,34 @@
 "use client";
+
+import { getMyProjects } from "@/services/MyProjectService";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-
-const projectsData = [
-	{
-		title: "Quant Signals — Starter",
-		price: 8000,
-		daily: 80,
-		lock: 30,
-		progress: 62,
-		status: "active",
-		img: "/assets/images/Real.jpeg",
-	},
-	{
-		title: "Quantum Finance — Edge",
-		price: 17000,
-		daily: 220,
-		lock: 65,
-		progress: 100,
-		status: "complete",
-		img: "/assets/images/Real.jpeg",
-	},
-];
+import { toast } from "sonner";
 
 export default function MyProjects() {
-	const [projects, setProjects] = useState<any>([]);
+	const [projects, setProjects] = useState<any[]>([]);
+	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
-		const activeProjects = projectsData.filter(p => p.status === "active");
-		const completeProjects = projectsData.filter(p => p.status === "complete");
-		setProjects([...activeProjects, ...completeProjects]);
+		const fetchMyProjects = async () => {
+			const result = await getMyProjects();
+
+			if (result.success) {
+				setProjects(result.data);
+			} else {
+				toast.error(result.message);
+			}
+			setLoading(false);
+		};
+		fetchMyProjects();
 	}, []);
 
+	if (loading) {
+		return <div className="text-center py-10">লোড হচ্ছে...</div>;
+	}
+
 	return (
-		<div className="max-w-3xl mx-auto p-4  min-h-screen">
+		<div className="max-w-3xl mx-auto p-4 min-h-screen">
 			<h1 className="text-center text-2xl font-extrabold my-4">
 				আমার প্রজেক্ট
 			</h1>
@@ -42,43 +37,51 @@ export default function MyProjects() {
 					<div
 						key={idx}
 						className="relative grid grid-cols-[88px_1fr] gap-3 p-3 rounded-lg border border-[rgba(255,255,255,0.18)] bg-[rgba(255,255,255,0.06)] backdrop-blur-md shadow-[0_6px_18px_rgba(0,0,0,0.35)]">
-						<Image
-							src={p.img}
-							alt={p.title}
-							width={88}
-							height={88}
-							className="w-[88px] h-[88px] object-cover rounded-lg"
-						/>
+						{p.project.image && (
+							<Image
+								src={p.project.image}
+								alt={p.project.title}
+								width={88}
+								height={88}
+								className="w-[88px] h-[88px] object-cover rounded-lg"
+							/>
+						)}
 						<div className="flex flex-col gap-2">
-							<h3 className="font-extrabold text-base">{p.title}</h3>
+							<h3 className="font-extrabold text-base">{p.project.title}</h3>
+
 							<div className="grid grid-cols-[auto_1fr_auto] gap-x-3 gap-y-1 mt-1">
 								<div className="text-[0.85rem] text-[#9fb3c8]">
 									প্রজেক্ট মূল্য
 								</div>
 								<div></div>
-								<div className="font-bold text-[0.95rem]">
-									৳ {p.price.toLocaleString()}
-								</div>
+								<div className="font-bold text-[0.95rem]">৳ {p.amount}</div>
+
 								<div className="text-[0.85rem] text-[#9fb3c8]">
 									প্রতিদিনের আয়
 								</div>
 								<div></div>
-								<div className="font-bold text-[0.95rem]">৳ {p.daily}</div>
+								<div className="font-bold text-[0.95rem]">
+									৳ {p.project.dailyIncome}
+								</div>
+
 								<div className="text-[0.85rem] text-[#9fb3c8]">
 									লক-আপ পিরিয়ড
 								</div>
 								<div></div>
-								<div className="font-bold text-[0.95rem]">{p.lock} দিন</div>
+								<div className="font-bold text-[0.95rem]">
+									{p.project.duration} দিন
+								</div>
 							</div>
+
 							{p.status === "active" && (
 								<div className="mt-2">
 									<div className="w-full h-2 rounded-full overflow-hidden border border-[rgba(255,255,255,0.18)] bg-[rgba(255,255,255,0.08)]">
 										<span
 											className="block h-full bg-gradient-to-r from-[#00e5ff] to-[#6a5cff] shadow-inner"
-											style={{ width: `${p.progress}%` }}></span>
+											style={{ width: `${p.project.progress}%` }}></span>
 									</div>
 									<div className="text-[12px] text-[#9fb3c8] mt-1">
-										মানুষ এই প্রজেক্টটি কিনছে… {p.progress}% পূর্ণ
+										মানুষ এই প্রজেক্টটি কিনছে… {p.project.progress}% পূর্ণ
 									</div>
 								</div>
 							)}

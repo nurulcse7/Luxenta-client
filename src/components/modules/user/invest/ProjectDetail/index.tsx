@@ -1,10 +1,12 @@
 "use client";
-import { getProject } from "@/services/ProjectService";
+import { buyProject, getProject } from "@/services/ProjectService";
 import { TProject } from "@/types/project";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 // স্ট্যাটাস অনুযায়ী ক্লাস এবং টেক্সট নির্ধারণের ফাংশন
 const getStatusClasses = (status: string) => {
@@ -62,6 +64,14 @@ export default function ProjectDetail({ projectId }: { projectId: string }) {
 
 	const statusData = getStatusClasses(project.status || "default");
 
+	const handleBuy = async () => {
+		const res = await buyProject(project.id);
+		if (res.success) {
+			toast.success("✅ সফলভাবে ক্রয় সম্পন্ন হয়েছে!");
+		} else {
+			toast.error("❌ " + res.message);
+		}
+	};
 	return (
 		<div className="max-w-3xl mx-auto p-3 bg-gradient-radial from-[#101a33] via-[#0a0f1c] to-[#060a14] min-h-screen text-[#e6f1ff] font-sans">
 			{/* Back Button এবং Title সেকশন */}
@@ -82,14 +92,17 @@ export default function ProjectDetail({ projectId }: { projectId: string }) {
 				className={`text-center mb-4 text-sm font-semibold px-4 py-2 rounded-xl border ${statusData.classes}`}>
 				স্ট্যাটাস: {statusData.text}
 			</div>
-
-			<div className="mb-3">
-				<Image
-					src={project.image as string}
-					alt="Project Banner"
-					className="w-full h-52 object-cover rounded-xl shadow-lg border border-[rgba(255,255,255,0.18)]"
-				/>
-			</div>
+			{project.image && (
+				<div className="mb-3">
+					<Image
+						src={project.image}
+						width={100}
+						height={100}
+						alt="Project Banner"
+						className="w-full h-52 object-cover rounded-xl shadow-lg border border-[rgba(255,255,255,0.18)]"
+					/>
+				</div>
+			)}
 
 			<div className="grid grid-cols-3 gap-3 mb-3">
 				<div className="bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.18)] rounded-lg backdrop-blur-md shadow-[0_6px_18px_rgba(0,0,0,0.35)] p-3 text-center text-sm">
@@ -131,9 +144,10 @@ export default function ProjectDetail({ projectId }: { projectId: string }) {
 				<p>{project.description}</p>
 			</div>
 
-			<button className="w-full text-center text-black font-bold text-base px-4 py-3 rounded-xl bg-gradient-to-br from-[#00e5ff] to-[#6a5cff] shadow-[0_8px_24px_rgba(0,229,255,.25)] active:scale-95 transition-transform duration-150">
+			<Button onClick={handleBuy} className="w-full">
+				{" "}
 				ক্রয় করুন
-			</button>
+			</Button>
 		</div>
 	);
 }

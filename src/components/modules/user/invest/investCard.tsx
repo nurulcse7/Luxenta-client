@@ -1,8 +1,10 @@
 import { Button } from "@/components/ui/button";
+import { buyProject } from "@/services/ProjectService";
 import { TProject } from "@/types/project";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect } from "react";
+import { toast } from "sonner";
 
 // স্ট্যাটাস অনুযায়ী রঙ এবং টেক্সট নির্ধারণের ফাংশন
 const getStatusClasses = (status: string) => {
@@ -31,7 +33,6 @@ const getStatusClasses = (status: string) => {
 };
 
 const InvestProjectCard = ({ project }: { project: TProject }) => {
-	// স্ট্যাটাস ক্লাসের জন্য ডেটা ডিস্ট্রাকচার করা হলো
 	const statusData = getStatusClasses(project.status || "default");
 
 	useEffect(() => {
@@ -45,6 +46,14 @@ const InvestProjectCard = ({ project }: { project: TProject }) => {
 		}
 	}, [project.progress, project.title]);
 
+	const handleBuy = async (id: string) => {
+		const res = await buyProject(id);
+		if (res.success) {
+			toast.success(res.message);
+		} else {
+			toast.error("❌ " + res.message);
+		}
+	};
 	return (
 		<div className="grid grid-cols-[88px_1fr] gap-4 p-3 rounded-2xl border border-[rgba(255,255,255,0.18)] bg-[rgba(255,255,255,0.08)]">
 			<Image
@@ -90,9 +99,7 @@ const InvestProjectCard = ({ project }: { project: TProject }) => {
 				</div>
 				<div className="flex gap-2 mt-2">
 					{/* আপনি Invest কম্পোনেন্টে ফিল্টার করেছেন, তাই এখানে শুধু কেনার অপশন থাকবে */}
-					<Button onClick={() => alert(`ক্রয় করা হয়েছে: ${project.title}`)}>
-						ক্রয় করুন
-					</Button>
+					<Button onClick={() => handleBuy(project.id)}>ক্রয় করুন</Button>
 					<Link href={`/invest/project-detail/${project.id}`}>
 						<Button variant="outline">বিস্তারিত</Button>
 					</Link>

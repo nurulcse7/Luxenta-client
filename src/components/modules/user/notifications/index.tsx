@@ -105,7 +105,7 @@ const Notifications = () => {
 					search: search,
 				};
 
-				const result = await getUserNotifications(queryParams); // ✅ QueryParams পাস করা হয়েছে
+				const result = await getUserNotifications(queryParams);
 
 				if (result.success && Array.isArray(result.data)) {
 					setNotifications(result.data);
@@ -151,7 +151,6 @@ const Notifications = () => {
 
 		// 🔹 Subscribe to new notification events
 		subscribeEvent("new-notification", (newNotification: INotification) => {
-			// ✅ নতুন নোটিফিকেশন আসলে, তালিকার শীর্ষে যুক্ত করুন
 			setNotifications(prev => [newNotification, ...prev]);
 		});
 

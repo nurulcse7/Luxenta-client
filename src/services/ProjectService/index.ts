@@ -45,3 +45,25 @@ export const getProject = async (id: string) => {
 		return { success: false, message: error.message || "Something went wrong" };
 	}
 };
+
+// ---------------- BUY PROJECT ----------------
+export const buyProject = async (id: string) => {
+	const accessToken = await getValidToken();
+	try {
+		const res = await fetch(
+			`${process.env.NEXT_PUBLIC_BASE_API}/projects/${id}/buy`,
+			{
+				method: "POST",
+				headers: {
+					Authorization: `${accessToken}`,
+				},
+			}
+		);
+
+		const result = await res.json();
+		return result;
+	} catch (error: any) {
+		console.error("🚀 ~ buyProject ~ error:", error);
+		return { success: false, message: error.message || "Something went wrong" };
+	}
+};
