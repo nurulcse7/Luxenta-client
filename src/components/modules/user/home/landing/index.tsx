@@ -10,6 +10,8 @@ import RedeemModal from "../redeemModal";
 import Marquee from "react-fast-marquee";
 import Image from "next/image";
 import Real from "../../../../../../public/assets/images/Real.jpeg";
+import Crypto from "../../../../../../public/assets/images/Crypto.jpeg";
+import Gold from "../../../../../../public/assets/images/gold.jpeg";
 
 export default function LandingPage() {
 	const router = useRouter();
@@ -44,16 +46,18 @@ export default function LandingPage() {
 	const items = ["চেক-ইন", "রিডিম কোড", "আমার পণ্য", "বন্ধুকে আমন্ত্রণ"];
 
 	const images = [
-		"/assets/images/Real.jpeg",
-		"/assets/images/Crypto.jpeg",
-		"/assets/images/gold.jpeg",
-		"/assets/images/Real.jpeg",
-		"/assets/images/Crypto.jpeg",
-		"/assets/images/gold.jpeg",
-		"/assets/images/Real.jpeg",
-		"/assets/images/gold.jpeg",
-		"/assets/images/Crypto.jpeg",
-		"/assets/images/gold.jpeg",
+		Real,
+		Crypto,
+		Gold,
+		Real,
+		Crypto,
+		Gold,
+		Real,
+		Crypto,
+		Gold,
+		Real,
+		Crypto,
+		Gold,
 	];
 
 	return (
