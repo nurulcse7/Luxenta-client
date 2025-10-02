@@ -16,6 +16,11 @@ import {
 	setWithdrawMethod,
 	getWithdrawMethod,
 } from "@/services/WithdrawAccountService";
+import {
+	getSocket,
+	subscribeEvent,
+	unsubscribeEvent,
+} from "@/lib/socketClient";
 
 // The payment methods defined in your Prisma schema
 enum PaymentMethod {
@@ -41,22 +46,33 @@ const WithdrawAccount = () => {
 		useState<keyof typeof PaymentMethod>("bkash");
 	const [accountNumber, setAccountNumber] = useState("");
 	const [accountPassword, setAccountPassword] = useState("");
-	const [loading, setLoading] = useState(true);
+	const [loading, setLoading] = useState(false);
+	const [fetchLoading, setFetchLoading] = useState(true);
 
 	// Fetch withdrawal account data when the component mounts
 	useEffect(() => {
 		const fetchWithdrawAccount = async () => {
-			setLoading(true);
+			setFetchLoading(true);
 			const result = await getWithdrawMethod();
 			if (result?.success && result?.data) {
 				setAccountData(result.data);
 				setSelectedMethod(result.data.method);
 				setAccountNumber(result.data.account);
 			}
-			setLoading(false);
+			setFetchLoading(false);
 		};
 
 		fetchWithdrawAccount();
+		getSocket();
+
+		// 🔹 Subscribe to new notification events
+		subscribeEvent("withdraw-method", withdrawMethod => {
+			setAccountData(withdrawMethod);
+		});
+
+		return () => {
+			unsubscribeEvent("withdraw-method");
+		};
 	}, []);
 
 	const hasAccount = !!accountData;
@@ -85,6 +101,7 @@ const WithdrawAccount = () => {
 				`উত্তোলনের অ্যাকাউন্ট সফলভাবে ${hasAccount ? "আপডেট" : "তৈরি"} হয়েছে!`
 			);
 		} else {
+			setLoading(false);
 			toast.error(
 				result?.message || "অ্যাকাউন্ট আপডেট/তৈরি করতে ব্যর্থ হয়েছে।"
 			);
@@ -109,7 +126,7 @@ const WithdrawAccount = () => {
 	};
 
 	// Show a loading spinner while fetching data
-	if (loading) {
+	if (fetchLoading) {
 		return (
 			<div className="min-h-screen bg-[#0a0a0a] text-white flex items-center justify-center font-sans">
 				<RotateCw className="w-8 h-8 animate-spin text-blue-500" />
@@ -200,10 +217,7 @@ const WithdrawAccount = () => {
 							</div>
 						)}
 
-						<Button
-							type="submit"
-							className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-md shadow-lg transition-all duration-300 flex items-center justify-center"
-							disabled={loading}>
+						<Button className="w-full" type="submit" disabled={loading}>
 							{loading ? (
 								<>
 									<RotateCw className="w-4 h-4 mr-2 animate-spin" />

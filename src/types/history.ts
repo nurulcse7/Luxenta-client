@@ -1,8 +1,12 @@
-enum HistoryType {
+export enum HistoryType {
 	deposit = "deposit",
 	withdraw = "withdraw",
 	invest = "invest",
 	project_profit = "project_profit",
+
+	daily_income = "daily_income",
+	project_complete = "project_complete",
+
 	salary = "salary",
 	referral_bonus = "referral_bonus",
 	checkin_bonus = "checkin_bonus",

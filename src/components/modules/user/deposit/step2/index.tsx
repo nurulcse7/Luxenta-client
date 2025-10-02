@@ -6,6 +6,9 @@ import { createDeposit } from "@/services/DepositService";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import Image from "next/image";
+import bkash from "../../../../../../public/assets/images/bkash.png";
+import nagad from "../../../../../../public/assets/images/nagad.png";
+import binance from "../../../../../../public/assets/images/binance.png";
 
 type ChannelKey = string;
 type MethodKey = "bkash" | "nagad" | "binance";
@@ -17,10 +20,10 @@ interface DepositStep2Props {
 	goBack: () => void;
 }
 
-const methods: { id: MethodKey; label: string; img: string }[] = [
-	{ id: "bkash", label: "বিকাশ", img: "/assets/images/bkash.png" },
-	{ id: "nagad", label: "নগদ", img: "/assets/images/nagad.png" },
-	{ id: "binance", label: "Binance", img: "/assets/images/binance.png" },
+const methods: { id: MethodKey; label: string; img: any }[] = [
+	{ id: "bkash", label: "বিকাশ", img: bkash },
+	{ id: "nagad", label: "নগদ", img: nagad },
+	{ id: "binance", label: "Binance", img: binance },
 ];
 
 const DepositStep2 = ({
@@ -58,9 +61,11 @@ const DepositStep2 = ({
 	}, [settings, channel]);
 
 	const handleSubmit = async () => {
-		if (!selectedMethod) return alert("পেমেন্ট মেথড নির্বাচন করুন");
-		if (!txid.trim()) return alert("ট্রানজেকশন আইডি লিখুন");
-		if (!confirmPaid) return alert("অর্থ প্রেরণের নিশ্চয়তা দিন");
+	if (!selectedMethod) return alert("পেমেন্ট মেথড নির্বাচন করুন");
+	if (!txid.trim()) return alert("ট্রানজেকশন আইডি লিখুন");
+	if (txid.trim().length < 10)
+		return alert("ট্রানজেকশন আইডি ন্যূনতম 10 অক্ষর হতে হবে");
+	if (!confirmPaid) return alert("অর্থ প্রেরণের নিশ্চয়তা দিন");
 
 		const payload = {
 			serialId,
@@ -76,7 +81,7 @@ const DepositStep2 = ({
 			const result = await createDeposit(payload);
 
 			if (result.success) {
-				toast.success(result.message)
+				toast.success(result.message);
 				router.push(`/deposit/success?amount=${amount}`);
 			} else {
 				alert(result.error || "ডিপোজিট জমা দিতে ব্যর্থ হয়েছে");
@@ -142,10 +147,12 @@ const DepositStep2 = ({
 					{selectedMethod ? (
 						<div className="flex items-center gap-2 font-mono">
 							<Image
-								src={methods.find(m => m.id === selectedMethod)?.img as string}
+								src={methods.find(m => m.id === selectedMethod)?.img as any}
 								alt={
 									methods.find(m => m.id === selectedMethod)?.label as string
 								}
+								width={100}
+								height={30}
 								className="w-[100px] h-[30px] object-contain rounded"
 							/>
 							<span>

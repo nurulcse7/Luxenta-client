@@ -1,4 +1,3 @@
-// components/Notifications.jsx
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
@@ -16,15 +15,15 @@ import {
 	PiggyBank,
 	UserPlus,
 	Settings,
-	// ✅ Shuffle (ট্রান্সফারের জন্য) আইকন ইম্পোর্ট করা হলো
 	Shuffle,
+	TrendingUp,
+	CheckCircle,
+	Gift,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-// ⚠️ Note: আমি ধরে নিচ্ছি আপনার /types/notification.ts ফাইলে
-// NotificationType Enum/Union এ 'MAIN_TO_LUXENTA' এবং 'LUXENTA_TO_MAIN' যুক্ত করা হয়েছে।
 import { INotification, NotificationType } from "@/types/notification";
 import {
 	getUserNotifications,
@@ -36,9 +35,9 @@ import {
 	subscribeEvent,
 	unsubscribeEvent,
 } from "@/lib/socketClient";
+import { toast } from "sonner";
 
 const pageSize = 10;
-
 // Helper function to get the correct icon based on type
 const getNotificationIcon = (type: NotificationType) => {
 	switch (type) {
@@ -52,12 +51,16 @@ const getNotificationIcon = (type: NotificationType) => {
 			return <PiggyBank className="w-5 h-5" />;
 		case "referral":
 			return <UserPlus className="w-5 h-5" />;
-		case "project":
+		case "invest":
 			return <FileText className="w-5 h-5" />;
-		// ✅ নতুন দুটি নোটিফিকেশন টাইপ যোগ করা হলো
+		case "daily_income":
+			return <TrendingUp className="w-5 h-5" />;
+		case "project_complete":
+			return <CheckCircle className="w-5 h-5" />;
+		case "checkin_bonus":
+			return <Gift className="w-5 h-5" />;
 		case "MAIN_TO_LUXENTA":
 		case "LUXENTA_TO_MAIN":
-			// Shuffle আইকন, দুটি ট্রান্সফারের জন্য একই আইকন
 			return <Shuffle className="w-5 h-5" />;
 		default:
 			return <BellRing className="w-5 h-5" />;
@@ -76,12 +79,17 @@ const getNotificationColor = (type: NotificationType) => {
 			return "text-yellow-500";
 		case "referral":
 			return "text-cyan-500";
-		case "project":
+		case "invest":
 			return "text-blue-500";
-		// ✅ নতুন দুটি নোটিফিকেশন টাইপের জন্য রং যোগ করা হলো
+		case "daily_income":
+			return "text-emerald-400";
+		case "project_complete":
+			return "text-orange-500";
+		case "checkin_bonus":
+			return "text-pink-500";
 		case "MAIN_TO_LUXENTA":
 		case "LUXENTA_TO_MAIN":
-			return "text-indigo-400"; // ট্রান্সফারের জন্য একটি নিরপেক্ষ রং
+			return "text-indigo-400";
 		default:
 			return "text-gray-500";
 	}
@@ -113,13 +121,12 @@ const Notifications = () => {
 				} else {
 					setNotifications([]);
 					setMeta({ total: 0, totalPage: 1, limit: pageSize });
-					console.error(
-						"Failed to fetch notifications:",
-						result.error || "Invalid response data."
-					);
+
+					toast.error(result.message);
 				}
-			} catch (error) {
-				console.error("Network or fetch error:", error);
+			} catch (error: any) {
+				toast.error(error.message);
+
 				setNotifications([]);
 				setMeta({ total: 0, totalPage: 1, limit: pageSize });
 			} finally {
@@ -133,36 +140,17 @@ const Notifications = () => {
 		// 💡 Fetch data whenever page or searchTerm changes
 		fetchNotifications(page, searchTerm);
 
-		// --- 2. Socket Setup for Real-Time Updates ---
-		const socket = getSocket();
-
-		const sendUserId = () => {
-			if (user?.id) {
-				socket.emit("set-user", user?.id);
-			}
-		};
-
-		if (user?.id) {
-			if (socket.connected) {
-				sendUserId();
-			}
-			socket.on("connect", sendUserId);
-		}
+		getSocket();
 
 		// 🔹 Subscribe to new notification events
 		subscribeEvent("new-notification", (newNotification: INotification) => {
 			setNotifications(prev => [newNotification, ...prev]);
 		});
 
-		// --- 3. Cleanup Function ---
 		return () => {
 			unsubscribeEvent("new-notification");
-
-			if (user?.id) {
-				socket.off("connect", sendUserId);
-			}
 		};
-	}, [page, searchTerm, fetchNotifications, user?.id]); // ✅ user?.id dependency যোগ করা হয়েছে
+	}, [page, searchTerm, fetchNotifications, user?.id]);
 
 	const handleMarkAsRead = async (id: string) => {
 		// 1. Optimistic UI Update

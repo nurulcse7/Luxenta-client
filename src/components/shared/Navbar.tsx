@@ -15,6 +15,8 @@ import {
 	FileText,
 	Settings,
 	Shuffle,
+	PiggyBank,
+	Gift, // 🆕 salary/project_profit এর জন্য
 } from "lucide-react";
 
 import {
@@ -37,6 +39,7 @@ import {
 } from "@/lib/socketClient";
 import { useUser } from "@/context/UserContext";
 
+// ✅ Icon mapping updated with new type
 const getNotificationIcon = (type: NotificationType) => {
 	switch (type) {
 		case "system":
@@ -46,11 +49,15 @@ const getNotificationIcon = (type: NotificationType) => {
 		case "withdraw":
 			return <ArrowUpFromDot className="w-4 h-4 text-red-500" />;
 		case "salary":
-			return <Clock className="w-4 h-4 text-blue-500" />;
+			return <PiggyBank className="w-4 h-4 text-yellow-500" />;
 		case "referral":
-			return <UserPlus className="w-4 h-4 text-yellow-500" />;
-		case "project":
-			return <FileText className="w-4 h-4 text-purple-500" />;
+			return <UserPlus className="w-4 h-4 text-cyan-500" />;
+		case "invest":
+			return <FileText className="w-4 h-4 text-blue-500" />;
+		case "daily_income":
+			return <TrendingUp className="w-4 h-4 text-purple-400" />;
+		case "checkin_bonus":
+			return <Gift className="w-4 h-4 text-pink-500" />;
 		case "MAIN_TO_LUXENTA":
 		case "LUXENTA_TO_MAIN":
 			return <Shuffle className="w-4 h-4 text-indigo-400" />;
@@ -68,10 +75,8 @@ export default function Navbar() {
 		// --- 1. Initial Data Fetch ---
 		const fetchNotifications = async () => {
 			try {
-				// 💡 সার্ভিসে queryParams থাকলে এখানে তা পাস করুন
 				const result: any = await getUserNotifications({ page: 1, limit: 10 });
 				if (result.success && Array.isArray(result.data)) {
-					// সাধারণত Navbar-এর জন্য শুধু নতুন নোটিফিকেশনগুলোই লোড করা হয়
 					setNotifications(result.data);
 				} else {
 					setNotifications([]);
@@ -85,21 +90,20 @@ export default function Navbar() {
 		fetchNotifications();
 
 		// --- 2. Socket Setup for Real-Time Updates ---
-		const socket = getSocket();
+		getSocket();
 
-		const sendUserId = () => {
-			if (user?.id) {
-				socket.emit("set-user", user?.id);
-			}
-		};
+		// const sendUserId = () => {
+		// 	if (user?.id) {
+		// 		socket.emit("set-user", user?.id);
+		// 	}
+		// };
 
-		if (user?.id) {
-			if (socket.connected) {
-				sendUserId();
-			}
-
-			socket.on("connect", sendUserId);
-		}
+		// if (user?.id) {
+		// 	if (socket.connected) {
+		// 		sendUserId();
+		// 	}
+		// 	socket.on("connect", sendUserId);
+		// }
 
 		// 🔹 Subscribe to new notification events
 		subscribeEvent("new-notification", (newNotification: INotification) => {
@@ -109,33 +113,26 @@ export default function Navbar() {
 		// --- 3. Cleanup Function ---
 		return () => {
 			unsubscribeEvent("new-notification");
-
-			if (user?.id) {
-				socket.off("connect", sendUserId);
-			}
+			// if (user?.id) {
+			// 	socket.off("connect", sendUserId);
+			// }
 		};
 	}, [user?.id]);
 
 	const handleMarkAsRead = async (notificationId: string) => {
-		// 1. Optimistic UI Update
 		setNotifications(prevNotifications =>
 			prevNotifications.map(n =>
 				n.id === notificationId ? { ...n, isRead: true } : n
 			)
 		);
-
 		try {
-			// 2. API Call (Error handling omitted for brevity, but should be present)
 			await markNotificationAsRead(notificationId);
 		} catch (error) {
-			// 3. If API fails, rollback (Rollback logic should be added here for production)
 			console.error("Error marking notification as read:", error);
 		}
 	};
 
 	const newNotifications = notifications.filter(n => !n.isRead);
-	// displayedNotifications এখন আর দরকার নেই, ScrollArea পুরো নতুন তালিকা দেখাবে।
-	// const displayedNotifications = newNotifications.slice(0, 5);
 
 	return (
 		<nav className="fixed bottom-0 left-0 right-0 bg-[rgba(255,255,255,0.08)] backdrop-blur-md border-t pb-5 border-[rgba(255,255,255,0.18)] flex justify-around py-2 text-xs z-50">
@@ -155,7 +152,7 @@ export default function Navbar() {
 				<Users className="w-5 h-5 mb-1" /> দল
 			</Link>
 
-			{/* Notification Dropdown using Popover */}
+			{/* Notification Dropdown */}
 			<Popover open={open} onOpenChange={setOpen}>
 				<PopoverTrigger asChild>
 					<button className="flex flex-col items-center text-[#00e5ff] hover:text-white transition-transform hover:scale-110 cursor-pointer relative">
@@ -171,7 +168,6 @@ export default function Navbar() {
 				<PopoverContent className="w-72 p-0 rounded-lg shadow-lg bg-gray-900 border-gray-700 text-white">
 					<div className="p-4 border-b border-gray-700">
 						<h4 className="font-bold text-sm">
-							{" "}
 							নোটিফিকেশন ({newNotifications.length})
 						</h4>
 					</div>
@@ -184,7 +180,6 @@ export default function Navbar() {
 										onClick={() => handleMarkAsRead(notification.id)}
 										className="p-4 flex items-start gap-3 hover:bg-gray-800 cursor-pointer transition-colors">
 										<div className="pt-1">
-											{/* ✅ updated getNotificationIcon ব্যবহার করা হলো */}
 											{getNotificationIcon(notification.type)}
 										</div>
 										<div className="flex-1">

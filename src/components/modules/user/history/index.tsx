@@ -24,7 +24,6 @@ import { getHistory } from "@/services/HistoryService";
 import { IHistory } from "@/types/history";
 import { cn } from "@/lib/utils";
 
-
 const History = () => {
 	const [historyData, setHistoryData] = useState<IHistory[]>([]);
 	const [searchTerm, setSearchTerm] = useState("");
@@ -94,6 +93,8 @@ const History = () => {
 		withdraw: <TrendingDown className="w-5 h-5" />,
 		invest: <Briefcase className="w-5 h-5" />,
 		project_profit: <TrendingUp className="w-5 h-5" />,
+		daily_income: <TrendingUp className="w-5 h-5" />,
+		project_complete: <CheckCircle className="w-5 h-5" />,
 		salary: <PlusCircle className="w-5 h-5" />,
 		referral_bonus: <PlusCircle className="w-5 h-5" />,
 		checkin_bonus: <CheckCircle className="w-5 h-5" />,
@@ -106,6 +107,8 @@ const History = () => {
 		withdraw: "text-red-500",
 		invest: "text-blue-500",
 		project_profit: "text-lime-500",
+		daily_income: "text-emerald-400",
+		project_complete: "text-orange-500",
 		salary: "text-yellow-500",
 		referral_bonus: "text-cyan-500",
 		checkin_bonus: "text-purple-500",

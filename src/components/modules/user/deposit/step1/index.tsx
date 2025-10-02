@@ -102,23 +102,32 @@ const DepositStep1 = ({ onSubmit }: DepositStep1Props) => {
 						<div className="text-[12px] text-[#9fb3c8]">
 							চ্যানেল নির্বাচন করুন
 						</div>
-						<div className="grid grid-cols-2 gap-2">
-							{channels.map(ch => (
-								<div
-									key={ch.id}
-									onClick={() => setSelectedChannel(ch.id)}
-									className={`p-2.5 rounded-lg border text-center text-[12px] bg-white/5 cursor-pointer ${
-										selectedChannel === ch.id
-											? "border-[#00e5ff] bg-[#00e5ff]/8"
-											: "border-white/18"
-									}`}>
-									{ch.label}
-									<small className="block text-[10px] text-[#9fb3c8]">
-										{ch.sub}
-									</small>
-								</div>
-							))}
-						</div>
+						{channels.length > 0 ? (
+							<div className="grid grid-cols-2 gap-2">
+								<>
+									{channels.map(ch => (
+										<div
+											key={ch.id}
+											onClick={() => setSelectedChannel(ch.id)}
+											className={`p-2.5 rounded-lg border text-center text-[12px] bg-white/5 cursor-pointer ${
+												selectedChannel === ch.id
+													? "border-[#00e5ff] bg-[#00e5ff]/8"
+													: "border-white/18"
+											}`}>
+											{ch.label}
+											<small className="block text-[10px] text-[#9fb3c8]">
+												{ch.sub}
+											</small>
+										</div>
+									))}
+								</>
+							</div>
+						) : (
+							<p className="text-[13px] w-full text-center">
+								অনুগ্রহ করে এই পেজটি পুনরায় লোড করুন অথবা পরে আবার চেষ্টা
+								করুন।
+							</p>
+						)}
 					</div>
 
 					{/* Next Button */}

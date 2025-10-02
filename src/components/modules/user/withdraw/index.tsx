@@ -10,6 +10,7 @@ import {
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 
 interface WithdrawRecord {
 	serialId: string;
@@ -153,14 +154,14 @@ const Withdraw = () => {
 			return;
 		}
 		if (!withdrawPassword) {
-			alert("❌ Withdraw Password লিখুন");
+			toast.error("Withdraw Password লিখুন");
 			return;
 		}
 		const data = { serialId: serialCode, amount: amt, withdrawPassword };
 		const res = await createWithdrawRequest(data);
 
 		if (!res.success) {
-			alert(res.message || "Withdraw failed");
+			toast.error(res.message || "Withdraw failed");
 			return;
 		}
 
@@ -188,40 +189,36 @@ const Withdraw = () => {
 		return (
 			<div className="flex flex-col items-center justify-center h-[80vh] text-center gap-4">
 				<p className="text-red-400 font-semibold text-lg">
-					❌ বর্তমানে Withdraw বন্ধ আছে
+					বর্তমানে Withdraw বন্ধ আছে
 				</p>
 			</div>
 		);
 	}
 
-	// ❌ withdraw password নেই
-	if (!user?.investorInfo?.withdrawPassword) {
-		return (
-			<div className="flex flex-col items-center justify-center h-[80vh] text-center gap-4">
-				<p className="text-red-400 font-semibold text-lg">
-					❌ আপনার কোনো Withdraw Password সেট করা নেই
-				</p>
-				<button
-					onClick={() => router.push("/account/withdraw-password")}
-					className="px-4 py-2 rounded-lg bg-gradient-to-br from-[#00e5ff] to-[#6a5cff] text-[#051018] font-bold">
-					Set Withdraw Password
-				</button>
-			</div>
-		);
-	}
-
-	// ❌ withdraw method নেই
+	//  withdraw method নেই
 	if (!withdrawMethodExists) {
 		return (
 			<div className="flex flex-col items-center justify-center h-[80vh] text-center gap-4">
 				<p className="text-red-400 font-semibold text-lg">
-					❌ আপনি কোনো Withdraw Method সেট করেননি
+					আপনি কোনো Withdraw Method সেট করেননি
 				</p>
-				<button
-					onClick={() => router.push("/account/withdraw-account")}
-					className="px-4 py-2 rounded-lg bg-gradient-to-br from-[#00e5ff] to-[#6a5cff] text-[#051018] font-bold">
+				<Button onClick={() => router.push("/account/withdraw-account")}>
 					Set Withdraw Method
-				</button>
+				</Button>
+			</div>
+		);
+	}
+	
+	//  withdraw password নেই
+	if (!user?.investorInfo?.withdrawPassword) {
+		return (
+			<div className="flex flex-col items-center justify-center h-[80vh] text-center gap-4">
+				<p className="text-red-400 font-semibold text-lg">
+					আপনার কোনো Withdraw Password সেট করা নেই
+				</p>
+				<Button onClick={() => router.push("/account/withdraw-password")}>
+					Set Withdraw Password
+				</Button>
 			</div>
 		);
 	}
