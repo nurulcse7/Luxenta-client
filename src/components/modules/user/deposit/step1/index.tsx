@@ -46,6 +46,10 @@ const DepositStep1 = ({ onSubmit }: DepositStep1Props) => {
 			alert("সঠিক এমাউন্ট লিখুন");
 			return;
 		}
+		if (Number(amount) < 100) {
+			alert("ন্যূনতম এমাউন্ট 100 টাকা");
+			return;
+		}
 		if (!selectedChannel) {
 			alert("একটি সার্ভার নির্বাচন করুন");
 			return;
@@ -124,8 +128,7 @@ const DepositStep1 = ({ onSubmit }: DepositStep1Props) => {
 							</div>
 						) : (
 							<p className="text-[13px] w-full text-center">
-								অনুগ্রহ করে এই পেজটি পুনরায় লোড করুন অথবা পরে আবার চেষ্টা
-								করুন।
+								অনুগ্রহ করে এই পেজটি পুনরায় লোড করুন অথবা পরে আবার চেষ্টা করুন।
 							</p>
 						)}
 					</div>

@@ -4,8 +4,7 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/context/UserContext";
 import { logout } from "@/services/AuthService";
-import Image from "next/image";
-import Real from "../../../../../public/assets/images/Real.jpeg";
+import { Avatar } from "@/components/ui/avatar";
 
 const MyAccount = () => {
 	const { user, isLoading } = useUser();
@@ -22,18 +21,14 @@ const MyAccount = () => {
 			console.error("Logout failed:", err);
 		}
 	};
-	if (isLoading) return <h1>Account Info loading</h1>;
+	if (isLoading) return <h1 className="text-center">Account Info loading</h1>;
 	return (
 		<div className="min-h-screen    font-sans p-3 ">
 			{/* Header */}
 			<div className="flex items-center gap-3 bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.18)] rounded-[18px] shadow-[0_10px_30px_rgba(0,0,0,.35),0_1px_0_rgba(255,255,255,.04)_inset] backdrop-blur-md p-4 mb-4 transition">
-				<Image
-					src={Real}
-					alt={user?.investorInfo.level}
-					width={48}
-					height={48}
-					className="w-12 h-12 rounded-full border-2 border-[#00e5ff]"
-				/>
+				<div>
+					<Avatar className="w-12 h-12 rounded-full border-2 border-[#00e5ff] overflow-hidden" />
+				</div>
 				<div>
 					<h2 className="font-bold text-lg">{user.name}</h2>
 					<p className="text-sm text-[#9fb3c8]">

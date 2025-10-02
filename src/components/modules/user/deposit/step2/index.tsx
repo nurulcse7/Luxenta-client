@@ -6,9 +6,9 @@ import { createDeposit } from "@/services/DepositService";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import Image from "next/image";
-import bkash from "../../../../../../public/assets/images/bkash.png";
-import nagad from "../../../../../../public/assets/images/nagad.png";
-import binance from "../../../../../../public/assets/images/binance.png";
+import bkash from "../../../../../../public/assets/images/methods/bkash.png";
+import nagad from "../../../../../../public/assets/images/methods/nagad.png";
+import binance from "../../../../../../public/assets/images/methods/binance.png";
 
 type ChannelKey = string;
 type MethodKey = "bkash" | "nagad" | "binance";
@@ -61,11 +61,11 @@ const DepositStep2 = ({
 	}, [settings, channel]);
 
 	const handleSubmit = async () => {
-	if (!selectedMethod) return alert("পেমেন্ট মেথড নির্বাচন করুন");
-	if (!txid.trim()) return alert("ট্রানজেকশন আইডি লিখুন");
-	if (txid.trim().length < 10)
-		return alert("ট্রানজেকশন আইডি ন্যূনতম 10 অক্ষর হতে হবে");
-	if (!confirmPaid) return alert("অর্থ প্রেরণের নিশ্চয়তা দিন");
+		if (!selectedMethod) return alert("পেমেন্ট মেথড নির্বাচন করুন");
+		if (!txid.trim()) return alert("ট্রানজেকশন আইডি লিখুন");
+		if (txid.trim().length < 10)
+			return alert("ট্রানজেকশন আইডি ন্যূনতম 10 অক্ষর হতে হবে");
+		if (!confirmPaid) return alert("অর্থ প্রেরণের নিশ্চয়তা দিন");
 
 		const payload = {
 			serialId,

@@ -37,7 +37,19 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
 		fetchUser();
 
-		getSocket();
+		const socket = getSocket();
+		const sendUserId = () => {
+			if (user?.id) {
+				socket.emit("set-user", user?.id);
+			}
+		};
+
+		if (user?.id) {
+			if (socket.connected) {
+				sendUserId();
+			}
+			socket.on("connect", sendUserId);
+		}
 
 		subscribeEvent("user-data-update", updateData => {
 			setUser(prevUser => {
@@ -58,8 +70,11 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
 		// 2. Cleanup Function
 		return () => {
 			unsubscribeEvent("user-data-update");
+			if (user?.id) {
+				socket.off("connect", sendUserId);
+			}
 		};
-	}, []);
+	}, [user?.id]);
 
 	return (
 		<UserContext.Provider value={{ user, setUser, isLoading, setIsLoading }}>

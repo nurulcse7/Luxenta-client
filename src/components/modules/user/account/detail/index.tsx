@@ -30,30 +30,59 @@ export default function MyAccountDetail() {
 	};
 
 	return (
-		<section className="max-w-3xl mx-auto mt-8 p-6 bg-white/5 backdrop-blur-lg rounded-2xl shadow-lg text-white">
+		<section className="max-w-4xl mx-auto mt-8 p-6 bg-white/5 backdrop-blur-lg rounded-2xl shadow-lg text-white">
 			<h1 className="text-2xl font-bold mb-6">আমার অ্যাকাউন্ট</h1>
 
-			{/* User Info */}
+			{/* 🔹 Basic Info */}
 			<div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
 				<InfoCard label="নাম" value={user.name} />
 				<InfoCard label="ইমেইল" value={user.email} />
-				<InfoCard label="মোবাইল নম্বর" value={user.number || "নির্ধারিত নেই"} />
+				<InfoCard label="মোবাইল" value={user.number || "নির্ধারিত নেই"} />
 				<InfoCard
 					label="অ্যাকাউন্ট স্ট্যাটাস"
 					value={isActive ? "সক্রিয়" : "নিষ্ক্রিয়"}
 				/>
+				<InfoCard label="ইউজার আইডি" value={user.id} />
+				<InfoCard
+					label="ভেরিফাইড"
+					value={user.is_verified ? "✅ হ্যাঁ" : "❌ না"}
+				/>
+				<InfoCard
+					label="ডিলিটেড"
+					value={user.is_deleted ? "❌ হ্যাঁ" : "✅ না"}
+				/>
+				<InfoCard label="স্ট্যাটাস" value={user.status} />
+				<InfoCard label="Created At" value={formatDate(user.createdAt)} />
+				<InfoCard label="Updated At" value={formatDate(user.updatedAt)} />
+			</div>
 
-				{user.role === "investor" && user.investorInfo && (
-					<>
+			{/* 🔹 Role Info */}
+			<div className="mb-6 p-4 bg-white/10 rounded-xl">
+				<p className="text-gray-300 text-sm">রোল</p>
+				<p className="font-semibold text-lg capitalize">{user.role}</p>
+				{user.role === "investor" && (
+					<p className="mt-2 text-green-400 text-sm">💰 Investor account</p>
+				)}
+			</div>
+
+			{/* 🔹 Investor Info */}
+			{user.role === "investor" && user.investorInfo && (
+				<>
+					<h2 className="text-xl font-semibold mb-4">Investor Details</h2>
+					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
 						<InfoCard label="লেভেল" value={user.investorInfo.level} />
 						<InfoCard
 							label="ওয়ালেট ব্যালেন্স"
 							value={`৳ ${user.investorInfo.walletBalance.toLocaleString()}`}
 						/>
 						<InfoCard
-							label="মোট ডিপোজিট"
-							value={`৳ ${user.investorInfo.totalDeposit.toLocaleString()}`}
+							label="লাক্সেন্টা ওয়ালেট"
+							value={`৳ ${user.investorInfo.luxentaWallet}`}
 						/>
+						<InfoCard
+							label="আজকের আয়"
+							value={`৳ ${user.investorInfo.todayEarning.toLocaleString()}`}
+						/>{" "}
 						<InfoCard
 							label="মোট আয়"
 							value={`৳ ${user.investorInfo.totalEarnings.toLocaleString()}`}
@@ -62,21 +91,40 @@ export default function MyAccountDetail() {
 							label="মোট উত্তোলন"
 							value={`৳ ${user.investorInfo.totalWithdraw.toLocaleString()}`}
 						/>
-					</>
-				)}
-			</div>
+						<InfoCard
+							label="মোট ডিপোজিট"
+							value={`৳ ${user.investorInfo.totalDeposit.toLocaleString()}`}
+						/>
+						<InfoCard
+							label="মোট ইনভেস্ট"
+							value={`৳ ${user.investorInfo.totalInvest.toLocaleString()}`}
+						/>
+						<InfoCard
+							label="মোট প্রফিট"
+							value={`৳ ${user.investorInfo.totalProfit.toLocaleString()}`}
+						/>
+						<InfoCard
+							label="মোট স্যালারি"
+							value={`৳ ${user.investorInfo.totalSalary.toLocaleString()}`}
+						/>
+						<InfoCard
+							label="স্যালারি মাস"
+							value={user.investorInfo.salaryMonths}
+						/>
+						<InfoCard label="টিম সাইজ" value={user.investorInfo.teamSize} />
+						<InfoCard
+							label="মোট ইনভাইট"
+							value={user.investorInfo.totalInvites}
+						/>
+						<InfoCard
+							label="রেফারেল কোড"
+							value={user.investorInfo.referralCode}
+						/>
+					</div>
+				</>
+			)}
 
-			{/* Role-specific info */}
-			<div className="mb-6 p-4 bg-white/10 rounded-xl">
-				<p className="text-gray-300 text-sm">রোল</p>
-				<p className="font-semibold text-lg capitalize">{user.role}</p>
-
-				{user.role === "investor" && (
-					<p className="mt-2 text-green-400 text-sm">💰 Investor account</p>
-				)}
-			</div>
-
-			{/* Actions */}
+			{/* 🔹 Actions */}
 			<div className="flex flex-col sm:flex-row gap-4">
 				<Button className="w-full">অ্যাকাউন্ট এডিট করুন</Button>
 				<Button onClick={handleLogout} className="w-full" variant="destructive">
@@ -96,6 +144,18 @@ const InfoCard = ({
 }) => (
 	<div className="p-4 bg-white/10 rounded-xl">
 		<p className="text-gray-300 text-sm">{label}</p>
-		<p className="font-semibold text-lg">{value}</p>
+		<p className="font-semibold text-lg break-words">{value}</p>
 	</div>
 );
+
+// Date formatting helper
+function formatDate(dateString?: string) {
+	if (!dateString) return "N/A";
+	return new Date(dateString).toLocaleString("bn-BD", {
+		year: "numeric",
+		month: "long",
+		day: "numeric",
+		hour: "2-digit",
+		minute: "2-digit",
+	});
+}

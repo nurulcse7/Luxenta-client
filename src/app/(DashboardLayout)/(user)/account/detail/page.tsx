@@ -4,7 +4,7 @@ export const metadata = {
 };
 const AccountDetail = () => {
 	return (
-		<div>
+		<div className="pb-[60px]">
 			<MyAccountDetail />
 		</div>
 	);

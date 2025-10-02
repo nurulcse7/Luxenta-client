@@ -90,20 +90,7 @@ export default function Navbar() {
 		fetchNotifications();
 
 		// --- 2. Socket Setup for Real-Time Updates ---
-		const socket = getSocket();
-
-		const sendUserId = () => {
-			if (user?.id) {
-				socket.emit("set-user", user?.id);
-			}
-		};
-
-		if (user?.id) {
-			if (socket.connected) {
-				sendUserId();
-			}
-			socket.on("connect", sendUserId);
-		}
+		getSocket();
 
 		// 🔹 Subscribe to new notification events
 		subscribeEvent("new-notification", (newNotification: INotification) => {
@@ -113,9 +100,6 @@ export default function Navbar() {
 		// --- 3. Cleanup Function ---
 		return () => {
 			unsubscribeEvent("new-notification");
-			if (user?.id) {
-				socket.off("connect", sendUserId);
-			}
 		};
 	}, [user?.id]);
 

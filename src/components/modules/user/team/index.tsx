@@ -1,7 +1,6 @@
 "use client";
+import { Avatar } from "@/components/ui/avatar";
 import { useUser } from "@/context/UserContext";
-import Image from "next/image";
-import Real from "../../../../../public/assets/images/Real.jpeg";
 
 const Team = () => {
 	const { user } = useUser();
@@ -12,17 +11,11 @@ const Team = () => {
 			{/* Header */}
 			<header className="flex justify-between items-center p-2">
 				<div className="flex items-center gap-3">
-					<Image
-						src={Real}
-						alt={user?.name as string}
-						width={48}
-						height={48}
-						className="w-12 h-12 rounded-full border-2 border-[#00e5ff]"
-					/>
+					<Avatar className="w-12 h-12 rounded-full border-2 border-[#00e5ff]" />
 					<div className="text-sm leading-6">
-						ইউআইডি: <b>210226433</b>
+						ইউআইডি: <b>{user?.id}</b>
 						<br />
-						অভ্যর্থনা কোড: <b>C9JTKJ</b>
+						অভ্যর্থনা কোড: <b>{user?.investorInfo.referralCode}</b>
 					</div>
 				</div>
 				<div className="w-[30px] h-[30px] rounded-full border-2 border-[#00e5ff] flex items-center justify-center animate-spin">

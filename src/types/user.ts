@@ -14,8 +14,12 @@ export interface IUser {
 	status: UserStatus;
 	isActive?: boolean;
 	is_deleted: boolean;
+	is_verified: boolean;
 	investorInfo: IInvestor;
 	role: "investor" | "agent";
 	iat?: number;
 	exp?: number;
+	// Timestamps
+	createdAt: string;
+	updatedAt: string;
 }
