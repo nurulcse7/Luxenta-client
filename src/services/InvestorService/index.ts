@@ -2,6 +2,7 @@
 
 import { getValidToken } from "@/lib/verifyToken";
 
+// funds transfer
 export const transferFunds = async (
 	type: "wallet" | "main",
 	amount: number
@@ -24,18 +25,34 @@ export const transferFunds = async (
 
 		const result = await res.json();
 
-		if (!res.ok) {
-			return {
-				success: false,
-				error: result.message || `Failed to transfer fund`,
-			};
-		}
-
-		return {
-			success: true,
-			message: result.message || "Wallet transfer successful",
-		};
+		return result;
 	} catch (error: any) {
 		return { success: false, message: error.message || "Something went wrong" };
+	}
+};
+
+// আজকের earning → main balance এ transfer
+export const transferTodayEarning = async () => {
+	const accessToken = await getValidToken();
+
+	try {
+		const res = await fetch(
+			`${process.env.NEXT_PUBLIC_BASE_API}/investors/transfer-today-earning`,
+			{
+				method: "POST",
+				headers: {
+					Authorization: `${accessToken}`,
+					"Content-Type": "application/json",
+				},
+			}
+		);
+
+		const result = await res.json();
+		return result;
+	} catch (error: any) {
+		return {
+			success: false,
+			message: error.message || "Something went wrong",
+		};
 	}
 };

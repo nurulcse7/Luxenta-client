@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { Wallet, Boxes, Layers } from "lucide-react";
-// Assuming these imports are correct based on your file structure
 import InvestProjectCard from "./investCard";
 import { Button } from "@/components/ui/button";
 import { TProject } from "@/types/project";
@@ -13,8 +12,10 @@ import {
 	subscribeEvent,
 	unsubscribeEvent,
 } from "@/lib/socketClient";
+import { transferTodayEarning } from "@/services/InvestorService";
+import { toast } from "sonner";
 
-// --- Ticker Component (Unchanged) ---
+// --- Ticker Component ---
 const Ticker = () => {
 	const [tickerText, setTickerText] = useState("");
 
@@ -49,12 +50,12 @@ const Ticker = () => {
 
 export const Invest = () => {
 	const { user } = useUser();
-	// Stores all projects (open, closed, draft) fetched from DB or through sockets.
 	const [allProjects, setAllProjects] = useState<TProject[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
+	const [loadingTransfer, setLoadingTransfer] = useState(false);
 
-	// ✨ Filter the projects to display only those with status 'open'.
+	// Filter only open projects
 	const displayProjects = useMemo(() => {
 		return allProjects.filter(project => project.status === "open");
 	}, [allProjects]);
@@ -66,7 +67,6 @@ export const Invest = () => {
 			try {
 				const result = await getProjects();
 				if (result.success) {
-					// Set the entire list of projects
 					setAllProjects(result.data);
 				} else {
 					setError(result.error || "Failed to fetch projects");
@@ -80,7 +80,7 @@ export const Invest = () => {
 
 		fetchProjects();
 
-		// ---------------- Socket Setup ----------------
+		// Socket Setup
 		getSocket();
 
 		subscribeEvent("new-project", (project: TProject) => {
@@ -101,7 +101,6 @@ export const Invest = () => {
 			);
 		});
 
-		// Cleanup
 		return () => {
 			unsubscribeEvent("new-project");
 			unsubscribeEvent("update-project");
@@ -113,6 +112,23 @@ export const Invest = () => {
 		const baseClasses =
 			"bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.18)] rounded-2xl backdrop-blur-md shadow-lg shadow-[rgba(0,0,0,0.35)] p-4";
 		return <div className={`${baseClasses} ${className}`}>{children}</div>;
+	};
+
+	// ✅ handle transfer today's earning
+	const handleTransferTodayEarning = async () => {
+		try {
+			setLoadingTransfer(true);
+			const res = await transferTodayEarning();
+			if (res.success) {
+				toast.success(res.message);
+			} else {
+				toast.error(res.message);
+			}
+		} catch (error: any) {
+			toast.error(error.message || "Something went wrong");
+		} finally {
+			setLoadingTransfer(false);
+		}
 	};
 
 	return (
@@ -141,8 +157,19 @@ export const Invest = () => {
 					</div>
 				</div>
 				<div className="flex flex-col items-end gap-3">
-					<Button>
-						<Wallet className="w-6 h-6 " /> ব্যালেন্স স্থানান্তর করুন
+					<Button
+						onClick={handleTransferTodayEarning}
+						disabled={!user?.investorInfo.todayEarning || loadingTransfer}>
+						{loadingTransfer ? (
+							<span className="flex items-center gap-2">
+								<span className="animate-spin border-2 border-white border-t-transparent rounded-full w-4 h-4"></span>
+								<span>প্রসেস হচ্ছে...</span>
+							</span>
+						) : (
+							<>
+								<Wallet className="w-6 h-6" /> ব্যালেন্স স্থানান্তর করুন
+							</>
+						)}
 					</Button>
 				</div>
 			</Card>
@@ -162,10 +189,13 @@ export const Invest = () => {
 					<Layers className="w-6 h-6  text-cyan-400" />
 					<span>প্রজেক্ট শ্রেণী</span>
 				</div>
-				<Button className="px-6">সকল</Button>
+				<Button disabled className="px-6">
+					সকল
+				</Button>
 			</Card>
-			{loading && <p>Loading projects...</p>}
-			{error && <p className="text-red-400 mb-4">❌ {error}</p>}
+
+			{loading && <p className="text-center">Loading projects...</p>}
+			{error && <p className="text-red-400 mb-4 text-center"> {error}</p>}
 
 			{/* Renders only the 'open' projects */}
 			<div className="grid gap-4">
