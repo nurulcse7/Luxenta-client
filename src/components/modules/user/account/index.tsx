@@ -12,7 +12,16 @@ const MyAccount = () => {
 
 	if (!user) return null;
 
+	if (isLoading)
+		return <h1 className="text-center">Account Info loading...</h1>;
+
+	if (!user) {
+		router.push("/login");
+		return null;
+	}
+
 	const investor = user.role === "investor" ? user.investorInfo : null;
+
 	const handleLogout = async () => {
 		try {
 			await logout();
@@ -21,7 +30,6 @@ const MyAccount = () => {
 			console.error("Logout failed:", err);
 		}
 	};
-	if (isLoading) return <h1 className="text-center">Account Info loading</h1>;
 	return (
 		<div className="min-h-screen    font-sans p-3 ">
 			{/* Header */}
