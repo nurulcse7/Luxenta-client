@@ -27,8 +27,12 @@ const Team = () => {
 			<section className="bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.18)] rounded-xl p-4 mt-4 flex justify-between items-center">
 				<div className="flex flex-col gap-2">
 					<h3 className="text-base text-[#00e5ff]">টিমের সুবিধা</h3>
-					<div className="text-2xl font-bold">৳180.00</div>
-					<div className="text-sm opacity-80">আজকের আয়: ৳0.00</div>
+					<div className="text-2xl font-bold">
+						৳{user?.investorInfo.totalEarnings}
+					</div>
+					<div className="text-sm opacity-80">
+						আজকের আয়: ৳{user?.investorInfo.todayEarning}
+					</div>
 				</div>
 				<div className="flex flex-col items-center gap-1">
 					<button className="bg-gradient-to-br from-[#00e5ff] to-[#6a5cff] text-[#051018] px-3 py-1.5 rounded-md text-sm font-medium">

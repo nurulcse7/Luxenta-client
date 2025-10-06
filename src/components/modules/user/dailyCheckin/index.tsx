@@ -49,7 +49,7 @@ interface CheckInHistory {
 }
 
 const DailyCheckin = () => {
-	const { user } = useUser();
+	const { user, isLoading } = useUser();
 	const [mainBalance, setMainBalance] = useState(
 		user?.investorInfo?.walletBalance || 0
 	);
@@ -59,6 +59,7 @@ const DailyCheckin = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [isGlow, setIsGlow] = useState(false);
 	const [viewDate, setViewDate] = useState(new Date());
+	const [loading, setLoading] = useState(false);
 
 	// 🔹 Load history + last check-in from API
 	useEffect(() => {
@@ -104,14 +105,19 @@ const DailyCheckin = () => {
 		setTodayBonusAmount(newBonus);
 	}, [history]);
 
+	// user info loading
+	if (isLoading) return <h1>Info loading...</h1>;
+
 	// 🔹 Handle check-in action
 	const handleCheckin = async () => {
+		setLoading(true);
 		const today = new Date();
 		const dateStr = yyyyMMdd(today);
 		const alreadyChecked =
 			lastCheckinDate === dateStr || history.some(h => h.date === dateStr);
 		if (alreadyChecked) {
 			toast.error("আজকের চেক-ইন সম্পন্ন হয়েছে ✅");
+			setLoading(false);
 			return;
 		}
 
@@ -142,9 +148,11 @@ const DailyCheckin = () => {
 				...prev,
 			]);
 			setLastCheckinDate(dateStr);
+			setLoading(false);
 			toast.success(`চেক-ইন সম্পন্ন! +৳${todayBonusAmount}`);
 		} else {
 			toast.error("চেক-ইন ব্যর্থ হয়েছে ❌");
+			setLoading(false);
 		}
 	};
 
@@ -268,6 +276,7 @@ const DailyCheckin = () => {
 					<div className="flex justify-center">
 						<button
 							onClick={handleCheckin}
+							disabled={loading}
 							className={`inline-flex items-center justify-center gap-2 px-4 py-3 rounded-2xl cursor-pointer select-none border border-white/10 bg-gradient-to-br from-cyan-500 to-fuchsia-500 text-gray-900 font-black shadow-[0_12px_28px_rgba(0,229,255,0.15)] transition-all active:translate-y-px active:shadow-[0_8px_20px_rgba(0,229,255,0.12)] relative overflow-hidden ${
 								isGlow ? "glow" : ""
 							}`}>
