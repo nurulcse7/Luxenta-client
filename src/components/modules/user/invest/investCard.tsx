@@ -3,7 +3,7 @@ import { buyProject } from "@/services/ProjectService";
 import { TProject } from "@/types/project";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 // স্ট্যাটাস অনুযায়ী রঙ এবং টেক্সট নির্ধারণের ফাংশন
@@ -34,6 +34,7 @@ const getStatusClasses = (status: string) => {
 
 const InvestProjectCard = ({ project }: { project: TProject }) => {
 	const statusData = getStatusClasses(project.status || "default");
+	const [loadingBuy, setLoadingBuy] = useState(false);
 
 	useEffect(() => {
 		const bar = document.getElementById(
@@ -47,13 +48,17 @@ const InvestProjectCard = ({ project }: { project: TProject }) => {
 	}, [project.progress, project.title]);
 
 	const handleBuy = async (id: string) => {
+		setLoadingBuy(true);
 		const res = await buyProject(id);
 		if (res.success) {
 			toast.success(res.message);
+			setLoadingBuy(false);
 		} else {
+			setLoadingBuy(false);
 			toast.error("❌ " + res.message);
 		}
 	};
+	
 	return (
 		<div className="grid grid-cols-[88px_1fr] gap-4 p-3 rounded-2xl border border-[rgba(255,255,255,0.18)] bg-[rgba(255,255,255,0.08)]">
 			<Image
@@ -98,8 +103,10 @@ const InvestProjectCard = ({ project }: { project: TProject }) => {
 					</div>
 				</div>
 				<div className="flex gap-2 mt-2">
-					{/* আপনি Invest কম্পোনেন্টে ফিল্টার করেছেন, তাই এখানে শুধু কেনার অপশন থাকবে */}
-					<Button onClick={() => handleBuy(project.id)}>ক্রয় করুন</Button>
+					<Button disabled={loadingBuy} onClick={() => handleBuy(project.id)}>
+						{" "}
+						{loadingBuy ? "ক্রয় হচ্ছে..." : "ক্রয় করুন"}
+					</Button>
 					<Link href={`/invest/project-detail/${project.id}`}>
 						<Button variant="outline">বিস্তারিত</Button>
 					</Link>

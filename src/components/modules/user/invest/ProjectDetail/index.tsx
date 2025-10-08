@@ -39,6 +39,7 @@ export default function ProjectDetail({ projectId }: { projectId: string }) {
 	const [project, setProject] = useState<TProject | null>(null);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
+	const [loadingBuy, setLoadingBuy] = useState(false);
 
 	useEffect(() => {
 		if (!projectId) return;
@@ -65,13 +66,17 @@ export default function ProjectDetail({ projectId }: { projectId: string }) {
 	const statusData = getStatusClasses(project.status || "default");
 
 	const handleBuy = async () => {
-		const res = await buyProject(project.id);
+		setLoadingBuy(true);
+		const res = await buyProject(projectId);
 		if (res.success) {
-			toast.success("✅ সফলভাবে ক্রয় সম্পন্ন হয়েছে!");
+			toast.success(res.message);
+			setLoadingBuy(false);
 		} else {
+			setLoadingBuy(false);
 			toast.error("❌ " + res.message);
 		}
 	};
+
 	return (
 		<div className="max-w-3xl mx-auto p-3 bg-gradient-radial from-[#101a33] via-[#0a0f1c] to-[#060a14] min-h-screen text-[#e6f1ff] font-sans">
 			{/* Back Button এবং Title সেকশন */}
@@ -144,9 +149,8 @@ export default function ProjectDetail({ projectId }: { projectId: string }) {
 				<p>{project.description}</p>
 			</div>
 
-			<Button onClick={handleBuy} className="w-full">
-				{" "}
-				ক্রয় করুন
+			<Button disabled={loadingBuy} onClick={handleBuy} className="w-full">
+				{loadingBuy ? "ক্রয় হচ্ছে..." : "ক্রয় করুন"}
 			</Button>
 		</div>
 	);

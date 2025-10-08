@@ -1,9 +1,33 @@
 "use client";
+
 import { Avatar } from "@/components/ui/avatar";
 import { useUser } from "@/context/UserContext";
+import { getTeams } from "@/services/TeamServie";
+import { useEffect, useState } from "react";
 
 const Team = () => {
 	const { user } = useUser();
+	const [data, setData] = useState<any>({});
+	const [loading, setLoading] = useState(true);
+
+	useEffect(() => {
+		const fetchTeams = async () => {
+			setLoading(true);
+			try {
+				const res = await getTeams();
+				setData(res.data);
+			} catch (err) {
+				console.error(err);
+			} finally {
+				setLoading(false);
+			}
+		};
+		if (user?.id) fetchTeams();
+	}, [user?.id]);
+
+	if (loading)
+		return <div className="text-white p-4 text-center">Loading...</div>;
+
 	return (
 		<div
 			className="min-h-screen bg-[#0a0f1c] text-[#e6f1ff] p-4 font-[Noto_Sans_Bengali]"
@@ -42,68 +66,59 @@ const Team = () => {
 				</div>
 			</section>
 
-			{/* Tree Section */}
-			<section className="mt-6 text-center">
-				<h2 className="text-[#00e5ff] text-lg mb-2">রেজিস্ট্রেশনের সংখ্যা</h2>
-				<div className="flex justify-center mb-2">
-					<div className="bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.18)] rounded-md px-3 py-1 text-xs font-semibold">
-						মোট
-						<br />
-						<b className="block mt-1 text-white text-sm">1</b>
-					</div>
-				</div>
-				<div className="flex justify-center gap-4 relative mt-3 before:content-[''] before:absolute before:top-0 before:left-0 before:right-0 before:h-[2px] before:bg-[rgba(255,255,255,0.18)]">
-					{["A", "B", "C"].map((label, i) => (
-						<div
-							key={i}
-							className="relative before:content-[''] before:absolute before:-top-3 before:left-1/2 before:-translate-x-1/2 before:h-3 before:border-l-2 before:border-[rgba(255,255,255,0.18)]">
-							<div className="bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.18)] rounded-md px-3 py-1 text-xs font-semibold">
-								{label}
-								<br />
-								<b className="block mt-1 text-white text-sm">
-									{label === "A" ? "1" : "0"}
-								</b>
-							</div>
-						</div>
-					))}
-				</div>
-			</section>
+			{/* Dynamic Sections: registration, size, purchase */}
+			{["registration", "purchase"].map((type, idx) => (
+				<section key={idx} className="mt-6 text-center">
+					<h2 className="text-[#00e5ff] text-lg mb-2">
+						{type === "purchase" ? "কেনার সংখ্যা" : "রেজিস্ট্রেশনের সংখ্যা"}
+					</h2>
 
+					{/* Total */}
+					<div className="flex justify-center mb-2">
+						<div className="bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.18)] rounded-md px-3 py-1 text-xs font-semibold">
+							মোট
+							<br />
+							<b className="block mt-1 text-white text-sm">
+								{data?.[type]?.total ?? 0}
+							</b>
+						</div>
+					</div>
+
+					{/* Branches */}
+					<div className="flex justify-center gap-4 relative mt-3 before:content-[''] before:absolute before:top-0 before:left-0 before:right-0 before:h-[2px] before:bg-[rgba(255,255,255,0.18)]">
+						{["A", "B", "C"].map((label, i) => (
+							<div
+								key={i}
+								className="relative before:content-[''] before:absolute before:-top-3 before:left-1/2 before:-translate-x-1/2 before:h-3 before:border-l-2 before:border-[rgba(255,255,255,0.18)]">
+								<div className="bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.18)] rounded-md px-3 py-1 text-xs font-semibold">
+									{label}
+									<br />
+									<b className="block mt-1 text-white text-sm">
+										{data?.[type]?.branches?.[label] ?? 0}
+									</b>
+								</div>
+							</div>
+						))}
+					</div>
+				</section>
+			))}
+
+			{/* Team Size Section */}
 			<section className="mt-6 text-center">
 				<h2 className="text-[#00e5ff] text-lg mb-2">টিমের আকার (সুবিধা)</h2>
-				<div className="flex justify-center mb-2">
-					<div className="bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.18)] rounded-md px-3 py-1 text-xs font-semibold">
-						মোট
-						<br />
-						<b className="block mt-1 text-white text-sm">1800</b>
-					</div>
-				</div>
-				<div className="flex justify-center gap-4 relative mt-3 before:content-[''] before:absolute before:top-0 before:left-0 before:right-0 before:h-[2px] before:bg-[rgba(255,255,255,0.18)]">
-					{["A", "B", "C"].map((label, i) => (
-						<div
-							key={i}
-							className="relative before:content-[''] before:absolute before:-top-3 before:left-1/2 before:-translate-x-1/2 before:h-3 before:border-l-2 before:border-[rgba(255,255,255,0.18)]">
-							<div className="bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.18)] rounded-md px-3 py-1 text-xs font-semibold">
-								{label}
-								<br />
-								<b className="block mt-1 text-white text-sm">
-									{label === "A" ? "1800" : "0"}
-								</b>
-							</div>
-						</div>
-					))}
-				</div>
-			</section>
 
-			<section className="mt-6 text-center">
-				<h2 className="text-[#00e5ff] text-lg mb-2">কেনার সংখ্যা</h2>
+				{/* Total team size */}
 				<div className="flex justify-center mb-2">
 					<div className="bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.18)] rounded-md px-3 py-1 text-xs font-semibold">
 						মোট
 						<br />
-						<b className="block mt-1 text-white text-sm">1</b>
+						<b className="block mt-1 text-white text-sm">
+							{user?.investorInfo.teamSize ?? 0}
+						</b>
 					</div>
 				</div>
+
+				{/* Branches */}
 				<div className="flex justify-center gap-4 relative mt-3 before:content-[''] before:absolute before:top-0 before:left-0 before:right-0 before:h-[2px] before:bg-[rgba(255,255,255,0.18)]">
 					{["A", "B", "C"].map((label, i) => (
 						<div
@@ -113,7 +128,7 @@ const Team = () => {
 								{label}
 								<br />
 								<b className="block mt-1 text-white text-sm">
-									{label === "A" ? "1" : "0"}
+									{data?.teamSize?.branches?.[label] ?? 0}
 								</b>
 							</div>
 						</div>

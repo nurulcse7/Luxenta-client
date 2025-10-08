@@ -9,15 +9,15 @@ export const getTeams = async () => {
 		const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/team`, {
 			method: "GET",
 			headers: {
-				Authorization: `Bearer ${accessToken}`,
+				Authorization: `${accessToken}`,
 			},
-			cache: "no-store", // always fetch fresh data
+			cache: "no-store",  
 		});
 
 		const result = await res.json();
-		return result.data; // { hierarchy, totalCount }
-	} catch (error: any) {
+		return result;  
+	} catch (error) {
 		console.error("🚀 ~ getTeams error:", error);
-		return { hierarchy: [], totalCount: 0 };
+		return error;
 	}
 };
