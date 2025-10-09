@@ -1,11 +1,12 @@
 "use client";
 import { useState } from "react";
 import { Copy } from "lucide-react";
+import { useUser } from "@/context/UserContext";
 
 export default function InviteModal() {
+	const { user } = useUser();
 	const [copied, setCopied] = useState(false);
-	const referralLink = "https://luxenta.com/signup?ref=ABC123";
-	const referralCode = "ABC123";
+	const referralLink = `https://luxenta.com/signup?ref=${user?.investorInfo?.referralCode}`;
 
 	const handleCopy = (text: string) => {
 		navigator.clipboard.writeText(text);
@@ -35,9 +36,11 @@ export default function InviteModal() {
 				<div>
 					<p className="text-sm text-[#9fb3c8] mb-1">আপনার কোড:</p>
 					<div className="flex items-center justify-between text-[#e6f1ff] bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.18)] rounded-lg px-3 py-2 font-mono text-lg">
-						<span>{referralCode}</span>
+						<span>{user?.investorInfo?.referralCode}</span>
 						<button
-							onClick={() => handleCopy(referralCode)}
+							onClick={() =>
+								handleCopy(user?.investorInfo?.referralCode as string)
+							}
 							className="ml-2 text-[#00e5ff] hover:text-white transition"
 							title="Copy code">
 							<Copy className="w-4 h-4" />
