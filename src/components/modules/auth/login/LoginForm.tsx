@@ -2,9 +2,9 @@
 
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
-import { LoginFormValues, loginSchema } from "./loginValidation";
+import { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { LoginFormValues, loginSchema } from "./loginValidation";
 import { loginUser } from "@/services/AuthService";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -26,7 +26,6 @@ export default function LoginForm() {
 
 	const onSubmit = async (values: LoginFormValues) => {
 		setServerMessage(null);
-
 		try {
 			const result = await loginUser(values);
 			if (!result.success) {
@@ -35,15 +34,11 @@ export default function LoginForm() {
 					text: result.message || "লগইন ব্যর্থ হয়েছে",
 				});
 				return;
-			} else {
-				setServerMessage({
-					type: "success",
-					text: "✅ লগইন সফল হয়েছে!",
-				});
-				setTimeout(() => router.push("/"), 100);
 			}
+			setServerMessage({ type: "success", text: "✅ লগইন সফল হয়েছে!" });
+			setTimeout(() => router.push("/"), 100);
 		} catch (err) {
-			console.log("🚀 ~ onSubmit ~ err:", err)
+			console.log("🚀 ~ onSubmit ~ err:", err);
 			setServerMessage({
 				type: "error",
 				text: "❌ নেটওয়ার্ক সমস্যা হয়েছে। আবার চেষ্টা করুন।",
@@ -51,42 +46,139 @@ export default function LoginForm() {
 		}
 	};
 
+	// 🌌 Particle Animation (Tailwind friendly)
+	useEffect(() => {
+		const particles: any[] = [];
+		const container = document.createElement("div");
+		document.body.appendChild(container);
+		Object.assign(container.style, {
+			position: "absolute",
+			top: "0",
+			left: "0",
+			width: "100%",
+			height: "100%",
+			overflow: "hidden",
+			pointerEvents: "none",
+			zIndex: "0",
+		});
+
+		function createParticle() {
+			const p = document.createElement("div");
+			p.className = "rounded-full absolute";
+			const size = Math.random() * 8 + 4;
+			const hue = Math.random() * 360;
+			Object.assign(p.style, {
+				width: `${size}px`,
+				height: `${size}px`,
+				background: `hsl(${hue},100%,60%)`,
+				boxShadow: `0 0 ${size}px hsl(${hue},100%,60%), 0 0 ${
+					size * 1.5
+				}px hsl(${hue},100%,60%)`,
+			});
+			container.appendChild(p);
+
+			particles.push({
+				el: p,
+				x: window.innerWidth / 2 + (Math.random() - 0.5) * 200,
+				y: window.innerHeight,
+				size,
+				speed: Math.random() * 1 + 0.5,
+				hue,
+			});
+		}
+
+		for (let i = 0; i < 30; i++) createParticle();
+
+		function animate() {
+			for (let i = particles.length - 1; i >= 0; i--) {
+				const p = particles[i];
+				p.y -= p.speed;
+				p.x += Math.sin(p.y / 50) * 0.3;
+				if (p.y < -20) {
+					container.removeChild(p.el);
+					particles.splice(i, 1);
+					continue;
+				}
+				p.hue += 0.5;
+				const color = `hsl(${p.hue % 360},100%,60%)`;
+				p.el.style.background = color;
+				p.el.style.boxShadow = `0 0 ${p.size}px ${color}, 0 0 ${
+					p.size * 1.5
+				}px ${color}`;
+				p.el.style.transform = `translate(${p.x}px, ${p.y}px)`;
+			}
+			requestAnimationFrame(animate);
+		}
+		const interval = setInterval(createParticle, 300);
+		animate();
+
+		return () => {
+			clearInterval(interval);
+			container.remove();
+		};
+	}, []);
+
 	return (
-		<main className="min-h-screen grid place-items-center bg-[radial-gradient(75%_60%_at_20%_20%,#101a33_0%,#0a0f1c_35%,#060a14_100%)] p-6">
-			<section className="w-full max-w-md bg-white/6 border border-white/18 rounded-2xl backdrop-blur-lg shadow-lg p-6">
-				<header className="mb-4 text-center">
-					<h1 className="text-xl font-semibold text-white">Welcome Back</h1>
-					<p className="text-sm text-[#9fb3c8] mt-1">
-						আপনার একাউন্টে লগইন করুন
-					</p>
+		<main className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-[#0a0f1c] to-[#1a0933] text-white">
+			{/* Floating Luxenta Fund background text */}
+			<div className="absolute  flex items-center justify-center  select-none pointer-events-none text-[120px] font-extrabold text-cyan-400/5 -rotate-[20deg] animate-[floatLogo_6s_ease-in-out_infinite] whitespace-nowrap">
+				Luxenta Fund
+			</div>
+
+			{/* Login box */}
+			<section className="relative z-10 w-full max-w-md rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl shadow-[0_0_20px_rgba(0,255,255,0.1)] p-6">
+				<header className="text-center mb-5">
+					<h2 className="text-2xl font-bold text-[#76e8ff] drop-shadow-[0_0_8px_rgba(118,232,255,0.4)]">
+						Luxenta Fund
+					</h2>
+					<p className="text-[#85f3ff] text-base mt-1">লগইন</p>
 				</header>
 
-				<form onSubmit={handleSubmit(onSubmit)} className="grid gap-3">
-					<input
-						type="text"
-						placeholder="ইমেইল অথবা মোবাইল নম্বর"
-						className="w-full p-3 rounded-lg border border-white/18 bg-white/6 text-white outline-none"
-						{...register("emailOrNumber")}
-					/>
-					{errors.emailOrNumber && (
-						<p className="text-red-400 text-sm">
-							{errors.emailOrNumber.message}
-						</p>
-					)}
+				<p className="text-center text-sm text-[#d1e7ff]/90 mb-2">
+					স্বাগতম! আপনার Luxenta Fund একাউন্টে লগইন করুন।
+				</p>
+				<p className="text-center text-xs text-[#a0e5ff]/70 mb-4">
+					আপনার তথ্য সম্পূর্ণ নিরাপদ এবং SSL এনক্রিপশন দ্বারা সুরক্ষিত।
+				</p>
 
-					<input
-						type="password"
-						placeholder="পাসওয়ার্ড"
-						className="w-full p-3 rounded-lg border border-white/18 bg-white/6 text-white outline-none"
-						{...register("password")}
-					/>
-					{errors.password && (
-						<p className="text-red-400 text-sm">{errors.password.message}</p>
-					)}
+				<form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
+					<div>
+						<label className="block text-sm mb-1 text-[#d1e7ff]">
+							মোবাইল/ইমেইল
+						</label>
+						<input
+							type="text"
+							placeholder="আপনার মোবাইল বা ইমেইল লিখুন"
+							className="w-full p-3 rounded-lg bg-white/10 text-white outline-none shadow-inner shadow-cyan-500/10 focus:ring-2 focus:ring-cyan-400 placeholder:text-white/50"
+							{...register("emailOrNumber")}
+						/>
+						{errors.emailOrNumber && (
+							<p className="text-red-400 text-sm mt-1">
+								{errors.emailOrNumber.message}
+							</p>
+						)}
+					</div>
+
+					<div>
+						<label className="block text-sm mb-1 text-[#d1e7ff]">
+							পাসওয়ার্ড
+						</label>
+						<input
+							type="password"
+							placeholder="পাসওয়ার্ড লিখুন"
+							className="w-full p-3 rounded-lg bg-white/10 text-white outline-none shadow-inner shadow-cyan-500/10 focus:ring-2 focus:ring-cyan-400 placeholder:text-white/50"
+							{...register("password")}
+						/>
+						{errors.password && (
+							<p className="text-red-400 text-sm mt-1">
+								{errors.password.message}
+							</p>
+						)}
+					</div>
 
 					{serverMessage && (
 						<div
-							className={`p-3 rounded-md text-sm mt-1 ${
+							className={`p-3 rounded-md text-sm ${
 								serverMessage.type === "error"
 									? "bg-red-700/40 text-red-100"
 									: "bg-green-700/30 text-green-100"
@@ -95,18 +187,36 @@ export default function LoginForm() {
 						</div>
 					)}
 
-					<Button type="submit" disabled={isSubmitting}>
-						{isSubmitting ? "লগইন হচ্ছে..." : "লগইন করুন"}
+					<Button
+						type="submit"
+						disabled={isSubmitting}
+						className="w-full text-white font-bold py-3 text-lg rounded-lg bg-gradient-to-r from-cyan-400 to-fuchsia-600 shadow-[0_0_12px_rgba(0,229,255,0.4)] hover:scale-[1.03] hover:shadow-[0_0_18px_rgba(0,229,255,0.6)] transition-all duration-200">
+						{isSubmitting ? "লগইন হচ্ছে..." : "লগইন"}
 					</Button>
 				</form>
 
-				<footer className="mt-4 text-center text-sm text-[#9fb3c8]">
-					একাউন্ট নেই?{" "}
-					<Link href="/register" className="text-[#00e5ff] underline">
+				<footer className="text-center mt-5 text-sm">
+					নতুন ব্যবহারকারী?{" "}
+					<Link
+						href="/register"
+						className="text-[#85f3ff] font-semibold hover:drop-shadow-[0_0_8px_#85f3ff]">
 						রেজিস্টার করুন
 					</Link>
 				</footer>
 			</section>
+
+			{/* Floating animation keyframes */}
+			<style jsx global>{`
+				@keyframes floatLogo {
+					0%,
+					100% {
+						transform: translate(-50%, -50%) rotate(-20deg) translateY(0);
+					}
+					50% {
+						transform: translate(-50%, -50%) rotate(-20deg) translateY(-15px);
+					}
+				}
+			`}</style>
 		</main>
 	);
 }
