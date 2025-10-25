@@ -15,7 +15,7 @@ export const loginSchema = z.object({
 	password: z
 		.string()
 		.min(1, "পাসওয়ার্ড দেওয়া আবশ্যক")
-		.min(8, "পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে"),
+		.min(6, "পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে"),
 });
 
 export type LoginFormValues = z.infer<typeof loginSchema>;
