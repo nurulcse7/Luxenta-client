@@ -86,3 +86,43 @@
 		@apply bg-background text-foreground;
 	}
 }
+
+/* Gradient Background Animation */
+@keyframes gradientMove {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+
+.animate-gradientMove {
+	animation: gradientMove 3s linear infinite;
+	background-size: 400% 100%;
+}
+
+/* Flashing/Glowing Text Animation */
+@keyframes flashMove {
+	0%,
+	100% {
+		transform: translateY(0) scale(1);
+		box-shadow: 0 0 5px rgba(0, 229, 255, 0.3);
+	}
+	25%,
+	75% {
+		transform: translateY(-2px) scale(1.02);
+		box-shadow: 0 0 12px rgba(0, 229, 255, 0.5);
+	}
+	50% {
+		transform: translateY(0) scale(1);
+		box-shadow: 0 0 5px rgba(0, 229, 255, 0.3);
+	}
+}
+
+.animate-flashMove {
+	animation: flashMove 2s infinite;
+}

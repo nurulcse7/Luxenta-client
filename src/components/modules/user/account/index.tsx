@@ -10,8 +10,6 @@ const MyAccount = () => {
 	const { user, isLoading } = useUser();
 	const router = useRouter();
 
-	if (!user) return null;
-
 	if (isLoading)
 		return <h1 className="text-center">Account Info loading...</h1>;
 

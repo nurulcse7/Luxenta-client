@@ -12,7 +12,11 @@ const MaintenanceGuard = ({ children }: IMaintenanceGuard) => {
 	const { settings, isLoading } = useSetting();
 
 	if (isLoading)
-		return <div className="text-center text-white p-6">Loading...</div>;
+		return (
+			<div className="text-center text-white p-6 h-screen flex items-center justify-center">
+				Loading...
+			</div>
+		);
 
 	if (settings?.general?.maintenance) {
 		// Notice & Extra Info admin panel থেকে আসবে

@@ -13,7 +13,7 @@ import {
 	ISupportSetting,
 	IPaymentSetting,
 	IWithdrawSetting,
-} from "@/types/setting"; // Ensure these types are correctly imported
+} from "@/types/setting"; 
 import { getSettings } from "@/services/SettingService";
 
 import {

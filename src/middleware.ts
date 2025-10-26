@@ -4,7 +4,7 @@ import { getCurrentUser } from "./services/AuthService";
 const allowedRoles = ["investor", "agent"] as const;
 type Role = (typeof allowedRoles)[number];
 
-const commonPaths = [/^\//]; // Everyone can access
+const commonPaths = [/^\//];
 const roleBasedPaths: Record<Role, RegExp[]> = {
 	investor: [/^\/investor/],
 	agent: [/^\/agent/],
@@ -14,7 +14,11 @@ export const middleware = async (req: NextRequest) => {
 	const { pathname, origin } = req.nextUrl;
 
 	// 1️⃣ Allow login and register even in maintenance
-	if (pathname === "/login" || pathname === "/register") {
+	if (
+		pathname === "/login" ||
+		pathname === "/register" ||
+		pathname === "/forgot-password"
+	) {
 		return NextResponse.next();
 	}
 

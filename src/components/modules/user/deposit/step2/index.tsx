@@ -141,6 +141,20 @@ const DepositStep2 = ({
 					))}
 				</div>
 
+				{selectedMethod && (
+					<div
+						className="relative flex justify-between items-center p-3 rounded-xl border border-cyan-400 mt-2
+			bg-gradient-to-r from-cyan-400 via-purple-600 to-cyan-400 animate-gradientMove">
+						<div className="text-white font-bold text-lg ml-3 animate-flashMove">
+							Send Money
+						</div>
+						<div className="text-white text-sm mr-3 text-right">
+							📢 এখন নির্দিষ্ট নম্বর/আইডিতে অর্থ পাঠান। সাবমিট করার সাথে সাথেই
+							ব্যালেন্স আপডেট হবে!
+						</div>
+					</div>
+				)}
+
 				{/* Payment info */}
 				<div className="p-3 border border-white/20 rounded-xl bg-[#00e5ff0a] text-sm grid gap-2 text-white">
 					<div>পেমেন্ট তথ্য:</div>

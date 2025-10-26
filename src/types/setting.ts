@@ -26,10 +26,8 @@ export interface IPaymentSetting {
 export interface ISupportSetting {
 	id: string;
 	email?: string;
-	phone?: string;
 	whatsapp?: string;
 	telegram?: string;
-	address?: string;
 	createdAt: Date;
 	updatedAt: Date;
 }

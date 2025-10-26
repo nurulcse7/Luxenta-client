@@ -8,6 +8,7 @@ import { LoginFormValues, loginSchema } from "./loginValidation";
 import { loginUser } from "@/services/AuthService";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import ReInput from "@/components/ui/ReInput";
 
 export default function LoginForm() {
 	const router = useRouter();
@@ -36,7 +37,7 @@ export default function LoginForm() {
 				return;
 			}
 			setServerMessage({ type: "success", text: "✅ লগইন সফল হয়েছে!" });
-			setTimeout(() => router.push("/"), 100);
+			setTimeout(() => router.push("/"));
 		} catch (err) {
 			console.log("🚀 ~ onSubmit ~ err:", err);
 			setServerMessage({
@@ -160,20 +161,19 @@ export default function LoginForm() {
 					</div>
 
 					<div>
-						<label className="block text-sm mb-1 text-[#d1e7ff]">
-							পাসওয়ার্ড
-						</label>
-						<input
+						<ReInput
+							label="পাসওয়ার্ড "
 							type="password"
-							placeholder="পাসওয়ার্ড লিখুন"
-							className="w-full p-3 rounded-lg bg-white/10 text-white outline-none shadow-inner shadow-cyan-500/10 focus:ring-2 focus:ring-cyan-400 placeholder:text-white/50"
+							placeholder="পাসওয়ার্ড লিখুন"
 							{...register("password")}
+							error={errors.password?.message}
 						/>
-						{errors.password && (
-							<p className="text-red-400 text-sm mt-1">
-								{errors.password.message}
-							</p>
-						)}
+					</div>
+					<div>
+						<Link className="border-b " href={`/forgot-password`}>
+							{" "}
+							forgot password?
+						</Link>
 					</div>
 
 					{serverMessage && (

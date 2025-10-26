@@ -3,6 +3,7 @@
 import { useState } from "react";
 import DepositStep1 from "@/components/modules/user/deposit/step1";
 import DepositStep2 from "@/components/modules/user/deposit/step2";
+import WithdrawalTicker from "./WithdrawalTicker";
 
 // Allowed channel types
 export type ChannelKey = string;
@@ -30,6 +31,7 @@ const DepositPage = () => {
 
 	return (
 		<div className="min-h-screen">
+			<WithdrawalTicker />
 			{step === 1 && <DepositStep1 onSubmit={handleStep1Submit} />}
 			{step === 2 && serialId && amount && channel && (
 				<DepositStep2

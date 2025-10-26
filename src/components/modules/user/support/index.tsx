@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useSetting } from "@/context/SettingContext";
 import {
 	Card,
@@ -8,17 +9,13 @@ import {
 	CardTitle,
 	CardDescription,
 } from "@/components/ui/card";
-import {
-	Mail,
-	Phone,
-	MapPin,
-	MessageCircle,
-	Send,
-	LifeBuoy,
-} from "lucide-react";
+import { Mail, MessageCircle, Send, LifeBuoy, ArrowLeft } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
+import BackButton from "@/components/ui/BackButton";
 
 const Support = () => {
+	const router = useRouter();
 	const { settings } = useSetting();
 	const support = settings?.support;
 
@@ -37,12 +34,6 @@ const Support = () => {
 			link: support.email ? `mailto:${support.email}` : undefined,
 		},
 		{
-			label: "Phone",
-			value: support.phone,
-			icon: <Phone className="w-5 h-5 text-primary" />,
-			link: support.phone ? `tel:${support.phone}` : undefined,
-		},
-		{
 			label: "WhatsApp",
 			value: support.whatsapp,
 			icon: <MessageCircle className="w-5 h-5 text-green-400" />,
@@ -58,15 +49,15 @@ const Support = () => {
 				? `https://t.me/${support.telegram.replace("@", "")}`
 				: undefined,
 		},
-		{
-			label: "Address",
-			value: support.address,
-			icon: <MapPin className="w-5 h-5 text-pink-400" />,
-		},
 	];
 
 	return (
 		<div className="max-w-5xl mx-auto py-10 px-6">
+			{/* ✅ Back to Login Button */}
+			<div className="mb-6">
+				<BackButton />
+			</div>
+
 			<Card className="bg-gradient-to-br from-gray-900 via-gray-800 to-black border border-gray-700/50 shadow-2xl rounded-2xl overflow-hidden">
 				<CardHeader className="flex flex-col items-center text-center bg-gradient-to-r from-primary/20 to-primary/5 border-b border-gray-700/50 py-8">
 					<LifeBuoy className="w-12 h-12 text-primary mb-3" />
@@ -107,7 +98,7 @@ const Support = () => {
 						<p>
 							For urgent issues, please contact us directly through{" "}
 							<span className="text-primary font-medium">Email</span> or{" "}
-							<span className="text-green-400 font-medium">WhatsApp</span>.
+							<span className="text-green-400 font-medium">Telegram</span>.
 						</p>
 					</div>
 				</CardContent>
