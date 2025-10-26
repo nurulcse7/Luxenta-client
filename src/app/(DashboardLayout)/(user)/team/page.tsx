@@ -5,7 +5,7 @@ export const metadata = {
 };
 const TeamPage = () => {
 	return (
-		<div>
+		<div className="pb-16">
 			<Team />
 		</div>
 	);

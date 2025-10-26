@@ -59,7 +59,7 @@ const DepositStep1 = ({ onSubmit }: DepositStep1Props) => {
 	};
 
 	return (
-		<main className="min-h-screen grid place-items-center bg-[radial-gradient(75%_60%_at_20%_20%,#101a33_0%,#0a0f1c_35%,#060a14_100%)] text-[#e6f1ff] p-4">
+		<main className="min-h-screen grid place-items-center bg-[radial-gradient(75%_60%_at_20%_20%,#101a33_0%,#0a0f1c_35%,#060a14_100%)] text-[#e6f1ff] p-2 md:p-4">
 			<section className="w-full max-w-md bg-white/6 border border-white/18 rounded-[14px] backdrop-blur-lg shadow-lg">
 				{/* Header */}
 				<div className="flex justify-between items-center p-4 border-b border-white/18 text-sm">
@@ -71,7 +71,7 @@ const DepositStep1 = ({ onSubmit }: DepositStep1Props) => {
 				</div>
 
 				{/* Content */}
-				<div className="p-4 grid gap-3">
+				<div className="md:p-4 p-3 grid gap-3">
 					{/* Serial */}
 					<div className="flex justify-between items-center p-2.5 rounded-lg bg-white/5 border border-white/15 text-[11px]">
 						<div>সিরিয়াল নম্বর:</div>

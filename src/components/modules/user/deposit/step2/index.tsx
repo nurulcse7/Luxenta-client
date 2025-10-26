@@ -95,9 +95,9 @@ const DepositStep2 = ({
 	};
 
 	return (
-		<main className="min-h-screen grid place-items-center p-6">
+		<main className="min-h-screen grid place-items-center md:p-6">
 			<section
-				className={`w-full max-w-3xl border border-white/20 rounded-2xl backdrop-blur-lg shadow-2xl p-6 grid gap-6 ${
+				className={`w-full max-w-3xl border border-white/20 rounded-2xl backdrop-blur-lg shadow-2xl md:p-6 p-2 grid gap-6 ${
 					selectedMethod === "bkash"
 						? "bg-[#E2136E]/50"
 						: selectedMethod === "nagad"
@@ -189,7 +189,7 @@ const DepositStep2 = ({
 					className="w-full p-3 rounded-xl border border-white/20 bg-white text-black text-sm"
 				/>
 				{selectedMethod ? (
-					<ul className="text-white list-disc list-inside space-y-1">
+					<ul className="text-white list-disc list-inside space-y-1 text-[13px]">
 						<li>উল্লেখিত নম্বর/আইডি তে টাকা পাঠানোর পরই সাবমিট করুন।</li>
 						<li>ট্রানজেকশন আইডি সাবমিট করুন।</li>
 						<li>ভুল এমাউন্ট/ভুল অ্যাকাউন্টে পাঠালে ডিপোজিট গৃহীত হবে না।</li>

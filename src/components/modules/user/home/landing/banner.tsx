@@ -42,7 +42,7 @@ const Banner = () => {
 		<div>
 			{/* Main Image */}
 			<div className="flex justify-center px-6 mb-6">
-				<div className="relative w-full max-w-[800px] h-[300px] md:h-[350px]  rounded-xl overflow-hidden shadow-lg">
+				<div className="relative w-full max-w-[800px] h-[200px] sm:h-[300px] md:h-[350px]  rounded-xl overflow-hidden shadow-lg">
 					<Image
 						src={banners[mainImageIndex].imageUrl}
 						alt={`Banner ${mainImageIndex}`}

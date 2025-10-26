@@ -45,7 +45,7 @@ const WithdrawalTicker = () => {
 	}, []);
 
 	return (
-		<div className="overflow-hidden whitespace-nowrap bg-gradient-to-r from-cyan-950 to-indigo-950 border border-[rgba(255,255,255,0.18)] rounded-xl mb-4">
+		<div className="overflow-hidden whitespace-nowrap bg-gradient-to-r from-cyan-950 to-indigo-950 border border-[rgba(255,255,255,0.18)] mb-4">
 			<div className="inline-block px-4 py-3 text-cyan-100 text-sm font-medium animate-slide">
 				{tickerText}
 			</div>

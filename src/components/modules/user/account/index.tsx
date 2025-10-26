@@ -29,7 +29,7 @@ const MyAccount = () => {
 		}
 	};
 	return (
-		<div className="min-h-screen    font-sans p-3 ">
+		<div className="min-h-screen   overflow-hidden font-sans sm:p-3 pb-3">
 			{/* Header */}
 			<div className="flex items-center gap-3 bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.18)] rounded-[18px] shadow-[0_10px_30px_rgba(0,0,0,.35),0_1px_0_rgba(255,255,255,.04)_inset] backdrop-blur-md p-4 mb-4 transition">
 				<div>
@@ -44,21 +44,16 @@ const MyAccount = () => {
 			</div>
 
 			{/* Account Card */}
-			<div className="bg-black rounded-2xl p-6 text-center relative shadow-[0_0_15px_3px_#bfa66a] m-4">
+			<div className="bg-black rounded-2xl md:p-6 p-1 text-center relative shadow-[0_0_15px_3px_#bfa66a] m-4">
 				<p className="uppercase tracking-wide font-semibold">
 					অ্যাকাউন্ট ফান্ড (৳)
 				</p>
-				<h1 className="text-4xl font-bold">
+				<h1 className="md:text-4xl font-bold">
 					৳{investor ? investor.walletBalance.toLocaleString() : "0.00"}
 				</h1>
 
 				{/* Metrics */}
-				<div className="flex gap-3 justify-center mt-4">
-					<Metric
-						title="মোট ডিপোজিট"
-						value={investor?.totalDeposit ?? 0}
-						isCurrency
-					/>
+				<div className="grid md:grid-cols-4 grid-cols-2 md:gap-3 gap-1 justify-center mt-4">
 					<Metric
 						title="মোট আয়"
 						value={investor?.totalEarnings ?? 0}
@@ -69,6 +64,12 @@ const MyAccount = () => {
 						value={investor?.totalWithdraw ?? 0}
 						isCurrency
 					/>
+					<Metric
+						title="মোট ডিপোজিট"
+						value={investor?.totalDeposit ?? 0}
+						isCurrency
+					/>
+
 					<Metric title="টিম সাইজ" value={investor?.teamSize ?? 0} />
 				</div>
 
@@ -123,7 +124,7 @@ const MyAccount = () => {
 					<div
 						key={i}
 						onClick={item.action}
-						className={`flex justify-between items-center p-4 rounded-xl m-2 cursor-pointer transition ${
+						className={`flex justify-between items-center sm:p-4 p-3 rounded-xl m-2  cursor-pointer transition sm:text-lg text-sm ${
 							item.danger
 								? "text-[#ff5c7a] border border-[#ff5c7a] bg-[rgba(255,255,255,0.06)]"
 								: "bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.18)]"
@@ -157,9 +158,9 @@ const Metric = ({
 	value: number;
 	isCurrency?: boolean;
 }) => (
-	<div className="flex-1 bg-[rgba(255,255,255,0.06)] p-4 rounded-xl text-center border border-[rgba(255,255,255,0.18)]">
-		<p className="text-xs text-white opacity-80">{title}</p>
-		<p className="text-lg font-bold text-white mt-1">
+	<div className="flex-1 bg-[rgba(255,255,255,0.06)] md:p-4 p-[3px] text-sm rounded-xl text-center border border-[rgba(255,255,255,0.18)]">
+		<p className="md:text-xs text-sm text-white opacity-80">{title}</p>
+		<p className="sm:text-lg font-bold text-white mt-1">
 			{isCurrency ? `৳ ${value.toLocaleString()}` : value.toLocaleString()}
 		</p>
 	</div>
