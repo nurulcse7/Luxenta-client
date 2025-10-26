@@ -42,8 +42,10 @@ const ResetPassword = () => {
 		try {
 			console.log("🔐 Password Change Request:", values);
 			// await api.changePassword(values);
-
-			toast.success("পাসওয়ার্ড সফলভাবে পরিবর্তন হয়েছে!");
+			alert(
+				"Password change feature is not available at the moment! it will open soon."
+			);
+			// toast.success("পাসওয়ার্ড সফলভাবে পরিবর্তন হয়েছে!");
 			reset();
 		} catch (error) {
 			console.error(error);
