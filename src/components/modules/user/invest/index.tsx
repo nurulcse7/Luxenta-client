@@ -136,27 +136,33 @@ export const Invest = () => {
 			<h1 className="h1 text-center text-2xl font-extrabold mb-4">বিনিয়োগ</h1>
 			<Ticker />
 			<Card className="grid grid-cols-1 gap-4 sm:grid-cols-[1fr_auto] items-start mb-4">
-				<div className="grid text-white grid-cols-1 sm:grid-cols-2 gap-4">
-					<div className="card-block bg-[rgba(255,255,255,0.08)] p-4 rounded-xl border border-[rgba(255,255,255,0.18)]">
-						<div className="text-sm text-gray-300 ">মোট বিনিয়োগ মূল্য</div>
-						<div className="text-4xl font-extrabold leading-tight">
+				<div className="grid text-white grid-cols-2 gap-2">
+					<div className="card-block bg-[rgba(255,255,255,0.08)] p-1 rounded-xl border border-[rgba(255,255,255,0.18)]">
+						<div className="text-sm text-center text-gray-300 ">মোট বিনিয়োগ মূল্য</div>
+						<div className="text-xl text-center font-bold leading-tight">
 							৳ {user?.investorInfo.totalInvest || 0}
 						</div>
 					</div>
-					<div className="card-block bg-[rgba(255,255,255,0.08)] p-4 rounded-xl border border-[rgba(255,255,255,0.18)]">
-						<div className="text-xl font-bold">
+					<div className="card-block bg-[rgba(255,255,255,0.08)] p-1 rounded-xl border border-[rgba(255,255,255,0.18)]">
+						<div className="text-sm text-center text-gray-300  mt-1">মোট আয়</div>
+						<div className="text-xl text-center font-bold">
 							৳ {user?.investorInfo.totalEarnings || 0}
 						</div>
-						<div className="text-sm text-gray-300  mt-1">মোট আয়</div>
+						
 					</div>
-					<div className="card-block bg-[rgba(255,255,255,0.08)] p-4 rounded-xl border border-[rgba(255,255,255,0.18)] col-span-1 sm:col-span-2">
-						<div className="text-xl font-bold">
+					<div className="card-block bg-[rgba(255,255,255,0.08)] p-1 rounded-xl border border-[rgba(255,255,255,0.18)] col-span-1 sm:col-span-2">
+						<div className="text-sm text-center text-gray-300 mt-1">আজকের আয়</div>
+						<div className="text-xl text-center font-bold">
 							৳ {user?.investorInfo?.todayEarning || 0}
 						</div>
-						<div className="text-sm text-gray-300 mt-1">আজকের আয়</div>
 					</div>
-				</div>
-				<div className="flex flex-col items-end gap-3">
+					<div className="card-block bg-[rgba(255,255,255,0.08)] p-1 rounded-xl border border-[rgba(255,255,255,0.18)] col-span-1 sm:col-span-2">
+						<div className="text-sm text-center text-gray-300 mt-1">বেতন</div>
+						<div className="text-xl text-center font-bold">
+							৳ {user?.investorInfo?.todayEarning || 0}
+						</div>
+					</div>
+					<div className=" gap-3">
 					<Button
 						onClick={handleTransferTodayEarning}
 						disabled={!user?.investorInfo.todayEarning || loadingTransfer}>
@@ -167,11 +173,13 @@ export const Invest = () => {
 							</span>
 						) : (
 							<>
-								<Wallet className="w-6 h-6" /> ব্যালেন্স স্থানান্তর করুন
+								<Wallet className="w-6 h-6" /> ব্যালেন্স স্থানান্তর
 							</>
 						)}
 					</Button>
 				</div>
+				</div>
+				
 			</Card>
 
 			<Card className="flex items-center justify-between p-4 mb-3">
