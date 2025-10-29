@@ -200,9 +200,9 @@ export default function LuxentaWallet() {
 							</div>
 						</div>
 					</div>
-					<div className="flex justify-between mt-2 text-xs text-[#9fb3c8]">
-						<span>দৈনিক লাভ: 0.71% (Compound)</span>
-						<span>শেষ হালনাগাদ: {lastCalc?.toLocaleString() || "—"}</span>
+					<div className="flex gap-3 mt-2 text-xs text-[#9fb3c8]">
+						<span className="flex-1">দৈনিক লাভ: 0.71% (Compound)</span>
+						<span className="flex-1">শেষ হালনাগাদ: {lastCalc?.toLocaleString() || "—"}</span>
 					</div>
 					<p className="text-xs text-[#9fb3c8] text-center mt-1">
 						💡 Wallet-এর টাকা ব্যবহার করার আগে মেইন ব্যালেন্সে ফেরত আনতে হবে।
@@ -214,7 +214,7 @@ export default function LuxentaWallet() {
 					<h3 className="text-center text-[#00e5ff] font-bold mb-2">
 						মেইন → Wallet ট্রান্সফার
 					</h3>
-					<div className="flex gap-2">
+					<div className="flex gap-2" >
 						<input
 							type="number"
 							min={1}
@@ -226,11 +226,11 @@ export default function LuxentaWallet() {
 									e.target.value === "" ? "" : parseFloat(e.target.value)
 								)
 							}
-							className="flex-1 p-2 rounded-lg border border-white/18 bg-white/8 text-[#e6f1ff]"
+							className="w-40 sm:w-full p-2 rounded-lg border border-white/18 bg-white/8 text-[#e6f1ff]"
 							disabled={isLoading} // লোডিং অবস্থায় ডিসেবল
 						/>
 						<Button
-							className="rounded-sm"
+							className="rounded-sm "
 							onClick={handleToWallet}
 							disabled={isLoading} // লোডিং অবস্থায় ডিসেবল
 						>
@@ -256,16 +256,16 @@ export default function LuxentaWallet() {
 									e.target.value === "" ? "" : parseFloat(e.target.value)
 								)
 							}
-							className="flex-1 p-2 rounded-lg border border-white/18 bg-white/8 text-[#e6f1ff]"
+							className="w-40 sm:w-full p-2 rounded-lg border border-white/18 bg-white/8 text-[#e6f1ff]"
 							disabled={isLoading} // লোডিং অবস্থায় ডিসেবল
 						/>
 						<Button
-							variant="secondary"
+							
 							className="rounded-sm"
 							onClick={handleToMain}
 							disabled={isLoading} // লোডিং অবস্থায় ডিসেবল
 						>
-							{isLoading ? "ফিরিয়ে নেওয়া হচ্ছে..." : "মেইনে ফিরিয়ে নিন"}
+							{isLoading ? "ফিরিয়ে নেওয়া হচ্ছে..." : "মেইন - এ পাঠান"}
 						</Button>
 					</div>
 				</div>

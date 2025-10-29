@@ -42,7 +42,7 @@ const Team = () => {
 						অভ্যর্থনা কোড: <b>{user?.investorInfo.referralCode}</b>
 					</div>
 				</div>
-				<div className="w-[30px] h-[30px] rounded-full border-2 border-[#00e5ff] flex items-center justify-center animate-spin">
+				<div className="w-[30px] h-[30px] rounded-full border-0 border-[#00e5ff] flex items-center justify-center animate-spin">
 					<span className="text-lg">🌍</span>
 				</div>
 			</header>

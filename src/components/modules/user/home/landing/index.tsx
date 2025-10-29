@@ -51,10 +51,12 @@ export default function LandingPage() {
 				</div>
 				{/* Header */}
 				<header className="text-center py-6">
-					<h1 className="text-3xl font-bold text-[#00e5ff] drop-shadow-[0_0_8px_#00e5ff]">
-						Luxenta AI Fund
-					</h1>
-					<p className="mt-2 text-[#9fb3c8]">AI-চালিত রোবট বিনিয়োগ সিস্টেম</p>
+					<img className="mx-auto -my-24 -mb-24" src="/assets/images/Luxenta_Logo.png" alt="Luxenta" width={250} height={250}/>
+					    {/* <Image src="/images/Luxenta_Logo.jpeg" alt="Picture of the author" width={500} height={500} /> */}
+					{/* <h1 className="text-xl font-bold text-[#00e5ff] drop-shadow-[0_0_8px_#00e5ff]">
+						Luxenta Fund
+					</h1> */}
+					<p className="mt-2 text-[#9fb3c8]">স্মার্ট ইনভেস্টমেন্ট সিস্টেম</p>
 				</header>
 				<div>
 					<Banner />
@@ -64,7 +66,7 @@ export default function LandingPage() {
 					{/* Deposit Card */}
 					<Link
 						href="/deposit"
-						className="flex-1 bg-gradient-to-tr from-[#00e5ff] to-[#6a5cff] text-white font-bold py-6 rounded-xl shadow-lg hover:scale-105 transition-transform">
+						className="flex-1 bg-gradient-to-tr from-[#00e5ff] to-[#6a5cff] text-white py-2 rounded-xl shadow-lg hover:scale-105 transition-transform">
 						<h2 className="text-lg mb-1">ডিপোজিট</h2>
 						<p className="opacity-80">আপনার ওয়ালেটে টাকা যোগ করুন</p>
 					</Link>
@@ -72,7 +74,7 @@ export default function LandingPage() {
 					{/* Wallet Card */}
 					<Link
 						href="/wallet"
-						className="flex-1 bg-gradient-to-tr from-[#ffc14d] to-[#cc00ff] text-white font-bold py-6 rounded-xl shadow-lg hover:scale-105 transition-transform">
+						className="flex-1 bg-gradient-to-tr from-[#ffc14d] to-[#cc00ff] text-white py-2 rounded-xl shadow-lg hover:scale-105 transition-transform">
 						<h2 className="text-lg mb-1">ওয়ালেট</h2>
 						<p className="opacity-80">আপনার ওয়ালেটের ব্যালেন্স দেখুন</p>
 					</Link>
@@ -80,8 +82,8 @@ export default function LandingPage() {
 					{/* Withdraw Card */}
 					<Link
 						href="/withdraw"
-						className="flex-1 bg-gradient-to-tr from-[#ff5c7a] to-[#ff9f43] text-white font-bold py-6 rounded-xl shadow-lg hover:scale-105 transition-transform">
-						<h2 className="text-lg mb-1">উত্তোলন</h2>
+						className="flex-1 bg-gradient-to-tr from-[#ff5c7a] to-[#ff9f43] text-white py-2 rounded-xl shadow-lg hover:scale-105 transition-transform">
+						<h2 className="text-lg mb-1">উইথড্র</h2>
 						<p className="opacity-80">টাকা উত্তোলন করুন</p>
 					</Link>
 				</main>
