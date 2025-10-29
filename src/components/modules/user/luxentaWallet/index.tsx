@@ -180,7 +180,7 @@ export default function LuxentaWallet() {
 				<h1 className="text-lg text-center">💼 Luxenta Wallet</h1>
 			</header>
 
-			<section className="flex flex-col gap-3 max-w-[680px] w-full mx-auto flex-1">
+			<section className="flex flex-col gap-3 max-w-[680px] w-full mx-auto flex-1 pb-18">
 				{/* Balance Card */}
 				<div className="bg-[#0a0f1c] border border-white/18 rounded-lg p-4 backdrop-blur-sm shadow-lg">
 					<h3 className="text-center text-[#00e5ff] font-bold mb-2">

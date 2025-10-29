@@ -1,5 +1,5 @@
 import ProjectDetail from "@/components/modules/user/invest/ProjectDetail";
-export const metadata = { title: "প্রজেক্ট বিস্তারিতো • Luxenta AI Fund" };
+export const metadata = { title: "প্রজেক্ট বিস্তারিতো • Luxenta Fund" };
 
 interface Props {
 	params: {

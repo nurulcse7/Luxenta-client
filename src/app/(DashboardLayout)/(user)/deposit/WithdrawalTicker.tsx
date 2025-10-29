@@ -29,7 +29,7 @@ const WithdrawalTicker = () => {
 				`ব্যবহারকারী ${randomUserId()} সফলভাবে ${randomAmount()} টাকা উত্তোলন করেছেন`,
 				`ব্যবহারকারী ${randomUserId()} একটি নতুন উত্তোলন সম্পন্ন করেছেন`,
 				`ব্যবহারকারী ${randomUserId()} তার ব্যালেন্স থেকে ${randomAmount()} টাকা তুলেছেন`,
-				`উত্তোলন সফল! ব্যবহারকারী ${randomUserId()} পেয়েছেন ${randomAmount()} টাকা`,
+				`ব্যবহারকারী ${randomUserId()} পেয়েছেন ${randomAmount()} টাকা`,
 			];
 
 			const msg =
@@ -57,12 +57,12 @@ const WithdrawalTicker = () => {
 						transform: translateX(100%);
 					}
 					100% {
-						transform: translateX(-100%);
+						transform: translateX(-10%);
 					}
 				}
 				.animate-slide {
 					display: inline-block;
-					animation: slide 10s linear infinite;
+					animation: slide 6s linear infinite;
 				}
 			`}</style>
 		</div>

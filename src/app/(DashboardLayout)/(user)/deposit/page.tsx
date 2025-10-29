@@ -30,7 +30,7 @@ const DepositPage = () => {
 	};
 
 	return (
-		<div className="min-h-screen pb-20">
+		<div>
 			<WithdrawalTicker />
 			{step === 1 && <DepositStep1 onSubmit={handleStep1Submit} />}
 			{step === 2 && serialId && amount && channel && (

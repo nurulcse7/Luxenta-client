@@ -129,8 +129,9 @@ export default function LoginForm() {
 			{/* Login box */}
 			<section className="relative z-10 w-full max-w-md rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl shadow-[0_0_20px_rgba(0,255,255,0.1)] p-6">
 				<header className="text-center mb-5">
+					
 					<h2 className="text-2xl font-bold text-[#76e8ff] drop-shadow-[0_0_8px_rgba(118,232,255,0.4)]">
-						Luxenta Fund
+						Luxenta Fund 
 					</h2>
 					<p className="text-[#85f3ff] text-base mt-1">লগইন</p>
 				</header>
@@ -150,7 +151,7 @@ export default function LoginForm() {
 						<input
 							type="text"
 							placeholder="আপনার মোবাইল বা ইমেইল লিখুন"
-							className="w-full p-3 rounded-lg bg-white/10 text-white outline-none shadow-inner shadow-cyan-500/10 focus:ring-2 focus:ring-cyan-400 placeholder:text-white/50"
+							className="text-sm w-full p-3 rounded-lg bg-white/10 text-white outline-none shadow-inner shadow-cyan-500/10 focus:ring-2 focus:ring-cyan-400 placeholder:text-white/50"
 							{...register("emailOrNumber")}
 						/>
 						{errors.emailOrNumber && (
