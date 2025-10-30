@@ -39,7 +39,7 @@ const Team = () => {
 					<div className="text-sm leading-6">
 						ইউআইডি: <b>{user?.id}</b>
 						<br />
-						অভ্যর্থনা কোড: <b>{user?.investorInfo.referralCode}</b>
+						রেফার কোড: <b>{user?.investorInfo.referralCode}</b>
 					</div>
 				</div>
 				<div className="w-[30px] h-[30px] rounded-full border-0 border-[#00e5ff] flex items-center justify-center animate-spin">
@@ -60,9 +60,9 @@ const Team = () => {
 				</div>
 				<div className="flex flex-col items-center gap-1">
 					<button className="bg-gradient-to-br from-[#00e5ff] to-[#6a5cff] text-[#051018] px-3 py-1.5 rounded-md text-sm font-medium">
-						স্থানান্তর করা
+						ট্রান্সফার
 					</button>
-					<div className="text-sm mt-1">সংখ্যা: 0</div>
+					<div className="text-sm mt-1">নাম্বার: 0</div>
 				</div>
 			</section>
 
@@ -70,13 +70,13 @@ const Team = () => {
 			{["registration", "purchase"].map((type, idx) => (
 				<section key={idx} className="mt-6 text-center">
 					<h2 className="text-[#00e5ff] text-lg mb-2">
-						{type === "purchase" ? "কেনার সংখ্যা" : "রেজিস্ট্রেশনের সংখ্যা"}
+						{type === "purchase" ? "কেনার নাম্বার" : "রেজিস্ট্রেশনের নাম্বার"}
 					</h2>
 
 					{/* Total */}
 					<div className="flex justify-center mb-2">
 						<div className="bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.18)] rounded-md px-3 py-1 text-xs font-semibold">
-							মোট
+							টোটাল
 							<br />
 							<b className="block mt-1 text-white text-sm">
 								{data?.[type]?.total ?? 0}
@@ -110,7 +110,7 @@ const Team = () => {
 				{/* Total team size */}
 				<div className="flex justify-center mb-2">
 					<div className="bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.18)] rounded-md px-3 py-1 text-xs font-semibold">
-						মোট
+						টোটাল
 						<br />
 						<b className="block mt-1 text-white text-sm">
 							{user?.investorInfo.teamSize ?? 0}

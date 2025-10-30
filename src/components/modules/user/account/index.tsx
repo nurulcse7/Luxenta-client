@@ -38,7 +38,7 @@ const MyAccount = () => {
 				<div>
 					<h2 className="font-bold text-lg">{user.name}</h2>
 					<p className="text-sm text-[#9fb3c8]">
-						ইউজারআইডি: <span className="font-semibold">{user.id || "N/A"}</span>
+						ইউআইডি: <span className="font-semibold">{user.id || "N/A"}</span>
 					</p>
 				</div>
 			</div>
@@ -55,17 +55,17 @@ const MyAccount = () => {
 				{/* Metrics */}
 				<div className="grid md:grid-cols-4 grid-cols-2 md:gap-3 gap-1 justify-center mt-4">
 					<Metric
-						title="মোট আয়"
+						title="টোটাল আয়"
 						value={investor?.totalEarnings ?? 0}
 						isCurrency
 					/>
 					<Metric
-						title="মোট উত্তোলন"
+						title="টোটাল উত্তোলন"
 						value={investor?.totalWithdraw ?? 0}
 						isCurrency
 					/>
 					<Metric
-						title="মোট ডিপোজিট"
+						title="টোটাল ডিপোজিট"
 						value={investor?.totalDeposit ?? 0}
 						isCurrency
 					/>

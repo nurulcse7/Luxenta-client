@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 export default function DepositThankYou() {
 	const searchParams = useSearchParams();
 	const amount = searchParams.get("amount") || "0.00";
-	const [counter, setCounter] = useState(10);
+	const [counter, setCounter] = useState(5);
 
 	useEffect(() => {
 		// countdown

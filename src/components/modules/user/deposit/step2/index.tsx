@@ -95,7 +95,7 @@ const DepositStep2 = ({
 	};
 
 	return (
-		<main className="min-h-screen grid place-items-center md:p-6">
+		<main className="grid place-items-center md:p-6 pb-20">
 			<section
 				className={`w-full max-w-3xl border border-white/20 rounded-2xl backdrop-blur-lg shadow-2xl md:p-6 p-2 grid gap-6 ${
 					selectedMethod === "bkash"
@@ -207,7 +207,7 @@ const DepositStep2 = ({
 						checked={confirmPaid}
 						onChange={e => setConfirmPaid(e.target.checked)}
 					/>
-					আমি নিশ্চিত করছি যে আমি অর্থ পাঠিয়েছি।
+					আমি নিশ্চিত করছি যে আমি টাকা পাঠিয়েছি।
 				</label>
 
 				{/* Actions */}

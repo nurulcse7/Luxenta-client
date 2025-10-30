@@ -8,9 +8,9 @@ export const getSettings = async () => {
 			`${process.env.NEXT_PUBLIC_BASE_API}/settings/all`,
 			{
 				method: "GET",
-				// headers: {
-				// 	Authorization: `${accessToken}`,
-				// },
+				headers: {
+					Authorization: `${accessToken}`,
+				},
 			}
 		);
 

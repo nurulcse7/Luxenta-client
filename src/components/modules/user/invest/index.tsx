@@ -14,6 +14,7 @@ import {
 } from "@/lib/socketClient";
 import { transferTodayEarning } from "@/services/InvestorService";
 import { toast } from "sonner";
+import Link from "next/link";
 
 // --- Ticker Component ---
 const Ticker = () => {
@@ -183,27 +184,25 @@ export const Invest = () => {
 				
 			</Card>
 
-			<Card className="flex items-center justify-between p-4 mb-3">
+			{/* <Card className="flex items-center justify-between p-4 mb-3">
 				<div className="flex items-center gap-2 text-white text-sm">
 					<Boxes className="w-6 h-6 text-cyan-400" />
+					
 					<span>আমার প্রোজেক্ট</span>
 				</div>
 				<div className="text-right text-sm text-cyan-300 font-semibold">
-					( 0 ইউনিট )
+					( 0 টি )
 				</div>
-			</Card>
+			</Card> */}
 
 			<Card className="flex items-center justify-between p-4 mb-4">
 				<div className="flex items-center gap-2 text-sm">
 					<Layers className="w-6 h-6  text-cyan-400" />
 					<span>প্রজেক্ট শ্রেণী</span>
 				</div>
-				{/* <Button disabled className="px-4">
-					সকল
-				</Button> */}
-				<div className="text-right text-sm text-cyan-300 font-semibold">
-					( সকল প্রজেক্ট )
-				</div>
+				
+				<Link href="/my-projects">( সব প্রজেক্ট )</Link>
+				
 			</Card>
 
 			{loading && <p className="text-center">Loading projects...</p>}

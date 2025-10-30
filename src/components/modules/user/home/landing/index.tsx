@@ -26,7 +26,7 @@ export default function LandingPage() {
 				setIsOpenRedeemModal(true);
 				break;
 
-			case "আমার পণ্য":
+			case "আমার প্রোজেক্ট":
 				router.push("/my-projects");
 				break;
 
@@ -39,7 +39,7 @@ export default function LandingPage() {
 		}
 	};
 
-	const items = ["চেক-ইন", "রিডিম কোড", "আমার পণ্য", "বন্ধুকে আমন্ত্রণ"];
+	const items = ["চেক-ইন", "রিডিম কোড", "আমার প্রোজেক্ট", "বন্ধুকে আমন্ত্রণ"];
 
 	return (
 		<main>
