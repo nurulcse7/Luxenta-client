@@ -85,7 +85,7 @@ const MyAccount = () => {
 			<div className="mt-4">
 				{[
 					{
-						label: "ইতিহাস",
+						label: "হিস্টরি", 
 						icon: HistoryIcon,
 						action: () => router.push("/history"),
 					},
@@ -95,7 +95,7 @@ const MyAccount = () => {
 						action: () => router.push("/notifications"),
 					},
 					{
-						label: "আমার সাহায্য",
+						label: "",
 						icon: HelpIcon,
 						action: () => router.push("/support"),
 					},
@@ -115,7 +115,7 @@ const MyAccount = () => {
 						action: () => router.push("/account/withdraw-account"),
 					},
 					{
-						label: "সাইন আউট",
+						label: "লগ আউট", 
 						icon: SignOutIcon,
 						danger: true,
 						action: () => handleLogout(),

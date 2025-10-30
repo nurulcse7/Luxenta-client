@@ -128,12 +128,12 @@ export default function Navbar() {
 			<Link
 				href={"/invest"}
 				className="flex flex-col items-center text-[#00e5ff] hover:text-white transition-transform hover:scale-110 cursor-pointer">
-				<TrendingUp className="w-5 h-5 mb-1" /> বিনিয়োগ
+				<TrendingUp className="w-5 h-5 mb-1" /> ইনভেস্ট
 			</Link>
 			<Link
 				href={"/team"}
 				className="flex flex-col items-center text-[#00e5ff] hover:text-white transition-transform hover:scale-110 cursor-pointer">
-				<Users className="w-5 h-5 mb-1" /> দল
+				<Users className="w-5 h-5 mb-1" /> টিম 
 			</Link>
 
 			{/* Notification Dropdown */}

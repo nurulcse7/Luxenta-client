@@ -133,12 +133,12 @@ export const Invest = () => {
 
 	return (
 		<div className="container mx-auto  p-4  text-white">
-			<h1 className="h1 text-center text-2xl font-extrabold mb-4">বিনিয়োগ</h1>
+			<h1 className="h1 text-center text-2xl font-extrabold mb-4">ইনভেস্টমেন্ট</h1>
 			<Ticker />
 			<Card className="grid grid-cols-1 gap-4 sm:grid-cols-[1fr_auto] items-start mb-4">
 				<div className="grid text-white grid-cols-2 gap-2">
 					<div className="card-block bg-[rgba(255,255,255,0.08)] p-1 rounded-xl border border-[rgba(255,255,255,0.18)]">
-						<div className="text-sm text-center text-gray-300 ">মোট বিনিয়োগ মূল্য</div>
+						<div className="text-sm text-center text-gray-300 ">মোট ইনভেস্ট মূল্য</div>
 						<div className="text-xl text-center font-bold leading-tight">
 							৳ {user?.investorInfo.totalInvest || 0}
 						</div>
@@ -157,7 +157,7 @@ export const Invest = () => {
 						</div>
 					</div>
 					<div className="card-block bg-[rgba(255,255,255,0.08)] p-1 rounded-xl border border-[rgba(255,255,255,0.18)] col-span-1 sm:col-span-2">
-						<div className="text-sm text-center text-gray-300 mt-1">বেতন</div>
+						<div className="text-sm text-center text-gray-300 mt-1">স্যালারি</div>
 						<div className="text-xl text-center font-bold">
 							৳ {user?.investorInfo?.todayEarning || 0}
 						</div>
@@ -173,7 +173,8 @@ export const Invest = () => {
 							</span>
 						) : (
 							<>
-								<Wallet className="w-6 h-6" /> ব্যালেন্স স্থানান্তর
+								<Wallet className="w-h h-6" /> 
+								<span className="">ব্যালেন্স স্থানান্তর</span>
 							</>
 						)}
 					</Button>
@@ -183,23 +184,26 @@ export const Invest = () => {
 			</Card>
 
 			<Card className="flex items-center justify-between p-4 mb-3">
-				<div className="flex items-center gap-2 text-white">
-					<Boxes className="w-6 h-6  text-cyan-400" />
-					<span>আমার পণ্য</span>
+				<div className="flex items-center gap-2 text-white text-sm">
+					<Boxes className="w-6 h-6 text-cyan-400" />
+					<span>আমার প্রোজেক্ট</span>
 				</div>
 				<div className="text-right text-sm text-cyan-300 font-semibold">
-					(0 ইউনিট)
+					( 0 ইউনিট )
 				</div>
 			</Card>
 
 			<Card className="flex items-center justify-between p-4 mb-4">
-				<div className="flex items-center gap-2">
+				<div className="flex items-center gap-2 text-sm">
 					<Layers className="w-6 h-6  text-cyan-400" />
 					<span>প্রজেক্ট শ্রেণী</span>
 				</div>
-				<Button disabled className="px-6">
+				{/* <Button disabled className="px-4">
 					সকল
-				</Button>
+				</Button> */}
+				<div className="text-right text-sm text-cyan-300 font-semibold">
+					( সকল প্রজেক্ট )
+				</div>
 			</Card>
 
 			{loading && <p className="text-center">Loading projects...</p>}

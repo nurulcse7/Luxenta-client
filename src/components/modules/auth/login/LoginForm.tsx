@@ -9,6 +9,8 @@ import { loginUser } from "@/services/AuthService";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import ReInput from "@/components/ui/ReInput";
+import Image from "next/image";
+import Logo from "../../../../../public/assets/images/Luxenta_Logo.png"
 
 export default function LoginForm() {
 	const router = useRouter();
@@ -133,6 +135,10 @@ export default function LoginForm() {
 					<h2 className="text-2xl font-bold text-[#76e8ff] drop-shadow-[0_0_8px_rgba(118,232,255,0.4)]">
 						Luxenta Fund 
 					</h2>
+					<Image 
+					src={Logo} alt="Lux" width={250} height={250}
+					className="h-50 center"
+					/>
 					<p className="text-[#85f3ff] text-base mt-1">লগইন</p>
 				</header>
 

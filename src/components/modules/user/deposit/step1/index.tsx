@@ -59,7 +59,7 @@ const DepositStep1 = ({ onSubmit }: DepositStep1Props) => {
 	};
 
 	return (
-		<main className="min-h-screen grid place-items-center bg-[radial-gradient(75%_60%_at_20%_20%,#101a33_0%,#0a0f1c_35%,#060a14_100%)] text-[#e6f1ff] p-2 md:p-4">
+		<main className="grid place-items-center bg-[radial-gradient(75%_60%_at_20%_20%,#101a33_0%,#0a0f1c_35%,#060a14_100%)] text-[#e6f1ff] p-2 md:p-4">
 			<section className="w-full max-w-md bg-white/6 border border-white/18 rounded-[14px] backdrop-blur-lg shadow-lg">
 				{/* Header */}
 				<div className="flex justify-between items-center p-4 border-b border-white/18 text-sm">
