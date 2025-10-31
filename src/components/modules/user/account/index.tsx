@@ -96,7 +96,7 @@ const MyAccount = () => {
 						action: () => router.push("/notifications"),
 					},
 					{
-						label: "",
+						label: "সাপোর্ট",
 						icon: HelpIcon,
 						action: () => router.push("/support"),
 					},
