@@ -78,7 +78,7 @@ export default function ProjectDetail({ projectId }: { projectId: string }) {
 	};
 
 	return (
-		<div className="max-w-3xl mx-auto p-3 bg-gradient-radial from-[#101a33] via-[#0a0f1c] to-[#060a14] min-h-screen text-[#e6f1ff] font-sans">
+		<div className="pb-[80px] max-w-3xl mx-auto p-3 bg-gradient-radial from-[#101a33] via-[#0a0f1c] to-[#060a14] min-h-screen text-[#e6f1ff] font-sans">
 			{/* Back Button এবং Title সেকশন */}
 			<div className="flex items-center justify-between mb-4 mt-2">
 				<button
@@ -145,8 +145,8 @@ export default function ProjectDetail({ projectId }: { projectId: string }) {
 			{/* "কিনতে পারার সংখ্যা" সেকশনটি এখানে বাদ দেওয়া হয়েছে */}
 
 			<h2 className="text-lg font-bold mb-2 text-white">প্রজেক্ট বিস্তারিতো</h2>
-			<div className="bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.18)] rounded-lg backdrop-blur-md shadow-[0_6px_18px_rgba(0,0,0,0.35)] p-4 mb-4 leading-relaxed space-y-3 text-sm">
-				<p>{project.description}</p>
+			<div className="bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.18)] rounded-lg backdrop-blur-md shadow-[0_6px_18px_rgba(0,0,0,0.35)] p-4 mb-4   space-y-3 text-sm">
+				<p className="whitespace-pre-wrap">{project.description}</p>
 			</div>
 
 			<Button disabled={loadingBuy} onClick={handleBuy} className="w-full">
