@@ -10,13 +10,8 @@ const MyAccount = () => {
 	const { user, setUser, isLoading } = useUser();
 	const router = useRouter();
 
-	if (isLoading)
+	if (!user || isLoading)
 		return <h1 className="text-center">Account Info loading...</h1>;
-
-	if (!user) {
-		router.push("/login");
-		return null;
-	}
 
 	const investor = user.role === "investor" ? user.investorInfo : null;
 
