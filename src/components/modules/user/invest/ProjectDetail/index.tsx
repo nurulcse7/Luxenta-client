@@ -97,10 +97,10 @@ export default function ProjectDetail({ projectId }: { projectId: string }) {
 				className={`text-center mb-4 text-sm font-semibold px-4 py-2 rounded-xl border ${statusData.classes}`}>
 				স্ট্যাটাস: {statusData.text}
 			</div>
-			{project.image && (
+			{project.coverImage && (
 				<div className="mb-3">
 					<Image
-						src={project.image}
+						src={project.coverImage}
 						width={100}
 						height={100}
 						alt="Project Banner"

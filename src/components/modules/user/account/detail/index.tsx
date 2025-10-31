@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import React from "react";
 
 export default function MyAccountDetail() {
-	const { user } = useUser();
+	const { user, setUser } = useUser();
 	const router = useRouter();
 
 	if (!user) {
@@ -22,6 +22,7 @@ export default function MyAccountDetail() {
 
 	const handleLogout = async () => {
 		try {
+			setUser(null);
 			await logout();
 			router.push("/login");
 		} catch (err) {

@@ -50,6 +50,10 @@ const DepositStep1 = ({ onSubmit }: DepositStep1Props) => {
 			alert("ন্যূনতম এমাউন্ট 100 টাকা");
 			return;
 		}
+		if (Number(amount) > 25000) {
+			alert("সর্বোচ্চ ডিপোজিট সীমা 25,000 টাকা");
+			return;
+		}
 		if (!selectedChannel) {
 			alert("একটি সার্ভার নির্বাচন করুন");
 			return;

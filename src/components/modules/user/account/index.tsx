@@ -7,7 +7,7 @@ import { logout } from "@/services/AuthService";
 import { Avatar } from "@/components/ui/avatar";
 
 const MyAccount = () => {
-	const { user, isLoading } = useUser();
+	const { user, setUser, isLoading } = useUser();
 	const router = useRouter();
 
 	if (isLoading)
@@ -22,6 +22,7 @@ const MyAccount = () => {
 
 	const handleLogout = async () => {
 		try {
+			setUser(null);
 			await logout();
 			router.push("/login");
 		} catch (err) {
@@ -85,7 +86,7 @@ const MyAccount = () => {
 			<div className="mt-4">
 				{[
 					{
-						label: "হিস্টরি", 
+						label: "হিস্টরি",
 						icon: HistoryIcon,
 						action: () => router.push("/history"),
 					},
@@ -115,7 +116,7 @@ const MyAccount = () => {
 						action: () => router.push("/account/withdraw-account"),
 					},
 					{
-						label: "লগ আউট", 
+						label: "লগ আউট",
 						icon: SignOutIcon,
 						danger: true,
 						action: () => handleLogout(),
