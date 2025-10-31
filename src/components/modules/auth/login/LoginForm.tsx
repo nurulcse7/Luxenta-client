@@ -132,14 +132,14 @@ export default function LoginForm() {
 			<section className="relative z-10 w-full max-w-md rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl shadow-[0_0_20px_rgba(0,255,255,0.1)] p-6">
 				<header className="text-center mb-5">
 					
-					<h2 className="text-2xl font-bold text-[#76e8ff] drop-shadow-[0_0_8px_rgba(118,232,255,0.4)]">
+					{/* <h2 className="text-2xl font-bold text-[#76e8ff] drop-shadow-[0_0_8px_rgba(118,232,255,0.4)]">
 						Luxenta Fund 
-					</h2>
+					</h2> */}
 					<Image 
-					src={Logo} alt="Lux" width={250} height={250}
-					className="h-50 center"
+					src={Logo} alt="Luxenta" width={250} height={250}
+					className="ml-10 sm:ml-20"
 					/>
-					<p className="text-[#85f3ff] text-base mt-1">লগইন</p>
+					<p className="text-[#85f3ff] text-lg mt-1">লগইন করুন</p>
 				</header>
 
 				<p className="text-center text-sm text-[#d1e7ff]/90 mb-2">
