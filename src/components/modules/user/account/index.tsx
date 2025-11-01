@@ -1,29 +1,33 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/context/UserContext";
 import { logout } from "@/services/AuthService";
 import { Avatar } from "@/components/ui/avatar";
 
 const MyAccount = () => {
-	const { user, setUser, isLoading } = useUser();
+	const { user, setUser, isLoading, loadUser } = useUser();
 	const router = useRouter();
 
-	if (!user || isLoading)
-		return <h1 className="text-center">Account Info loading...</h1>;
-
-	const investor = user.role === "investor" ? user.investorInfo : null;
+	useEffect(() => {
+		if (!user) {
+			loadUser();
+		}
+	}, [user, loadUser]);
 
 	const handleLogout = async () => {
 		try {
-			setUser(null);
 			await logout();
-			router.push("/login");
+			setUser(null);
+			return router.replace("/login");
 		} catch (err) {
 			console.error("Logout failed:", err);
 		}
 	};
+ 
+	const investor = user?.role === "investor" ? user?.investorInfo : null;
+
 	return (
 		<div className="min-h-screen   overflow-hidden font-sans sm:p-3 pb-3">
 			{/* Header */}
@@ -32,9 +36,9 @@ const MyAccount = () => {
 					<Avatar className="w-12 h-12 rounded-full border-2 border-[#00e5ff] overflow-hidden" />
 				</div>
 				<div>
-					<h2 className="font-bold text-lg">{user.name}</h2>
+					<h2 className="font-bold text-lg">{user?.name}</h2>
 					<p className="text-sm text-[#9fb3c8]">
-						ইউআইডি: <span className="font-semibold">{user.id || "N/A"}</span>
+						ইউআইডি: <span className="font-semibold">{user?.id || "N/A"}</span>
 					</p>
 				</div>
 			</div>

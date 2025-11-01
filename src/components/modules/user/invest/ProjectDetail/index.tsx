@@ -8,7 +8,6 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
-// স্ট্যাটাস অনুযায়ী ক্লাস এবং টেক্সট নির্ধারণের ফাংশন
 const getStatusClasses = (status: string) => {
 	switch (status.toLowerCase()) {
 		case "open":

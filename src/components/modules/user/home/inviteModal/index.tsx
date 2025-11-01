@@ -1,18 +1,22 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Copy } from "lucide-react";
 import { useUser } from "@/context/UserContext";
 
 export default function InviteModal() {
-	const { user } = useUser();
+	const { user, loadUser } = useUser();
 	const [copied, setCopied] = useState(false);
-	const referralLink = `https://luxenta.com/signup?ref=${user?.investorInfo?.referralCode}`;
+	const referralLink = `https://luxentafund.cloud/register?ref=${user?.investorInfo?.referralCode}`;
 
 	const handleCopy = (text: string) => {
 		navigator.clipboard.writeText(text);
 		setCopied(true);
 		setTimeout(() => setCopied(false), 1500);
 	};
+
+	useEffect(() => {
+		loadUser();
+	}, []);
 
 	return (
 		<main>

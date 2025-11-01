@@ -3,6 +3,7 @@ import {
 	useContext,
 	useEffect,
 	useState,
+	useCallback,
 	Dispatch,
 	SetStateAction,
 } from "react";
@@ -19,6 +20,7 @@ interface IUserProviderValues {
 	setUser: (user: IUser | null) => void;
 	isLoading: boolean;
 	setIsLoading: Dispatch<SetStateAction<boolean>>;
+	loadUser: () => Promise<void>;
 }
 
 const UserContext = createContext<IUserProviderValues | undefined>(undefined);
@@ -27,20 +29,28 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
 	const [user, setUser] = useState<IUser | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
 
-	useEffect(() => {
-		const fetchUser = async () => {
-			setIsLoading(true);
+	// ✅ loadUser function — can be called anywhere
+	const loadUser = useCallback(async () => {
+		setIsLoading(true);
+		try {
 			const verifiedUser = await getCurrentUser();
 			setUser(verifiedUser);
+		} catch (error) {
+			console.error("Failed to load user:", error);
+			setUser(null);
+		} finally {
 			setIsLoading(false);
-		};
+		}
+	}, []);
 
-		fetchUser();
+	useEffect(() => {
+		loadUser(); // initial fetch
 
 		const socket = getSocket();
+
 		const sendUserId = () => {
 			if (user?.id) {
-				socket.emit("set-user", user?.id);
+				socket.emit("set-user", user.id);
 			}
 		};
 
@@ -67,17 +77,17 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
 			});
 		});
 
-		// 2. Cleanup Function
 		return () => {
 			unsubscribeEvent("user-data-update");
 			if (user?.id) {
 				socket.off("connect", sendUserId);
 			}
 		};
-	}, [user?.id]);
+	}, [user?.id, loadUser]);
 
 	return (
-		<UserContext.Provider value={{ user, setUser, isLoading, setIsLoading }}>
+		<UserContext.Provider
+			value={{ user, setUser, isLoading, setIsLoading, loadUser }}>
 			{children}
 		</UserContext.Provider>
 	);

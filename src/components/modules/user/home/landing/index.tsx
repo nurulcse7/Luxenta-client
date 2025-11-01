@@ -22,7 +22,6 @@ export default function LandingPage() {
 				break;
 
 			case "রিডিম কোড":
-				// modal খুলবে
 				setIsOpenRedeemModal(true);
 				break;
 
