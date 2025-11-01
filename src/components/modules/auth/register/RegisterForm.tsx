@@ -5,6 +5,8 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { registerUser } from "@/services/AuthService";
 import Link from "next/link";
+import Image from "next/image";
+import Logo from "../../../../../public/assets/images/Luxenta_Logo.png"
 
 type FormValues = {
 	name: string;
@@ -93,11 +95,16 @@ export default function RegisterForm() {
 				onSubmit={handleSubmit(onSubmit)}
 				className="relative z-10 w-full max-w-md bg-white/5 backdrop-blur-lg p-6 rounded-xl shadow-lg text-white">
 				<div className="text-center mb-4">
-					<h2 className="text-2xl font-bold text-[#76e8ff] text-shadow-md">
+					{/* <h2 className="text-2xl font-bold text-[#76e8ff] text-shadow-md">
 						Luxenta Fund
-					</h2>
+					</h2> */}
+					<Image 
+										src={Logo} alt="Luxenta" width={250} height={250}
+										className="ml-10 sm:ml-20"
+										/>
+
 					<p className="text-[#85f3ff] mt-2 text-sm">
-						একাউন্ট রেজিস্ট্রেশন করুন এবং আপনার স্মার্ট ইনভেস্টমেন্ট শুরু করুন
+						রেজিস্ট্রেশন সম্পন্ন করে আপনার স্মার্ট ইনভেস্টমেন্ট শুরু করুন
 					</p>
 				</div>
 

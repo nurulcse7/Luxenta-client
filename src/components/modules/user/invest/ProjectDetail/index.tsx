@@ -132,7 +132,7 @@ export default function ProjectDetail({ projectId }: { projectId: string }) {
 			{/* ✨ প্রজেক্ট প্রোগ্রেস বার (Progress Bar) */}
 			<div className="mb-6 p-4 bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.18)] rounded-lg backdrop-blur-md shadow-[0_6px_18px_rgba(0,0,0,0.35)]">
 				<div className="flex justify-between mb-1 text-sm font-semibold text-white">
-					<span>প্রগতি</span>
+					<span>প্রোগ্রেস</span>
 					<span className="text-[#00e5ff]">{project.progress}% পূর্ণ</span>
 				</div>
 				<div className="progress w-full h-3 rounded-full overflow-hidden bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.18)]">
