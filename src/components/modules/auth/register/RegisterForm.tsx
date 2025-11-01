@@ -86,22 +86,19 @@ export default function RegisterForm() {
 	};
 
 	return (
-		<main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0a0f1c] to-[#1a0933] p-4 relative">
-			<div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rotate-[-20deg] text-[120px] font-bold text-white/5 pointer-events-none select-none">
+		<main className="min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-[#0a0f1c] to-[#1a0933] p-4 relative">
+			<div className="absolute overflow-hidden top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rotate-[-20deg] text-[120px] font-bold text-white/5 pointer-events-none select-none">
 				Luxenta Fund
 			</div>
 
 			<form
 				onSubmit={handleSubmit(onSubmit)}
-				className="relative z-10 w-full max-w-md bg-white/5 backdrop-blur-lg p-6 rounded-xl shadow-lg text-white">
+				className="relative overflow-hidden z-10 w-full max-w-md bg-white/5 backdrop-blur-lg p-6 rounded-xl shadow-lg text-white">
 				<div className="text-center mb-4">
-					{/* <h2 className="text-2xl font-bold text-[#76e8ff] text-shadow-md">
-						Luxenta Fund
-					</h2> */}
 					<Image 
-										src={Logo} alt="Luxenta" width={250} height={250}
-										className="ml-10 sm:ml-20"
-										/>
+						src={Logo} alt="Luxenta" width={250} height={250}
+						className="ml-10 sm:ml-20"
+					/>
 
 					<p className="text-[#85f3ff] mt-2 text-sm">
 						রেজিস্ট্রেশন সম্পন্ন করে আপনার স্মার্ট ইনভেস্টমেন্ট শুরু করুন
